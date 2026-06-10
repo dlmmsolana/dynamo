@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Solana Liquidity Terminal</title>
+<style>
+:root {
+  --bg:#0f0f0f;--bg2:#161616;--bg3:#1e1e1e;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
+  --text:#e8e8e6;--text2:#888884;--text3:#555552;
+  --green:#1D9E75;--blue:#378ADD;--orange:#D85A30;--amber:#BA7517;--red:#c94a4a;--purple:#7F77DD;
+  --mono:'SF Mono','Fira Code','Cascadia Code',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --r:6px;--rl:10px;
+}
+html{background:#0f0f0f;}
+body{background:#0f0f0f;color:#e8e8e6;font-family:'SF Mono','Fira Code','Cascadia Code',monospace;margin:0;padding:0;}
+.app{max-width:1020px;margin:0 auto;padding:24px 16px 80px;}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.hdot{width:8px;height:8px;border-radius:50%;background:#1D9E75;flex-shrink:0;}
+.htitle{font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#888884;}
+.hright{margin-left:auto;font-size:11px;color:#555552;}
+.chrome{border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;}
+.tabbar{display:flex;border-bottom:0.5px solid rgba(255,255,255,0.08);background:#0f0f0f;padding:0 16px;border-radius:10px 10px 0 0;flex-wrap:wrap;}
+.tab{padding:10px 16px;font-size:11px;font-family:inherit;color:#555552;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:0.1em;text-transform:uppercase;background:none;border-top:none;border-left:none;border-right:none;transition:color .15s,border-color .15s;white-space:nowrap;}
+.tab:hover{color:#888884;}
+.tab.active{color:#e8e8e6;border-bottom-color:#1D9E75;}
+.sbar{display:flex;align-items:center;gap:16px;padding:5px 16px;border-bottom:0.5px solid rgba(255,255,255,0.08);background:#0f0f0f;font-size:10px;color:#555552;letter-spacing:0.06em;flex-wrap:wrap;}
+.sdot{width:5px;height:5px;border-radius:50%;background:#1D9E75;display:inline-block;margin-right:5px;}
+.panel{display:none;background:#161616;padding:16px;border-radius:0 0 10px 10px;}
+.panel.active{display:block;}
+.sl{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:#444442;margin-bottom:6px;padding-bottom:4px;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.igrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:14px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:9px;color:#555552;letter-spacing:0.08em;text-transform:uppercase;}
+.field input,.field select{font-family:inherit;font-size:12px;padding:6px 8px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;color:#e8e8e6;width:100%;outline:none;}
+.field input:focus,.field select:focus{border-color:rgba(255,255,255,0.2);}
+.field select option{background:#1e1e1e;}
+.rbtn{font-family:inherit;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:7px 16px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.16);border-radius:6px;color:#e8e8e6;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;transition:background .15s;}
+.rbtn:hover{background:#252525;}
+.rbtn:active{transform:scale(0.98);}
+.rbtn:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
+.obj-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.obj-btn{font-family:inherit;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:20px;color:#555552;cursor:pointer;transition:all .15s;}
+.obj-btn:hover{color:#888884;border-color:rgba(255,255,255,0.16);}
+.obj-btn.active.fee{border-color:#1D9E75;color:#1D9E75;background:rgba(29,158,117,0.1);}
+.obj-btn.active.stability{border-color:#378ADD;color:#378ADD;background:rgba(55,138,221,0.1);}
+.obj-btn.active.volume{border-color:#BA7517;color:#BA7517;background:rgba(186,117,23,0.1);}
+.obj-btn.active.balanced{border-color:#7F77DD;color:#7F77DD;background:rgba(127,119,221,0.1);}
+.out{border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#0f0f0f;padding:12px;font-size:12px;line-height:1.6;}
+.ph2{color:#555552;font-size:11px;}
+.mrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:5px;margin-bottom:10px;}
+.mc2{background:#161616;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:7px 10px;}
+.mc2 .ml{font-size:8px;color:#555552;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;}
+.mc2 .mv{font-size:14px;font-weight:500;color:#e8e8e6;}
+.mc2 .ms{font-size:9px;color:#555552;margin-top:1px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;}
+.abar{height:6px;border-radius:3px;background:#1e1e1e;overflow:hidden;display:flex;margin:6px 0;}
+.fd{background:#1D9E75;}.fdl{background:#378ADD;}.fcl{background:#D85A30;}
+.lrow{display:flex;gap:16px;margin-bottom:8px;align-items:center;flex-wrap:wrap;}
+.ldot{width:7px;height:7px;border-radius:2px;flex-shrink:0;}
+.llbl{font-size:10px;color:#888884;}
+.lt{width:100%;border-collapse:collapse;font-size:11px;}
+.lt th{text-align:left;color:#555552;font-weight:400;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:6px;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.lt td{padding:7px 6px;border-bottom:0.5px solid rgba(255,255,255,0.08);color:#e8e8e6;vertical-align:middle;}
+.lt tr:last-child td{border-bottom:none;}
+.pool-wrap{border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;margin-bottom:10px;overflow-x:auto;}
+.ph{display:flex;align-items:center;padding:5px 10px;background:#161616;font-size:9px;color:#555552;letter-spacing:0.1em;text-transform:uppercase;border-bottom:0.5px solid rgba(255,255,255,0.08);gap:8px;min-width:720px;}
+.pr{display:flex;align-items:center;padding:8px 10px;border-bottom:0.5px solid rgba(255,255,255,0.08);font-size:11px;gap:8px;min-width:720px;}
+.pr:last-child{border-bottom:none;}
+.dtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;}
+.dtable th{text-align:left;color:#555552;font-weight:400;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:6px 8px;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.dtable td{padding:9px 8px;border-bottom:0.5px solid rgba(255,255,255,0.08);color:#e8e8e6;vertical-align:top;line-height:1.5;}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable .amt{font-size:15px;font-weight:500;color:#e8e8e6;white-space:nowrap;}
+.dtable .sub{font-size:10px;color:#555552;margin-top:2px;}
+.mstep{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
+.mstep-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px;}
+.mstep-body{flex:1;}
+.mstep-trigger{font-size:11px;color:#e8e8e6;font-weight:500;margin-bottom:3px;}
+.mstep-action{font-size:11px;color:#888884;line-height:1.6;}
+.analysis{margin-top:10px;padding:12px;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#161616;}
+.analysis-label{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555552;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.obj-tag{font-size:9px;padding:1px 7px;border-radius:10px;letter-spacing:0.06em;}
+.analysis p{font-size:12px;line-height:1.8;color:#888884;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin-bottom:10px;}
+.analysis p:last-child{margin-bottom:0;}
+.analysis strong{color:#e8e8e6;font-weight:500;}
+/* chart */
+.chart-wrap{display:flex;gap:24px;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;}
+.chart-canvas-wrap{position:relative;flex-shrink:0;}
+.chart-legend{flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px;justify-content:center;}
+.chart-legend-item{display:flex;align-items:center;gap:8px;font-size:11px;}
+.chart-legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.chart-legend-label{color:#888884;flex:1;}
+.chart-legend-val{color:#e8e8e6;font-weight:500;text-align:right;}
+.chart-legend-pct{color:#555552;font-size:10px;width:36px;text-align:right;}
+/* portfolio */
+.portfolio-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.portfolio-card{background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:12px 14px;cursor:pointer;transition:border-color .15s;}
+.portfolio-card:hover{border-color:rgba(255,255,255,0.18);}
+.portfolio-card-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.portfolio-card-name{font-size:13px;font-weight:500;color:#e8e8e6;}
+.portfolio-card-sym{font-size:11px;color:#555552;}
+.portfolio-card-addr{font-size:9px;color:#333;word-break:break-all;margin-bottom:6px;}
+.portfolio-metrics{display:flex;gap:16px;flex-wrap:wrap;}
+.portfolio-metric{display:flex;flex-direction:column;gap:2px;}
+.portfolio-metric .pm-l{font-size:9px;color:#555552;text-transform:uppercase;letter-spacing:0.08em;}
+.portfolio-metric .pm-v{font-size:13px;font-weight:500;color:#e8e8e6;}
+.port-add-row{display:flex;gap:8px;margin-bottom:10px;}
+.port-add-row input{flex:1;font-family:inherit;font-size:12px;padding:7px 10px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;color:#e8e8e6;outline:none;}
+.port-add-row input:focus{border-color:rgba(255,255,255,0.2);}
+.port-empty{color:#555552;font-size:11px;padding:20px 0;text-align:center;}
+/* discover */
+.disc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:4px;}
+.disc-card{background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:9px 12px;transition:border-color .15s;}
+.disc-card:hover{border-color:rgba(255,255,255,0.18);}
+.disc-header{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.disc-sym{font-size:12px;font-weight:600;color:#e8e8e6;}
+.disc-name{font-size:10px;color:#555552;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.disc-price{font-size:14px;font-weight:500;color:#e8e8e6;margin-bottom:6px;}
+.disc-metrics{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.disc-m{display:flex;flex-direction:column;gap:2px;}
+.disc-m .dl{font-size:9px;color:#555552;text-transform:uppercase;letter-spacing:0.08em;}
+.disc-m .dv{font-size:12px;font-weight:500;color:#e8e8e6;}
+.disc-actions{display:flex;gap:6px;}
+.disc-btn{font-family:inherit;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.1);border-radius:4px;color:#888884;cursor:pointer;transition:all .15s;}
+.disc-btn:hover{border-color:rgba(255,255,255,0.25);color:#e8e8e6;}
+.disc-btn.primary{background:#1D9E7520;border-color:#1D9E7550;color:#1D9E75;}
+.disc-btn.primary:hover{background:#1D9E7535;}
+/* export */
+.export-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.export-btn{font-family:inherit;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:5px 12px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.1);border-radius:4px;color:#888884;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
+.export-btn:hover{color:#e8e8e6;border-color:rgba(255,255,255,0.22);}
+/* misc */
+.blink{color:#555552;animation:bl 1s step-end infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0.2}}
+.err{color:#c94a4a;font-size:11px;line-height:1.8;}
+.hint{font-size:10px;color:#555552;margin-bottom:14px;}
+.arow{display:flex;gap:8px;margin-bottom:6px;align-items:center;}
+.arow input{flex:1;font-family:inherit;font-size:12px;padding:8px 10px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;color:#e8e8e6;outline:none;}
+.arow input:focus{border-color:rgba(255,255,255,0.2);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.14);border-radius:3px;}
+@media print{.export-bar,.rbtn,.obj-row,.arow,.port-add-row,.tabbar,.sbar{display:none!important;}.panel{display:block!important;}.chrome{border:none;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="hdot"></div>
+    <span class="htitle">Solana Liquidity Terminal</span>
+    <span class="hright" id="clock"></span>
+  </div>
+  <div class="chrome">
+    <div class="tabbar">
+      <button class="tab active" onclick="switchTab('discover',this)">◈ Discover</button>
+      <button class="tab" onclick="switchTab('livelp',this)">⚡ Live LP</button>
+      <button class="tab" onclick="switchTab('auditor',this)">⊕ Auditor</button>
+      <button class="tab" onclick="switchTab('portfolio',this)">◎ Portfolio</button>
+      <button class="tab" onclick="switchTab('architect',this)">⬡ Architect</button>
+    </div>
+    <div class="sbar">
+      <span><span class="sdot"></span>Solana Mainnet</span>
+      <span>DexScreener · Rules Engine · No API Key Required</span>
+    </div>
+
+    <!-- ── ARCHITECT ── -->
+    <div class="panel" id="panel-architect">
+      <div class="sl">Token design</div>
+      <div class="igrid">
+        <div class="field"><label>Total Supply</label><input id="a-supply" type="number" value="1000000000"/></div>
+        <div class="field"><label>Initial FDV ($)</label><input id="a-fdv" type="number" value="500000"/></div>
+        <div class="field"><label>Initial Market Cap ($)</label><input id="a-mc" type="number" value="50000"/></div>
+        <div class="field"><label>Total Capital to Deploy ($)</label><input id="a-capital" type="number" value="25000"/></div>
+        <div class="field"><label>Treasury Alloc (%)</label><input id="a-treasury" type="number" value="20"/></div>
+        <div class="field"><label>LP Allocation (%)</label><input id="a-lpalloc" type="number" value="10"/></div>
+      </div>
+      <div class="sl">Growth assumptions</div>
+      <div class="igrid">
+        <div class="field"><label>30d MC ($)</label><input id="a-mc30" type="number" value="250000"/></div>
+        <div class="field"><label>90d MC ($)</label><input id="a-mc90" type="number" value="1000000"/></div>
+        <div class="field"><label>180d MC ($)</label><input id="a-mc180" type="number" value="5000000"/></div>
+        <div class="field"><label>365d MC ($)</label><input id="a-mc365" type="number" value="10000000"/></div>
+      </div>
+      <div class="sl">Trading assumptions</div>
+      <div class="igrid">
+        <div class="field"><label>Expected Daily Vol ($)</label><input id="a-vol" type="number" value="5000"/></div>
+        <div class="field"><label>Volatility</label><select id="a-vola"><option>Low</option><option selected>Medium</option><option>High</option><option>Extreme</option></select></div>
+        <div class="field"><label>Buy/Sell Ratio</label><input id="a-bsratio" type="number" value="1.2" step="0.1"/></div>
+        <div class="field"><label>Initial Holders</label><input id="a-holders" type="number" value="100"/></div>
+        <div class="field"><label>Top 10 Concentration (%)</label><input id="a-top10" type="number" value="40"/></div>
+      </div>
+      <div class="sl" style="margin-top:4px;">Optimization objective</div>
+      <div class="obj-row" id="arch-obj-row">
+        <button class="obj-btn fee" onclick="setArchObj('fee',this)">⬡ Fee Generation</button>
+        <button class="obj-btn stability" onclick="setArchObj('stability',this)">◈ Price Stability</button>
+        <button class="obj-btn volume" onclick="setArchObj('volume',this)">↑ Volume Growth</button>
+        <button class="obj-btn balanced active" onclick="setArchObj('balanced',this)">⊕ Balanced</button>
+      </div>
+      <button class="rbtn" id="arch-btn" onclick="runArchitect()">▶ Generate Architecture</button>
+      <div class="out" id="arch-out"><span class="ph2">Fill inputs and run to generate your liquidity architecture plan.</span></div>
+    </div>
+
+    <!-- ── AUDITOR ── -->
+    <div class="panel" id="panel-auditor">
+      <div class="sl">Token mint address</div>
+      <div class="arow">
+        <input id="audit-addr" placeholder="e.g. oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp"/>
+        <button class="rbtn" style="margin-bottom:0;" id="audit-btn" onclick="runAudit()">⊕ Audit</button>
+      </div>
+      <div class="hint">Token mint address only — not the pair address.</div>
+      <div class="sl" style="margin-top:12px;">Optimization objective</div>
+      <div class="obj-row" id="obj-row">
+        <button class="obj-btn fee active" onclick="setObj('fee',this)">⬡ Fee Generation</button>
+        <button class="obj-btn stability" onclick="setObj('stability',this)">◈ Price Stability</button>
+        <button class="obj-btn volume" onclick="setObj('volume',this)">↑ Volume Growth</button>
+        <button class="obj-btn balanced" onclick="setObj('balanced',this)">⊕ Balanced</button>
+      </div>
+      <div class="out" id="audit-out"><span class="ph2">Enter a token address, select your optimization objective, then audit.</span></div>
+    </div>
+
+    <!-- ── LIVE LP ── -->
+    <div class="panel" id="panel-livelp">
+      <!-- ── analysis form ── -->
+      <div class="sl">Token mint address</div>
+      <div class="arow">
+        <input id="lp-addr" placeholder="e.g. oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp"/>
+        <button class="rbtn" style="margin-bottom:0;" id="lp-btn" onclick="runLiveLP()">⚡ Analyze</button>
+      </div>
+      <div class="hint">Should I LP this token, and if so — exactly how?</div>
+      <div class="sl" style="margin-top:12px;">Your position parameters</div>
+      <div class="igrid" style="margin-bottom:18px;">
+        <div class="field"><label>Capital to deploy ($)</label><input id="lp-capital" type="number" value="1000" min="1"/></div>
+        <div class="field"><label>Risk tolerance</label><select id="lp-risk"><option>Conservative</option><option selected>Moderate</option><option>Aggressive</option></select></div>
+        <div class="field"><label>Time horizon</label><select id="lp-horizon"><option>Days</option><option selected>Weeks</option><option>Months</option></select></div>
+        <div class="field"><label>Primary goal</label><select id="lp-goal"><option>Maximize PnL</option><option selected>Generate yield</option><option>Support the token</option><option>Speculate</option></select></div>
+      </div>
+      <div class="out" id="lp-out"><span class="ph2">Enter a token address and your position parameters, then analyze.</span></div>
+    </div>
+
+    <!-- ── DISCOVER ── -->
+    <div class="panel active" id="panel-discover">
+      <div class="sl">Discover tokens</div>
+      <div class="arow" style="margin-bottom:6px;">
+        <input id="disc-search" placeholder="Search by ticker ($ORE), name, or contract address..." onkeydown="if(event.key==='Enter')searchDiscover()"/>
+        <button class="rbtn" style="margin-bottom:0;" onclick="searchDiscover()">Search</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+        <button class="disc-btn primary" id="disc-vol" onclick="setDiscMode('volume',this)">Volume</button>
+        <button class="disc-btn" id="disc-mc" onclick="setDiscMode('mcchange',this)">MC Change</button>
+        <div style="display:flex;align-items:center;gap:4px;margin-left:4px;">
+          <button class="disc-btn" id="disc-t1" onclick="setDiscTime('1',this)">1h</button>
+          <button class="disc-btn" id="disc-t4" onclick="setDiscTime('4',this)">~4h</button>
+          <button class="disc-btn" id="disc-t12" onclick="setDiscTime('12',this)">~12h</button>
+          <button class="disc-btn primary" id="disc-t24" onclick="setDiscTime('24',this)">24h</button>
+        </div>
+      </div>
+      <div id="disc-out"><div class="ph2" style="padding:20px 0;">Open this tab to load trending tokens.</div></div>
+    </div>
+
+    <!-- ── PORTFOLIO ── -->
+    <div class="panel" id="panel-portfolio">
+      <div class="sl">Tracked tokens</div>
+      <div class="port-add-row">
+        <input id="port-input" placeholder="Add token mint address..." onkeydown="if(event.key==='Enter')addPortfolioToken()"/>
+        <button class="rbtn" style="margin-bottom:0;" onclick="addPortfolioToken()">+ Add</button>
+        <button class="rbtn" style="margin-bottom:0;" onclick="refreshPortfolio()">↺ Refresh All</button>
+      </div>
+      <div class="hint">Add up to 50 token addresses. Data fetches from DexScreener. Click any card to open full audit.</div>
+      <div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px;">
+        <span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555552;margin-right:2px;">Filter</span>
+        <button class="disc-btn primary" id="pfilter-all" onclick="setPortFilter('all',this)">All</button>
+        <button class="disc-btn" id="pfilter-watching" onclick="setPortFilter('watching',this)">Watching</button>
+        <button class="disc-btn" id="pfilter-active-lp" onclick="setPortFilter('active-lp',this)">Active LP</button>
+        <button class="disc-btn" id="pfilter-research" onclick="setPortFilter('research',this)">Research</button>
+        <button class="disc-btn" id="pfilter-other" onclick="setPortFilter('other',this)">Other</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin:0 0 10px;">
+        <span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555552;margin-right:2px;">Sort</span>
+        <button class="disc-btn" id="psort-stage-desc" onclick="setPortSort('stage-desc',this)">Stage ↓</button>
+        <button class="disc-btn" id="psort-stage-asc" onclick="setPortSort('stage-asc',this)">Stage ↑</button>
+        <button class="disc-btn" id="psort-liq" onclick="setPortSort('liq',this)">Liq Ratio</button>
+        <button class="disc-btn" id="psort-health" onclick="setPortSort('health',this)">Worst Health</button>
+        <button class="disc-btn" id="psort-alpha" onclick="setPortSort('alpha',this)">A–Z</button>
+      </div>
+      <div id="portfolio-list" class="portfolio-list"><div class="port-empty">No tokens tracked yet. Add a mint address above.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── state ────────────────────────────────────────────────────────────────────
+let auditObjective='fee';
+let archObjective='balanced';
+let portfolioTokens=JSON.parse(localStorage.getItem('slt_portfolio')||'[]');
+let portSort='stage-desc';
+let portFilter='all';
+const PORT_TAGS={'watching':{label:'Watching',color:'#BA7517'},'active-lp':{label:'Active LP',color:'#1D9E75'},'research':{label:'Research',color:'#378ADD'},'other':{label:'Other',color:'#7F77DD'}};
+const TAG_CYCLE=[null,'watching','active-lp','research','other'];
+let lastAuditData=null; // store for export
+let lastLPAddr='';
+let lastAuditAddr='';
+
+// Meteora Dynamic AMM program. Lock escrow accounts are PDAs derived from this program
+// using seeds ["lock_escrow", pool_pubkey, owner_pubkey] — there is no separate lock vault program.
+// Any token account whose owner is itself owned by this program ID is a lock escrow PDA.
+const METEORA_AMM_PROGRAM='Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB';
+const SOLANA_RPC='https://api.mainnet-beta.solana.com';
+
+// ── utils ────────────────────────────────────────────────────────────────────
+function setObj(o,el){
+  auditObjective=o;
+  document.querySelectorAll('#obj-row .obj-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+function setArchObj(o,el){
+  archObjective=o;
+  document.querySelectorAll('#arch-obj-row .obj-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+function switchTab(t,el){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+t).classList.add('active');
+  if(t==='portfolio') renderPortfolio();
+  if(t==='discover') runDiscover();
+}
+function fmt(n){
+  n=parseFloat(n)||0;
+  if(n>=1e9) return '$'+(n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return '$'+(n/1e3).toFixed(1)+'K';
+  if(n>0&&n<0.001) return '$'+n.toPrecision(3);
+  return '$'+n.toFixed(2);
+}
+function fmtD(n){
+  n=Math.round(parseFloat(n)||0);
+  if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return '$'+(n/1e3).toFixed(0)+'K';
+  return '$'+n.toLocaleString();
+}
+
+// ── classification ────────────────────────────────────────────────────────────
+function classifyStage(mc){
+  if(mc<50000)    return{stage:0,label:'Launch',      damm:90,dlmm:10, clmm:0};
+  if(mc<250000)   return{stage:1,label:'Discovery',   damm:60,dlmm:40, clmm:0};
+  if(mc<1000000)  return{stage:2,label:'Emerging',    damm:25,dlmm:75, clmm:0};
+  if(mc<5000000)  return{stage:3,label:'Growth',      damm:5, dlmm:90, clmm:5};
+  if(mc<20000000) return{stage:4,label:'Established', damm:0, dlmm:70, clmm:30};
+  return               {stage:5,label:'Institutional',damm:0, dlmm:40, clmm:60};
+}
+function sc(s){return['#888780','#1D9E75','#378ADD','#BA7517','#D85A30','#993556'][s]||'#888780';}
+function getShape(vola,bsr,obj){
+  if(vola==='Extreme') return 'Multi Range';
+  if(obj==='stability') return bsr>1.2?'Curve':'Bid Ask';
+  if(obj==='fee') return vola==='Low'?'Curve':'Spot';
+  if(bsr>1.4) return 'Skewed Bullish';
+  if(bsr<0.8) return 'Skewed Bearish';
+  if(vola==='High') return 'Bid Ask';
+  if(vola==='Low') return 'Curve';
+  return 'Spot';
+}
+function getRW(vola,obj){
+  if(obj==='stability') return {Low:'±30%',Medium:'±40%',High:'±55%',Extreme:'±70%'}[vola]||'±40%';
+  const base={Low:5,Medium:15,High:35,Extreme:60}[vola]||15;
+  const adj=obj==='fee'?-3:0;
+  return `±${Math.max(3,base+adj)}%`;
+}
+function getMig(s){return['MC > $50K or vol > $5K/day','MC > $250K or 3x vol spike','MC > $1M, bin utilization > 80%','MC > $5M — introduce CLMM layer','Route optimization, expand CLMM','Full institutional market-making'][s]||'—';}
+function getTLP(s){return s<=1?'40–60%':s<=3?'20–40%':'5–20%';}
+function objConfig(obj){
+  return{
+    fee:      {label:'Fee Generation', color:'#1D9E75',rangeAdj:'Narrow range — max fee density',    reservePct:15,dlmmBias:+10},
+    stability:{label:'Price Stability',color:'#378ADD',rangeAdj:'Wide range — persistent support',    reservePct:25,dlmmBias:-10},
+    volume:   {label:'Volume Growth',  color:'#BA7517',rangeAdj:'Depth at price > range width',      reservePct:20,dlmmBias:+5},
+    balanced: {label:'Balanced',       color:'#7F77DD',rangeAdj:'Balanced width and concentration',  reservePct:20,dlmmBias:0},
+  }[obj]||{label:'Balanced',color:'#7F77DD',rangeAdj:'Balanced',reservePct:20,dlmmBias:0};
+}
+
+// Bin step and fee tier are MC-aware — larger steps + higher fees for micro-cap tokens
+function getBinConfig(mc,obj){
+  const isMicro=mc<500000,isMid=mc<5000000;
+  if(isMicro){
+    if(obj==='fee')       return{step:250,fee:'2%',   desc:'Bin step 250 (2.5%/bin) · 2% fee tier'};
+    if(obj==='stability') return{step:400,fee:'4%',   desc:'Bin step 400 (4%/bin) · 4% fee tier'};
+    if(obj==='volume')    return{step:300,fee:'3%',   desc:'Bin step 300 (3%/bin) · 3% fee tier'};
+    return                      {step:300,fee:'2.5%', desc:'Bin step 300 (3%/bin) · 2.5% fee tier'};
+  }
+  if(isMid){
+    if(obj==='fee')       return{step:80, fee:'0.5%', desc:'Bin step 80 (0.8%/bin) · 0.5% fee tier'};
+    if(obj==='stability') return{step:200,fee:'2%',   desc:'Bin step 200 (2%/bin) · 2% fee tier'};
+    if(obj==='volume')    return{step:100,fee:'0.5%', desc:'Bin step 100 (1%/bin) · 0.5% fee tier'};
+    return                      {step:150,fee:'1%',   desc:'Bin step 150 (1.5%/bin) · 1% fee tier'};
+  }
+  if(obj==='fee')       return{step:25, fee:'0.25%',desc:'Bin step 25 (0.25%/bin) · 0.25% fee tier'};
+  if(obj==='stability') return{step:100,fee:'1%',   desc:'Bin step 100 (1%/bin) · 1% fee tier'};
+  if(obj==='volume')    return{step:50, fee:'0.25%',desc:'Bin step 50 (0.5%/bin) · 0.25% fee tier'};
+  return                      {step:80, fee:'0.5%', desc:'Bin step 80 (0.8%/bin) · 0.5% fee tier'};
+}
+
+// ── pool helpers ──────────────────────────────────────────────────────────────
+function detectPoolType(p){
+  const dex=(p.dexId||'').toLowerCase(),lbl=((p.labels||[]).join(' ')).toLowerCase(),url=(p.url||'').toLowerCase();
+  if(dex.includes('meteora')){
+    if(lbl.includes('dlmm')||url.includes('dlmm')) return{type:'DLMM',color:'#378ADD',group:'Meteora DLMM'};
+    if(lbl.includes('damm')||lbl.includes('dynamic')||lbl.includes('dyn')) return{type:'DAMM',color:'#1D9E75',group:'Meteora DAMM'};
+    return{type:'AMM',color:'#1D9E75',group:'Meteora AMM'};
+  }
+  if(dex.includes('orca')){
+    if(lbl.includes('clmm')||lbl.includes('whirlpool')||url.includes('whirlpool')) return{type:'CLMM',color:'#7F77DD',group:'Orca CLMM'};
+    return{type:'CPMM',color:'#7F77DD',group:'Orca CPMM'};
+  }
+  if(dex.includes('raydium')){
+    if(lbl.includes('clmm')||url.includes('clmm')) return{type:'CLMM',color:'#BA7517',group:'Raydium CLMM'};
+    if(lbl.includes('cpmm')) return{type:'CPMM',color:'#BA7517',group:'Raydium CPMM'};
+    return{type:'AMM',color:'#BA7517',group:'Raydium AMM'};
+  }
+  if(dex.includes('pump')) return{type:'Bonding Curve',color:'#D85A30',group:'PumpSwap'};
+  return{type:'AMM',color:'#555552',group:'Other'};
+}
+function poolLinks(p){
+  const dex=(p.dexId||'').toLowerCase(),pa=p.pairAddress||'';
+  const a=(href,color,lbl)=>`<a href="${href}" target="_blank" style="color:${color};text-decoration:none;font-size:10px;border:0.5px solid ${color}44;border-radius:3px;padding:1px 5px;white-space:nowrap;">${lbl} ↗</a>`;
+  const out=[];
+  if(p.url) out.push(a(p.url,'#555552','DS'));
+  if(pa) out.push(a(`https://solscan.io/account/${pa}`,'#555552','SC'));
+  if(dex.includes('orca')&&pa) out.push(a(`https://www.orca.so/pools?address=${pa}`,'#7F77DD','Orca'));
+  if(dex.includes('meteora')&&pa) out.push(a(`https://app.meteora.ag/pools/${pa}`,'#1D9E75','Met'));
+  if(dex.includes('raydium')&&pa) out.push(a(`https://raydium.io/liquidity/?ammId=${pa}`,'#BA7517','Ray'));
+  return out.join(' ');
+}
+function buildPoolRows(pairs){
+  return pairs.slice(0,12).map(p=>{
+    const tv=parseFloat(p.liquidity?.usd||0),vo=parseFloat(p.volume?.h24||0),fe=vo*0.003;
+    const ut=tv>0?(vo/tv*100).toFixed(0)+'%':'—';
+    const ch=p.priceChange?.h24??null;
+    const pt=detectPoolType(p);
+    return `<div class="pr">
+      <span style="min-width:110px;color:#888884;font-size:10px;text-transform:uppercase;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(p.dexId||'?').replace(/_/g,' ')}</span>
+      <span style="min-width:90px;"><span style="background:${pt.color}20;color:${pt.color};border:0.5px solid ${pt.color}50;border-radius:3px;padding:1px 6px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;">${pt.type}</span></span>
+      <span style="min-width:75px;">${fmt(tv)}</span>
+      <span style="min-width:75px;">${fmt(vo)}</span>
+      <span style="min-width:65px;">${fmt(fe)}</span>
+      <span style="min-width:50px;color:#888884;">${ut}</span>
+      <span style="min-width:60px;color:${ch===null?'#555552':ch>=0?'#1D9E75':'#c94a4a'};">${ch===null?'—':(ch>=0?'+':'')+ch.toFixed(1)+'%'}</span>
+      <span style="display:flex;gap:4px;flex-wrap:wrap;">${poolLinks(p)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── LP OWNERSHIP ─────────────────────────────────────────────────────────────
+async function solRpc(method,params){
+  const r=await fetch(SOLANA_RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});
+  if(r.status===429) throw new Error('Rate limited — try again shortly');
+  if(!r.ok) throw new Error(`RPC HTTP ${r.status}`);
+  const d=await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.result;
+}
+
+async function loadLPOwnershipSection(pairs){
+  const sec=document.getElementById('audit-lp-section');
+  if(!sec) return;
+
+  // PumpSwap: skip concentration check entirely (bonding curve — always concentrated by design)
+  const hasPumpSwap=pairs.some(p=>detectPoolType(p).group==='PumpSwap');
+  // DAMM pools: fetch LP holder data
+  const dammPools=pairs.filter(p=>detectPoolType(p).group==='Meteora DAMM');
+  // All other pool types (DLMM, CLMM, etc): Phase 3 stub
+  const hasOtherTypes=pairs.some(p=>{const g=detectPoolType(p).group;return g!=='Meteora DAMM'&&g!=='PumpSwap';});
+
+  const results=[];
+  const poolErrors=[];
+
+  for(const pair of dammPools){
+    try{
+      // Step 1: resolve lp_mint from Meteora AMM v2 API
+      const ammRes=await fetch(`https://amm-v2.meteora.ag/pools?address=${pair.pairAddress}`);
+      const ammData=await ammRes.json();
+      if(!Array.isArray(ammData)||!ammData[0]?.lp_mint) continue;
+      const{lp_mint:lpMint,pool_name:poolName}=ammData[0];
+
+      // Step 2: total LP supply
+      const supplyRes=await solRpc('getTokenSupply',[lpMint]);
+      const totalSupply=parseFloat(supplyRes?.value?.uiAmount||0);
+      if(!totalSupply) continue;
+
+      // Step 3: top LP token account holders (up to 20)
+      const holdersRes=await solRpc('getTokenLargestAccounts',[lpMint]);
+      const topAccts=holdersRes?.value||[];
+      if(!topAccts.length) continue;
+
+      // Step 4: resolve token accounts → wallet owner addresses (batch)
+      const tAcctAddrs=topAccts.map(h=>h.address);
+      const parsedRes=await solRpc('getMultipleAccounts',[tAcctAddrs,{encoding:'jsonParsed'}]);
+      const ownerAddrs=(parsedRes?.value||[]).map(a=>a?.data?.parsed?.info?.owner||null);
+
+      // Step 5: identify lock escrow PDAs — any owner account owned by the Meteora AMM program
+      const validOwners=[...new Set(ownerAddrs.filter(Boolean))];
+      const lockSet=new Set();
+      if(validOwners.length){
+        const ownerRes=await solRpc('getMultipleAccounts',[validOwners,{encoding:'base64'}]);
+        (ownerRes?.value||[]).forEach((acct,i)=>{
+          if(acct?.owner===METEORA_AMM_PROGRAM) lockSet.add(validOwners[i]);
+        });
+      }
+
+      // Build holder rows
+      const holderRows=topAccts.map((h,i)=>({
+        wallet:ownerAddrs[i]||h.address,
+        amount:parseFloat(h.uiAmount||0),
+        pct:totalSupply>0?(parseFloat(h.uiAmount||0)/totalSupply*100):0,
+        locked:ownerAddrs[i]?lockSet.has(ownerAddrs[i]):false
+      }));
+
+      // Concentration flag: top-3 unlocked wallets > 60% of total LP supply
+      const unlocked=holderRows.filter(h=>!h.locked);
+      const top3Pct=unlocked.slice(0,3).reduce((s,h)=>s+h.pct,0);
+      const lockedPct=holderRows.filter(h=>h.locked).reduce((s,h)=>s+h.pct,0);
+      const flagConcentrated=top3Pct>60;
+
+      results.push({
+        poolName:poolName||pair.pairAddress.slice(0,8)+'…',
+        pairAddress:pair.pairAddress,
+        holderRows,top3Pct,lockedPct,
+        flagConcentrated,
+        unlockedCount:unlocked.length
+      });
+    }catch(e){
+      poolErrors.push({pairAddress:pair.pairAddress,msg:e.message});
+    }
+  }
+
+  sec.innerHTML=buildLPOwnershipHTML(results,poolErrors,hasPumpSwap,hasOtherTypes);
+}
+
+function buildLPOwnershipHTML(results,errors,hasPumpSwap,hasOtherTypes){
+  const sh=a=>a?`${a.slice(0,4)}…${a.slice(-4)}`:'?';
+  let html=`<div class="sl">LP ownership concentration</div>`;
+
+  if(hasPumpSwap){
+    html+=`<div style="font-size:10px;color:#555552;margin-bottom:8px;padding:6px 10px;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;background:#0f0f0f;">PumpSwap bonding curve pools excluded — ownership concentration is structural by design and not a risk signal.</div>`;
+  }
+
+  if(errors.length){
+    errors.forEach(e=>{
+      html+=`<div style="font-size:10px;color:#555552;margin-bottom:6px;padding:5px 10px;border:0.5px solid rgba(201,74,74,0.2);border-radius:4px;">Pool ${sh(e.pairAddress)} — LP data unavailable: ${e.msg}</div>`;
+    });
+  }
+
+  for(const pool of results){
+    const fc=pool.flagConcentrated?'#c94a4a':'#1D9E75';
+    const fl=pool.flagConcentrated?'⚠ Concentrated Ownership':'✓ Distributed';
+    const uid='lpo_'+pool.pairAddress.slice(0,8);
+    html+=`
+    <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;margin-bottom:8px;overflow:hidden;">
+      <div style="background:#0f0f0f;padding:10px 14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:#e8e8e6;">${pool.poolName}</span>
+            <span style="font-size:9px;color:#444442;">${sh(pool.pairAddress)}</span>
+          </div>
+          <span class="badge" style="background:${fc}22;color:${fc};border:0.5px solid ${fc}44;">${fl}</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+          <div style="background:#161613;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 10px;flex:1;min-width:80px;">
+            <div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Top-3 unlocked</div>
+            <div style="font-size:16px;font-weight:600;color:${fc};">${pool.top3Pct.toFixed(1)}%</div>
+            <div style="font-size:9px;color:#444442;">of total supply</div>
+          </div>
+          <div style="background:#161613;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 10px;flex:1;min-width:80px;">
+            <div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">🔒 Locked LP</div>
+            <div style="font-size:16px;font-weight:600;color:#888884;">${pool.lockedPct.toFixed(1)}%</div>
+            <div style="font-size:9px;color:#444442;">of total supply</div>
+          </div>
+          <div style="background:#161613;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 10px;flex:1;min-width:80px;">
+            <div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Unlocked holders</div>
+            <div style="font-size:16px;font-weight:600;color:#888884;">${pool.unlockedCount}</div>
+            <div style="font-size:9px;color:#444442;">shown of top 20</div>
+          </div>
+        </div>
+        ${pool.flagConcentrated
+          ?`<div style="font-size:10px;color:#c94a4a;margin-bottom:8px;">Top 3 unlocked wallets hold ${pool.top3Pct.toFixed(1)}% of LP supply — significant single-party withdrawal risk. Concentration calculated on unlocked LP only.</div>`
+          :`<div style="font-size:9px;color:#444442;margin-bottom:6px;">Concentration calculated on unlocked LP only.</div>`}
+        <div onclick="const d=document.getElementById('${uid}');d.style.display=d.style.display==='block'?'none':'block';this.querySelector('.dtgl').textContent=d.style.display==='block'?'▾':'▸';" style="cursor:pointer;display:flex;align-items:center;gap:4px;font-size:9px;color:#555552;user-select:none;">
+          <span class="dtgl">▸</span> Show holders
+        </div>
+      </div>
+      <div id="${uid}" style="display:none;border-top:0.5px solid rgba(255,255,255,0.06);">
+        ${pool.holderRows.map((h,i)=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 14px;${i%2===0?'background:#0a0a0a;':''}border-bottom:0.5px solid rgba(255,255,255,0.03);">
+          <span style="font-size:9px;color:#333;min-width:16px;">${i+1}</span>
+          <span style="font-size:10px;font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            <a href="https://solscan.io/account/${h.wallet}" target="_blank" style="color:${h.locked?'#1D9E75':'#888884'};text-decoration:none;">${sh(h.wallet)}</a>
+          </span>
+          <span style="font-size:10px;color:#888884;min-width:55px;text-align:right;">${h.pct.toFixed(1)}%</span>
+          ${h.locked?`<span style="font-size:9px;background:#1D9E7518;color:#1D9E75;border:0.5px solid #1D9E7540;border-radius:3px;padding:1px 5px;white-space:nowrap;flex-shrink:0;">🔒 Locked</span>`:''}
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  if(hasOtherTypes){
+    html+=`<div style="font-size:11px;color:#555552;padding:10px 14px;border:0.5px solid rgba(255,255,255,0.06);border-radius:6px;background:#0f0f0f;margin-bottom:12px;">LP position data for DLMM and CLMM pools requires on-chain position account indexing — not available client-side without an RPC key. Available in Phase 3 with Helius integration.</div>`;
+  }
+
+  return html;
+}
+
+// ── SLIPPAGE / SCORES ────────────────────────────────────────────────────────
+function estSlippage(tradeSize,pairs){
+  // Use the deepest single pool as the routing target (what Jupiter would pick)
+  const best=pairs.reduce((mx,p)=>parseFloat(p.liquidity?.usd||0)>parseFloat(mx.liquidity?.usd||0)?p:mx,pairs[0]);
+  const poolTVL=parseFloat(best?.liquidity?.usd||0);
+  if(!poolTVL) return 100;
+  const pt=detectPoolType(best);
+  // Concentration factors reflect how much of TVL sits at the active price
+  // CLMM/DLMM are concentrated; DAMM is full-range (thin at any given price); CPMM is passive
+  const cf=pt.type==='CLMM'?2.0:pt.type==='DLMM'?1.8:pt.type==='DAMM'?0.5:0.9;
+  const oneSidedDepth=poolTVL*cf/2;
+  return Math.min(tradeSize/(oneSidedDepth+tradeSize)*100,99.9);
+}
+
+function calcFragScore(pairs){
+  const tvls=pairs.map(p=>parseFloat(p.liquidity?.usd||0)).filter(v=>v>0);
+  if(!tvls.length) return 0;
+  const total=tvls.reduce((a,b)=>a+b,0)||1;
+  // HHI: sum of squared market shares (0–10000). Map to 0–100. Higher = more concentrated.
+  const hhi=tvls.reduce((s,t)=>s+Math.pow(t/total*100,2),0);
+  return Math.min(100,Math.round(hhi/100));
+}
+
+function calcRoutingScore(pairs,tvl,mc){
+  if(!pairs.length||!tvl) return 0;
+  const medianTrade=mc<250000?200:mc<1000000?750:mc<5000000?2500:7500;
+  const depthNeeded=medianTrade*100;
+  const bestPoolTVL=pairs.reduce((mx,p)=>Math.max(mx,parseFloat(p.liquidity?.usd||0)),0);
+  // Factor 1: depth vs target (0–40 pts)
+  const dr=bestPoolTVL/(depthNeeded||1);
+  const depthPts=dr>=1?40:dr>=0.5?25:dr>=0.25?10:0;
+  // Factor 2: fragmentation — concentrated = better (0–30 pts)
+  const fragPts=Math.round(calcFragScore(pairs)*0.30);
+  // Factor 3: DEX venue — Meteora DLMM wins Jupiter routing (0–30 pts)
+  const bestPool=pairs.reduce((mx,p)=>parseFloat(p.liquidity?.usd||0)>parseFloat(mx.liquidity?.usd||0)?p:mx,pairs[0]);
+  const bestPT=detectPoolType(bestPool);
+  const hasMDlmm=pairs.some(p=>detectPoolType(p).group==='Meteora DLMM');
+  const venuePts=bestPT.group==='Meteora DLMM'?30:hasMDlmm?18:(bestPT.type==='DLMM'||bestPT.type==='CLMM')?10:5;
+  return Math.min(100,depthPts+fragPts+venuePts);
+}
+
+// ── DONUT CHART ───────────────────────────────────────────────────────────────
+function buildDonutChart(pairs, totalTVL){
+  // group by pool type
+  const groups={};
+  pairs.forEach(p=>{
+    const tv=parseFloat(p.liquidity?.usd||0);
+    if(tv<=0) return;
+    const pt=detectPoolType(p);
+    if(!groups[pt.group]) groups[pt.group]={tvl:0,color:pt.color};
+    groups[pt.group].tvl+=tv;
+  });
+  const entries=Object.entries(groups).sort((a,b)=>b[1].tvl-a[1].tvl);
+  if(!entries.length) return '';
+
+  const size=160,cx=80,cy=80,r=62,ri=38;
+  let angle=-Math.PI/2;
+  let slices='',legendItems='';
+
+  entries.forEach(([name,{tvl,color}],i)=>{
+    const pct=tvl/totalTVL;
+    const sweep=pct*2*Math.PI;
+    if(sweep<0.01) return;
+    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(angle+sweep),y2=cy+r*Math.sin(angle+sweep);
+    const xi1=cx+ri*Math.cos(angle),yi1=cy+ri*Math.sin(angle);
+    const xi2=cx+ri*Math.cos(angle+sweep),yi2=cy+ri*Math.sin(angle+sweep);
+    const large=sweep>Math.PI?1:0;
+    slices+=`<path d="M${xi1.toFixed(1)},${yi1.toFixed(1)} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${xi2.toFixed(1)},${yi2.toFixed(1)} A${ri},${ri} 0 ${large},0 ${xi1.toFixed(1)},${yi1.toFixed(1)} Z" fill="${color}" opacity="0.85"/>`;
+    legendItems+=`<div class="chart-legend-item">
+      <div class="chart-legend-dot" style="background:${color};"></div>
+      <span class="chart-legend-label">${name}</span>
+      <span class="chart-legend-val">${fmt(tvl)}</span>
+      <span class="chart-legend-pct">${(pct*100).toFixed(1)}%</span>
+    </div>`;
+    angle+=sweep;
+  });
+
+  return `<div class="chart-wrap">
+    <div class="chart-canvas-wrap">
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+        ${slices}
+        <circle cx="${cx}" cy="${cy}" r="${ri-1}" fill="#0f0f0f"/>
+        <text x="${cx}" y="${cy-6}" text-anchor="middle" fill="#e8e8e6" font-size="13" font-weight="500" font-family="SF Mono,Fira Code,monospace">${fmt(totalTVL)}</text>
+        <text x="${cx}" y="${cy+9}" text-anchor="middle" fill="#555552" font-size="9" font-family="SF Mono,Fira Code,monospace">TOTAL TVL</text>
+      </svg>
+    </div>
+    <div class="chart-legend">${legendItems}</div>
+  </div>`;
+}
+
+// ── lifecycle ─────────────────────────────────────────────────────────────────
+function lifecycle(mc,vola,bsr,capital){
+  return [{l:'Launch',m:mc},{l:'$50K',m:50000},{l:'$250K',m:250000},{l:'$1M',m:1e6},{l:'$5M',m:5e6},{l:'$10M',m:1e7}].map(({l,m})=>{
+    const s=classifyStage(m),c=sc(s.stage);
+    const sh=getShape(vola,bsr,'balanced'),rwv=getRW(vola,'balanced');
+    const cap=Math.min(capital*(m/mc),capital*20);
+    return `<tr>
+      <td>${l}</td>
+      <td><span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;">${s.label}</span></td>
+      <td>${s.damm>0?s.damm+'%':'—'}<br><span style="font-size:10px;color:#555552;">${s.damm>0?fmtD(cap*s.damm/100):''}</span></td>
+      <td>${s.dlmm>0?s.dlmm+'%':'—'}<br><span style="font-size:10px;color:#555552;">${s.dlmm>0?fmtD(cap*s.dlmm/100):''}</span></td>
+      <td>${s.clmm>0?s.clmm+'%':'—'}<br><span style="font-size:10px;color:#555552;">${s.clmm>0?fmtD(cap*s.clmm/100):''}</span></td>
+      <td>${s.dlmm>0?sh:'—'}</td>
+      <td>${s.dlmm>0?rwv:'—'}</td>
+      <td style="color:#555552;font-size:10px;">${getMig(s.stage)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── deploy plan ───────────────────────────────────────────────────────────────
+function buildDeployPlan(capital,s,vola,bsr,mc,vol,obj){
+  const cfg=objConfig(obj||'balanced');
+  let{damm,dlmm,clmm}=s;
+  dlmm=Math.min(100,dlmm+cfg.dlmmBias);
+  damm=Math.max(0,100-dlmm-clmm-cfg.reservePct);
+  const rp=cfg.reservePct;
+  const dammAmt=capital*damm/100,dlmmAmt=capital*dlmm/100,clmmAmt=capital*clmm/100,resAmt=capital*rp/100;
+  const shape=getShape(vola,bsr,obj),rw=getRW(vola,obj);
+  const estFees=(dlmmAmt+dammAmt)*0.7*(vol/(capital||1))*0.003;
+  let rows='';
+  if(damm>0) rows+=`<tr><td><span style="color:#1D9E75;font-weight:500;">DAMM Pool</span><div class="sub">Meteora Dynamic AMM · Full range</div></td><td><div class="amt">${fmtD(dammAmt)}</div><div class="sub">${damm}% of capital</div></td><td style="color:#888884;font-size:11px;">Full-range liquidity. No rebalancing needed. Captures upside automatically.</td><td style="color:#888884;font-size:11px;">Price 2x or 0.5x from launch</td></tr>`;
+  if(dlmm>0) rows+=`<tr><td><span style="color:#378ADD;font-weight:500;">DLMM Pool</span><div class="sub">Meteora DLMM · ${shape} · ${rw}</div></td><td><div class="amt">${fmtD(dlmmAmt)}</div><div class="sub">${dlmm}% of capital</div></td><td style="color:#888884;font-size:11px;">${getBinConfig(mc,obj||'balanced').desc}. ${cfg.rangeAdj}. Est. ${fmtD(estFees)}/day fees at current volume.</td><td style="color:#888884;font-size:11px;">${getMig(s.stage)}</td></tr>`;
+  if(clmm>0) rows+=`<tr><td><span style="color:#D85A30;font-weight:500;">CLMM Pool</span><div class="sub">Orca Whirlpool or Raydium CLMM</div></td><td><div class="amt">${fmtD(clmmAmt)}</div><div class="sub">${clmm}% of capital</div></td><td style="color:#888884;font-size:11px;">Routing diversification. Captures institutional flow.</td><td style="color:#888884;font-size:11px;">When DLMM TVL exceeds ${fmtD(dlmmAmt*2)}</td></tr>`;
+  rows+=`<tr><td><span style="color:#555552;font-weight:500;">Reserve</span><div class="sub">Treasury — do not deploy</div></td><td><div class="amt">${fmtD(resAmt)}</div><div class="sub">${rp}% of capital</div></td><td style="color:#888884;font-size:11px;">Migration fund. Deploy only at stage transitions.</td><td style="color:#888884;font-size:11px;">Next stage trigger</td></tr>`;
+  return{rows,estFees,shape,rw,dammAmt,dlmmAmt,clmmAmt,resAmt,damm,dlmm,clmm,reservePct:rp};
+}
+
+function buildMigSteps(mc,mc30,mc90,mc180,capital,vola,bsr){
+  const milestones=[{mc:mc30,label:'30d target'},{mc:mc90,label:'90d target'},{mc:mc180,label:'180d target'}].filter(m=>m.mc>mc);
+  const colors=['#1D9E75','#378ADD','#BA7517'];
+  return milestones.map(({mc:m,label},i)=>{
+    const s=classifyStage(m),c=colors[i]||'#555552';
+    const sh=getShape(vola,bsr,'balanced'),rw=getRW(vola,'balanced');
+    const cap=Math.min(capital*(m/mc)*0.5,capital*3);
+    return `<div class="mstep"><div class="mstep-num" style="background:${c}22;color:${c};border:0.5px solid ${c}44;">${i+1}</div><div class="mstep-body"><div class="mstep-trigger">${label} · ${fmt(m)} MC · Stage ${s.stage}: ${s.label}</div><div class="mstep-action">Trigger: <strong style="color:#e8e8e6;">${getMig(Math.max(0,s.stage-1))}</strong><br>Action: Migrate to <strong style="color:#e8e8e6;">${s.damm}% DAMM / ${s.dlmm}% DLMM${s.clmm>0?' / '+s.clmm+'% CLMM':''}</strong> · ${sh} · ${rw}<br>DLMM target TVL: <strong style="color:#e8e8e6;">${fmtD(cap*s.dlmm/100)}</strong></div></div></div>`;
+  }).join('');
+}
+
+// ── analysis text ─────────────────────────────────────────────────────────────
+function archAnalysis(inp,deploy,obj){
+  const{mc,fdv,capital,vol,vola,bsr,treasury,top10,holders,mc30,mc90}=inp;
+  const s=classifyStage(mc),cfg=objConfig(obj);
+  const lr=capital/mc*100,vl=vol/capital;
+
+  if(obj==='fee'){
+    const rebalDays=vola==='Low'?'14–21':vola==='Medium'?'5–10':vola==='High'?'2–4':'1–2';
+    const bc=getBinConfig(mc,'fee');
+    const viable=vl>=0.5;
+    const p1=viable
+      ?`At ${fmtD(vol)}/day against ${fmtD(capital)} deployed, the vol/liq ratio is <strong>${vl.toFixed(2)}x</strong> — ${vl>=0.5?'above the 0.5x threshold for viable fee generation':'below the minimum; launch with Balanced and switch to Fee Generation when vol exceeds '+fmtD(capital*0.5)+'/day'}. Fee yield projection: <strong>${fmtD(deploy.estFees)}/day</strong> (${fmtD(deploy.estFees*365)}/year). Fee density on the DLMM allocation: ${deploy.dlmmAmt>0?(deploy.estFees/deploy.dlmmAmt*100).toFixed(3):'0'}% — ${deploy.dlmmAmt>0&&deploy.estFees/deploy.dlmmAmt*100>=0.1?'above the 0.1% viability floor':'building toward target as volume grows'}.`
+      :`Vol/liq is <strong>${vl.toFixed(2)}x</strong> at the stated volume — below the 0.5x minimum for viable fee generation. Estimated daily yield: <strong>${fmtD(deploy.estFees)}</strong>. <strong>Consider launching with Balanced and switching to Fee Generation once volume establishes above ${fmtD(capital*0.5)}/day.</strong> Tight bins into a low-volume market accumulate IL faster than they earn fees.`;
+    const p2=`The deployment puts <strong>${fmtD(deploy.dlmmAmt)} (${deploy.dlmm}%)</strong> into Meteora DLMM at <strong>Spot distribution · ${deploy.rw} · ${bc.desc}</strong> — maximum concentration within the stated volatility band. DAMM at ${fmtD(deploy.dammAmt)} is the minimum structural backstop: it protects against a catastrophic DLMM range exit but is deliberately underweighted in favour of fee density. The ${fmtD(deploy.resAmt)} reserve (${deploy.reservePct}%) is a <strong>rebalancing float, not idle capital</strong> — at ${vola.toLowerCase()} volatility, bins exit range every ${rebalDays} days, and each rebalance deploys a slice of reserve to reset range without adding new capital.`;
+    const p3=`Fee generation is an operational commitment. At <strong>${vola.toLowerCase()}</strong> volatility, plan a rebalancing event every <strong>${rebalDays} days</strong> — calendar-block it before launch. A missed rebalance costs ${fmtD(deploy.estFees*4)}–${fmtD(deploy.estFees*7)} in forgone fees (4–7 days idle). ${top10>40?`Top-10 concentration at ${top10}% accelerates bin exits — coordinated selling pushes price faster than normal volatility. Consider widening the range 20% from the stated ${deploy.rw} at launch.`:'Holder concentration is acceptable for this strategy.'} Success: fee density consistently above 0.1% for 30+ days, vol/liq sustaining above 0.5x. If either metric drops, switch to Balanced before the reserve runs out.`;
+    const p4=`Fee generation compounds at each stage. At ${fmt(mc30)} (Stage ${classifyStage(mc30).stage}: ${classifyStage(mc30).label}), the DLMM allocation grows proportionally — fee yield scales with both TVL and any volume increase. At Stage 3+, introduce a CLMM layer on Orca for institutional-size trades: DLMMs win sub-$5K routes, CLMMs win larger. The objective stays fee generation throughout; only the instruments evolve. Migration trigger: <strong>${getMig(s.stage)}</strong>.`;
+    return[p1,p2,p3,p4];
+  }
+
+  if(obj==='stability'){
+    const dammMin=mc*0.08;
+    const p1=`Price stability is built at the capital structure level, not the DLMM level. This deployment puts <strong>${fmtD(deploy.dammAmt)} (${deploy.damm}%)</strong> into full-range Meteora DAMM — ${deploy.damm>=40?'a strong stability foundation that guarantees a bid at every price point':'below the 40% DAMM minimum for a Stage '+s.stage+' stability strategy; the structure is vulnerable to a zero-bid scenario if DLMM bins are exhausted'}. The ${lr.toFixed(1)}% liquidity-to-MC ratio at launch ${lr>=8?'provides meaningful reflexive protection from day one':lr>=4?'is workable but thin — increase if possible before launch':'is critically thin for a stability objective; delay until liquidity reaches at least '+fmtD(mc*0.06)}.`;
+    const p2=`The reflexive loop at launch: <strong>thin liquidity → high price impact → volume avoidance → lower price → panic selling</strong>. Treasury-owned DAMM breaks this loop because it cannot be withdrawn in a panic. ${fmtD(deploy.dammAmt)} in protocol-owned DAMM is worth more than ${fmtD(deploy.dammAmt*2)} in external LP at Stage ${s.stage} — external LPs withdraw exactly when you need them most. ${treasury>0?`The ${treasury}% treasury allocation should be routed into DAMM first: it is the highest-ROI use of treasury capital at this stage.`:'Commit a portion of treasury reserves to permanent DAMM — this compounds stability faster than any other treasury deployment.'} Accept the lower fee yield (est. ${fmtD(deploy.estFees)}/day) as the cost of this insurance.`;
+    const p3=`DLMM configuration for stability: <strong>${deploy.shape} distribution · ${deploy.rw} range · ${getBinConfig(mc,'stability').desc}</strong>. This intentionally sacrifices fee density for range permanence — wide bins at ${vola.toLowerCase()} volatility can survive without rebalancing for weeks. ${top10>50?`<strong>Top-10 concentration at ${top10}% is the critical risk.</strong> A coordinated sell event can exhaust even a wide range. Consider extending to ${vola==='Low'?'±45%':vola==='Medium'?'±60%':'±75%'} given this concentration level.`:top10>35?`Top-10 at ${top10}% warrants monitoring — the ${deploy.rw} range is the correct defense, but be ready to widen on any coordinated selling.`:'Holder concentration is manageable.'} Do not tighten bins to improve fee yield — that trade-off is explicitly contrary to this objective.`;
+    const p4=`Hold the DAMM-heavy structure longer than instinct suggests. The common mistake is migrating DAMM to DLMM too early: at ${fmt(mc30)}, price may have moved significantly and the DAMM carries IL — that IL is the premium paid for stability. Begin reducing DAMM only at Stage ${Math.min(s.stage+2,5)} (${fmt([250000,1000000,5000000,20000000,20000000][s.stage]||0)}+ MC) when price has established a clear range and manipulation risk is demonstrably lower. At every migration decision, ask: does the DAMM backstop still cover a 50% drawdown? If not, add before migrating. Migration trigger: <strong>${getMig(s.stage)}</strong>.`;
+    return[p1,p2,p3,p4];
+  }
+
+  if(obj==='volume'){
+    const medianTrade=mc<250000?200:mc<1000000?750:mc<5000000?2500:7500;
+    const depthNeeded=medianTrade*100;
+    const hasDepth=deploy.dlmmAmt>=depthNeeded;
+    const p1=`Volume growth is a routing strategy. Jupiter routes to the pool with the best depth-to-slippage ratio for the specific trade size. At ${fmt(mc)} MC, the typical Jupiter trade is <strong>~$${medianTrade.toLocaleString()}</strong> — winning that route requires <strong>${fmt(depthNeeded)}</strong> in active depth at <0.5% slippage. This deployment puts ${fmtD(deploy.dlmmAmt)} into DLMM — ${hasDepth?'sufficient to compete for routing at launch':'a deficit of '+fmt(depthNeeded-deploy.dlmmAmt)+'. At launch, this token will not win the Jupiter route at median trade size. If possible, increase deployable capital to '+fmt(depthNeeded*1.5)+' before launch.'} The compounding effect: winning routing → more volume → higher route scoring → more routing.`;
+    const p2=`Concentrate into one pool. The Volume Growth objective is incompatible with spread deployment. A single Meteora DLMM at <strong>Spot distribution · ${deploy.rw} · ${getBinConfig(mc,'volume').desc} · depth at price</strong> wins Jupiter routing. Two pools with ${fmtD(deploy.dlmmAmt/2)} each lose to one competitor with ${fmtD(deploy.dlmmAmt*0.8)} in a single position — Jupiter's smart router weights single-pool depth. The DAMM allocation (${fmtD(deploy.dammAmt)}) is a routing backstop, not a second venue. Keep both on Meteora to avoid splitting the routing signal across DEXs.`;
+    const p3=`DEX selection is a routing decision. At Stage ${s.stage}, <strong>Meteora DLMM is the launch venue</strong> — native Jupiter integration, active-bin concentration, and DLMM structure that dominates routing for sub-$5M tokens. ${s.stage>=2?`At ${fmt(mc30)}, add an Orca Whirlpool CLMM as a secondary routing path. Jupiter diversifies routes at higher depth — two strong pools beat one at Stage ${classifyStage(mc30).stage}+.`:`Do not split across DEXs until Stage 2 minimum — routing diversity only helps when the primary pool is already dominant.`} Avoid CPMM and passive AMMs as primary deployment — neither wins route scoring against a well-positioned DLMM at this market cap.`;
+    const p4=`Volume compounds when routing is won: ${fmtD(vol)}/day at launch projects to ${fmtD(vol*2.5)}/day at ${fmt(mc30)} if routing is established. That is ${fmtD(vol*2.5*0.003)}/day in fees — ${fmtD(vol*2.5*0.003*365)}/year. At Stage 3 (${fmt(1000000)} MC), begin adding CLMM for institutional trade sizes: DLMM wins sub-$2,500 routes, CLMM wins larger. The transition is additive — keep the DLMM until routing data confirms the CLMM is capturing flow. Migration trigger: <strong>${getMig(s.stage)}</strong>.`;
+    return[p1,p2,p3,p4];
+  }
+
+  // Balanced — portfolio theory
+  const risks=[];
+  if(top10>50) risks.push(`top-10 concentration at ${top10}% is the primary threat to price stability`);
+  else if(top10>35) risks.push(`top-10 at ${top10}% warrants monitoring`);
+  if(lr<3) risks.push('liquidity ratio is too thin — delay launch until more capital is available');
+  if(holders<150) risks.push(`${holders} initial holders is fragile — a few exits can destabilize price`);
+  if(vola==='Extreme') risks.push('extreme volatility will push DLMM bins out of range rapidly — commit to weekly rebalancing');
+  const p1=`This token launches at ${fmt(mc)} market cap with ${fmtD(capital)} deployable — a <strong>${lr.toFixed(1)}% liquidity-to-MC ratio</strong>. ${lr<3?`Critically thin. Increase to at least ${fmtD(mc*0.05)} before launch.`:lr<8?`Workable, but building volume before the ratio becomes a bottleneck is the first-30-days priority.`:`Strong starting position with enough depth for meaningful trade sizes.`} Stage ${s.stage} (${s.label}): ${s.stage<=1?'fair value is unknown — liquidity must stay permissive':s.stage<=2?'price discovery is completing — DLMM concentration is appropriate now':'established range — fee efficiency is the primary lever'}.`;
+  const p2=`Portfolio theory applied: <strong>DAMM = defensive (${deploy.damm}%, ${fmtD(deploy.dammAmt)})</strong> · <strong>DLMM = yield (${deploy.dlmm}%, ${fmtD(deploy.dlmmAmt)})</strong> · <strong>reserve = tactical (${deploy.reservePct}%, ${fmtD(deploy.resAmt)})</strong>${deploy.clmm>0?' · CLMM = routing ('+deploy.clmm+'%, '+fmtD(deploy.clmmAmt)+')':''}. DAMM is sized for resilience — earns little, but guarantees a bid at every price. DLMM at <strong>${deploy.shape} · ${deploy.rw} · ${getBinConfig(mc,'balanced').desc}</strong> earns est. <strong>${fmtD(deploy.estFees)}/day</strong>. Reserve is not deployed into current-stage pools — it activates only at the next migration trigger.`;
+  const p3=risks.length?`Structural risks before launch: ${risks.join('; ')}. Size reserve conservatively and do not deploy it until a migration trigger fires. The most common mistake is reactive management — by the time price has exited bins, 3–5 days of fees are already lost.`:`Risk profile is manageable for a Balanced deployment. Resist over-optimizing for fee yield at the cost of structural stability — do not tighten bins until vol/liq consistently exceeds 0.5x for 7+ days.`;
+  const p4=`Migration targets ${fmt(mc30)} at 30 days and ${fmt(mc90)} at 90 days. Execute each migration deliberately: close underperforming DLMM positions first, deploy reserve into the new stage structure, then close legacy positions. At ${fmt(mc90)}, target structure is ${classifyStage(mc90).damm}% DAMM / ${classifyStage(mc90).dlmm}% DLMM${classifyStage(mc90).clmm>0?' / '+classifyStage(mc90).clmm+'% CLMM':''} — begin planning before the trigger fires, not after. Migration trigger: <strong>${getMig(s.stage)}</strong>.`;
+  return[p1,p2,p3,p4];
+}
+
+// ── RUG / PASS RISK FILTER ───────────────────────────────────────────────────
+function buildRiskSection(mc,fdv,tvl,vol24,liqRatio,volLiq,priceChg,pairs){
+  const flags=[];
+  let score=0;
+
+  // 1. Liquidity ratio as holder-concentration proxy
+  if(liqRatio<0.5&&mc>100000){
+    const pts=28; score+=pts;
+    flags.push({c:'red',pts,label:'Extreme holder concentration signal',
+      detail:`Liq ratio ${liqRatio.toFixed(2)}% on a ${fmt(mc)} MC token — almost no supply in liquidity pools, strongly suggesting concentrated whale ownership.`});
+  } else if(liqRatio<1&&mc>50000){
+    const pts=16; score+=pts;
+    flags.push({c:'amber',pts,label:'Holder concentration signal',
+      detail:`Liq ratio ${liqRatio.toFixed(2)}% is very low relative to market cap — limited supply distribution.`});
+  }
+
+  // 2. FDV/MC supply overhang
+  const fdvRatio=(mc>0&&fdv>0)?fdv/mc:1;
+  if(fdvRatio>20){
+    const pts=25; score+=pts;
+    flags.push({c:'red',pts,label:'Extreme supply overhang',
+      detail:`FDV/MC = ${fdvRatio.toFixed(0)}x — ${((1-mc/fdv)*100).toFixed(0)}% of total supply is locked or unvested. Unlock events create severe sell pressure.`});
+  } else if(fdvRatio>5){
+    const pts=12; score+=pts;
+    flags.push({c:'amber',pts,label:'Supply overhang',
+      detail:`FDV/MC = ${fdvRatio.toFixed(1)}x — ${((1-mc/fdv)*100).toFixed(0)}% of supply not yet circulating. Monitor for unlock schedule.`});
+  }
+
+  // 3. Vol/liq wash-trading signal
+  if(volLiq>20){
+    const pts=25; score+=pts;
+    flags.push({c:'red',pts,label:'Wash trading signal',
+      detail:`Vol/liq = ${volLiq.toFixed(1)}x — organic volume at this ratio is implausible at current pool depth. Likely artificial volume inflating metrics.`});
+  } else if(volLiq>8){
+    const pts=10; score+=pts;
+    flags.push({c:'amber',pts,label:'Elevated vol/liq ratio',
+      detail:`Vol/liq = ${volLiq.toFixed(1)}x — above the typical 2–5x range. Monitor for wash-trading activity.`});
+  }
+
+  // 4. Micro TVL
+  if(tvl<2000){
+    const pts=22; score+=pts;
+    flags.push({c:'red',pts,label:'Critically thin liquidity',
+      detail:`TVL ${fmt(tvl)} — pool depth is insufficient for meaningful trading. Easily manipulated; exit risk is extreme.`});
+  } else if(tvl<10000){
+    const pts=10; score+=pts;
+    flags.push({c:'amber',pts,label:'Thin liquidity',
+      detail:`TVL ${fmt(tvl)} — low depth creates elevated exit risk and price manipulation exposure.`});
+  }
+
+  // 5. Pool age (pairCreatedAt is ms epoch on DexScreener pairs)
+  const ages=pairs.map(p=>p.pairCreatedAt).filter(Boolean);
+  if(ages.length>0){
+    const youngest=Math.min(...ages);
+    const ageHours=(Date.now()-youngest)/3600000;
+    if(ageHours<24){
+      const pts=18; score+=pts;
+      flags.push({c:'red',pts,label:'New pool (< 24h)',
+        detail:`Youngest pool created ${ageHours<1?'<1h':Math.floor(ageHours)+'h'} ago — no established price history, volume pattern, or holder behavior.`});
+    } else if(ageHours<72){
+      const pts=8; score+=pts;
+      flags.push({c:'amber',pts,label:'Young pool (< 72h)',
+        detail:`Pool created ${Math.floor(ageHours)}h ago — still in early volatility phase.`});
+    }
+  }
+
+  // 6. Extreme price action
+  if(priceChg>200||priceChg<-70){
+    const pts=15; score+=pts;
+    flags.push({c:'amber',pts,label:'Extreme price action',
+      detail:`${priceChg>0?'+':''}${priceChg.toFixed(0)}% in 24h — may indicate coordinated pump/dump activity.`});
+  } else if(priceChg>80||priceChg<-50){
+    const pts=8; score+=pts;
+    flags.push({c:'amber',pts,label:'High price volatility',
+      detail:`${priceChg>0?'+':''}${priceChg.toFixed(0)}% in 24h — elevated price action warrants caution.`});
+  }
+
+  // 7. Single-pool dependency on large token
+  if(pairs.length===1&&mc>200000){
+    const pts=8; score+=pts;
+    flags.push({c:'amber',pts,label:'Single-pool dependency',
+      detail:`Only 1 pool on a ${fmt(mc)} MC token. Entire tradeable liquidity depends on one pool operator.`});
+  }
+
+  // 8. Bonding curve still active
+  const hasBonding=pairs.some(p=>{
+    const lbl=(p.labels||[]).join(' ').toLowerCase();
+    const dex=(p.dexId||'').toLowerCase();
+    return lbl.includes('bonding')||dex.includes('pump')||lbl.includes('pump');
+  });
+  if(hasBonding&&mc<100000){
+    const pts=5; score+=pts;
+    flags.push({c:'amber',pts,label:'Bonding curve stage',
+      detail:'Token has not graduated from bonding curve — standard pump.fun dynamics apply. Risk is highest before graduation.'});
+  }
+
+  // Green: healthy liq ratio
+  if(liqRatio>10){
+    const pts=-10; score+=pts;
+    flags.push({c:'green',pts,label:'Healthy liquidity ratio',
+      detail:`Liq ratio ${liqRatio.toFixed(1)}% — strong community/team commitment to liquid markets.`});
+  } else if(liqRatio>5){
+    const pts=-5; score+=pts;
+    flags.push({c:'green',pts,label:'Adequate liquidity ratio',
+      detail:`Liq ratio ${liqRatio.toFixed(1)}% — acceptable depth relative to market cap.`});
+  }
+
+  // Green: multi-DEX presence
+  const dexSet=new Set(pairs.map(p=>p.dexId).filter(Boolean));
+  if(dexSet.size>=2&&pairs.length>=3){
+    const pts=-5; score+=pts;
+    flags.push({c:'green',pts,label:'Multi-DEX presence',
+      detail:`Liquidity distributed across ${dexSet.size} DEXes — routing diversity reduces single-venue exit risk.`});
+  }
+
+  score=Math.min(100,Math.max(0,score));
+
+  // Stubs (on-chain data unavailable)
+  const stubs=[
+    {label:'Mint authority revoked',detail:'Requires on-chain verification (Helius RPC — Phase 3)'},
+    {label:'Freeze authority disabled',detail:'Requires on-chain verification (Helius RPC — Phase 3)'},
+    {label:'LP lock status',detail:'Requires on-chain verification (Helius RPC — Phase 3)'},
+  ];
+
+  let verdict,vc,vbg;
+  if(score<20){verdict='Pass';vc='#1D9E75';vbg='#1D9E7514';}
+  else if(score<45){verdict='Caution';vc='#BA7517';vbg='#BA751714';}
+  else if(score<70){verdict='High Risk';vc='#D85A30';vbg='#D85A3014';}
+  else{verdict='Do Not Touch';vc='#c94a4a';vbg='#c94a4a14';}
+
+  const dc={red:'#c94a4a',amber:'#BA7517',green:'#1D9E75'};
+  const sortedFlags=[...flags.filter(f=>f.c==='red'),...flags.filter(f=>f.c==='amber'),...flags.filter(f=>f.c==='green')];
+
+  const flagRows=sortedFlags.map(f=>`
+    <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.04);">
+      <span style="color:${dc[f.c]};font-size:9px;margin-top:2px;flex-shrink:0;">${f.c==='green'?'✓':'⚑'}</span>
+      <div style="min-width:0;">
+        <div style="font-size:11px;color:${dc[f.c]};font-weight:500;">${f.label} <span style="color:#555552;font-weight:400;">${f.pts>0?'(+'+f.pts+' pts)':'('+f.pts+' pts)'}</span></div>
+        <div style="font-size:10px;color:#888884;margin-top:2px;line-height:1.4;">${f.detail}</div>
+      </div>
+    </div>`).join('');
+
+  const stubRows=stubs.map(s=>`
+    <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.04);">
+      <span style="color:#555552;font-size:9px;margin-top:2px;flex-shrink:0;">○</span>
+      <div>
+        <div style="font-size:11px;color:#555552;">${s.label}</div>
+        <div style="font-size:10px;color:#555552;margin-top:2px;">${s.detail}</div>
+      </div>
+    </div>`).join('');
+
+  const barPct=Math.min(100,score);
+  const barC=score<20?'#1D9E75':score<45?'#BA7517':score<70?'#D85A30':'#c94a4a';
+
+  return `<div style="border:0.5px solid ${vc}55;border-radius:8px;padding:14px 14px 8px;margin-bottom:16px;background:${vbg};">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div style="font-size:10px;color:#888884;letter-spacing:0.08em;text-transform:uppercase;">Risk Assessment</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:#888884;">Score: <span style="color:${vc};font-weight:500;">${score}</span>/100</span>
+        <span style="background:${vbg};color:${vc};border:0.5px solid ${vc}55;border-radius:4px;padding:2px 10px;font-size:11px;font-weight:600;">${verdict}</span>
+      </div>
+    </div>
+    <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin-bottom:10px;">
+      <div style="height:3px;width:${barPct}%;background:${barC};border-radius:2px;transition:width 0.3s;"></div>
+    </div>
+    ${flagRows}${stubRows}
+  </div>`;
+}
+
+// ── MICRO-CAP COMPARISON (<$40K MC) ──────────────────────────────────────────
+let microCapParams=null;
+
+function buildMicroCapTable(mc,volLiq,tvl,ref){
+  const dailyFees=ref*volLiq*0.003;
+  const refLbl=ref>=1000?'$1K':'$'+ref;
+  const milestones=[{lbl:'$100K',tgt:100000},{lbl:'$250K',tgt:250000},{lbl:'$1M',tgt:1000000}];
+  const rows=milestones.map(m=>{
+    const r=m.tgt/mc;
+    const rStr=r>=100?Math.round(r)+'x':r>=10?r.toFixed(1)+'x':r.toFixed(2)+'x';
+    const spotVal=ref*r;
+    const dammVal=ref*Math.sqrt(r);
+    const ilDrag=spotVal-dammVal;
+    const bedays=dailyFees>0.001?Math.ceil(ilDrag/dailyFees):null;
+    const beStr=!bedays?'—':bedays>365?'>1yr':bedays+' days';
+    const beCl=!bedays?'#555552':bedays<=30?'#1D9E75':bedays<=90?'#BA7517':'#c94a4a';
+    return `<tr>
+      <td><strong style="color:#e8e8e6;">${m.lbl}</strong> <span style="font-size:9px;color:#555552;">${rStr}</span></td>
+      <td style="color:#1D9E75;">${fmtD(spotVal)}</td>
+      <td style="color:#378ADD;">${fmtD(dammVal)}</td>
+      <td style="color:#c94a4a;">−${fmtD(ilDrag)}</td>
+      <td style="color:${beCl};">${beStr}</td>
+    </tr>`;
+  }).join('');
+  let rec,recC,recReason;
+  const be100=dailyFees>0.001?Math.ceil((ref*(100000/mc)-ref*Math.sqrt(100000/mc))/dailyFees):9999;
+  const volThreshold=Math.max(50,tvl*0.03);
+  if(mc<1500||volLiq<0.005){
+    rec='Pass';recC='#c94a4a';
+    recReason=`At ${fmt(mc)} MC with vol/liq ${volLiq.toFixed(3)}x there is effectively no liquid market. Any capital placed here has near-zero fee yield and maximum execution risk. Wait for price discovery and organic volume before deploying liquidity.`;
+  } else if(volLiq>=0.30){
+    rec='Wide DLMM + Spot';recC='#D85A30';
+    recReason=`Vol/liq of ${volLiq.toFixed(2)}x is unusually high for Stage 0 — enough to justify a wide DLMM (Bid Ask, bin step 300–400). Allocate ~60% as wide DLMM for fee capture and ~40% as spot. Est. ${fmtD(dailyFees)}/day on ${refLbl}. Break-even vs spot at $100K: ${be100<9999?be100+' days':'—'}.`;
+  } else if(volLiq>=0.10){
+    rec='Combination';recC='#7F77DD';
+    recReason=`Vol/liq ${volLiq.toFixed(2)}x generates ${fmtD(dailyFees)}/day on ${refLbl}. Split ~50% DAMM (stability + passive fees) and ~50% spot (full upside). DAMM outperforms spot on downside; spot wins at high multiples. Break-even vs spot at $100K: ${be100<9999?be100+' days':'—'}.`;
+  } else if(volLiq>=0.03){
+    rec='DAMM';recC='#1D9E75';
+    recReason=`Vol/liq ${volLiq.toFixed(2)}x generates ${fmtD(dailyFees)}/day on ${refLbl}. DAMM is the right vehicle at Stage 0 — full-range, no rebalancing, earns fees at any price. IL drag is real (see table), but stability value outweighs the fee delta vs spot at this stage. Break-even vs spot at $100K: ${be100<9999?be100+' days':'—'}.`;
+  } else {
+    rec='Spot only';recC='#BA7517';
+    recReason=`Vol/liq is ${volLiq.toFixed(3)}x — below the 0.03x minimum for meaningful LP yield. Fees on ${refLbl}: ${fmtD(dailyFees)}/day — insufficient to justify IL risk. Take spot if you want exposure. Add DAMM only when daily volume sustainably exceeds ${fmtD(volThreshold)}.`;
+  }
+  return `
+    <div style="font-size:10px;color:#555552;margin-bottom:10px;">vol/liq <strong style="color:#e8e8e6;">${volLiq.toFixed(2)}x</strong> · est. fees <strong style="color:#e8e8e6;">${fmtD(dailyFees)}/day</strong> on ${refLbl}</div>
+    <div style="overflow-x:auto;margin-bottom:12px;">
+      <table class="dtable" style="min-width:420px;">
+        <thead><tr><th>MC target</th><th style="color:#1D9E75;">Spot (${refLbl})</th><th style="color:#378ADD;">DAMM (${refLbl})</th><th>IL drag</th><th>Fee break-even</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div style="font-size:10px;color:#333;margin-bottom:12px;">DAMM = ${refLbl} × √(price multiple). IL drag = Spot − DAMM. Break-even = days of fees at current vol/liq to offset IL. High multiples make spot structurally superior — DAMM is justified by stability value and downside protection.</div>
+    <div style="padding:10px 12px;background:${recC}11;border:0.5px solid ${recC}33;border-radius:4px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+      <div style="flex-shrink:0;min-width:90px;">
+        <div style="font-size:9px;color:#555552;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Recommendation</div>
+        <div style="font-size:13px;font-weight:600;color:${recC};">${rec}</div>
+      </div>
+      <div style="font-size:11px;color:#888884;line-height:1.5;flex:1;">${recReason}</div>
+    </div>`;
+}
+
+function buildMicroCapSection(mc,volLiq,tvl){
+  if(mc>=40000) return '';
+  microCapParams={mc,volLiq,tvl,ref:1000};
+  const btnRow=[100,250,500,1000].map(v=>{
+    const lbl=v>=1000?'$1K':'$'+v;
+    const active=v===1000;
+    return `<button class="disc-btn${active?' primary':''}" style="padding:3px 10px;" onclick="setMicroCapRef(${v},this)">${lbl}</button>`;
+  }).join('');
+  return `
+    <div class="sl">Micro-cap deployment analysis <span style="font-size:10px;font-weight:400;color:#555552;">MC &lt; $40K</span></div>
+    <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#0f0f0f;padding:14px 16px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+        <span style="font-size:10px;color:#555552;letter-spacing:0.04em;">CAPITAL</span>
+        <div style="display:flex;gap:5px;">${btnRow}</div>
+        <span style="font-size:10px;color:#555552;margin-left:4px;">Current MC: <strong style="color:#e8e8e6;">${fmt(mc)}</strong></span>
+      </div>
+      <div id="micro-cap-table">${buildMicroCapTable(mc,volLiq,tvl,1000)}</div>
+    </div>`;
+}
+
+function setMicroCapRef(ref,el){
+  if(!microCapParams) return;
+  microCapParams.ref=ref;
+  el.closest('div').querySelectorAll('.disc-btn').forEach(b=>b.classList.remove('primary'));
+  el.classList.add('primary');
+  const tbl=document.getElementById('micro-cap-table');
+  if(tbl) tbl.innerHTML=buildMicroCapTable(microCapParams.mc,microCapParams.volLiq,microCapParams.tvl,ref);
+}
+
+function auditAnalysis(inp,obj){
+  const{name,symbol,mc,fdv,tvl,vol24,liqRatio,volLiq,pairs,priceChg,vola}=inp;
+  const s=classifyStage(mc);
+  const estFees=vol24*0.003;
+  const fd=tvl>0?estFees/tvl*100:0;
+  const dexes=[...new Set(pairs.map(p=>p.dexId))];
+  // pool type breakdown
+  const dlmmTVL=pairs.filter(p=>detectPoolType(p).type==='DLMM').reduce((a,p)=>a+parseFloat(p.liquidity?.usd||0),0);
+  const dammTVL=pairs.filter(p=>detectPoolType(p).type==='DAMM').reduce((a,p)=>a+parseFloat(p.liquidity?.usd||0),0);
+  const hasDamm=dammTVL>100;
+  const hasMeteora=dexes.some(d=>d.toLowerCase().includes('meteora'));
+  // fragmentation score (HHI-based, 0=fragmented, 100=concentrated)
+  const tvls=pairs.map(p=>parseFloat(p.liquidity?.usd||0)).filter(v=>v>0);
+  const tot=tvls.reduce((a,b)=>a+b,0)||1;
+  const fragScore=Math.min(100,Math.round(tvls.reduce((s,t)=>s+Math.pow(t/tot*100,2),0)/100));
+  // best single pool
+  const bestPoolTVL=pairs.reduce((mx,p)=>Math.max(mx,parseFloat(p.liquidity?.usd||0)),0);
+
+  if(obj==='fee'){
+    const viable=volLiq>=0.5;
+    const bc=getBinConfig(mc,'fee');
+    const rebalDays=vola==='Low'?'14–21':vola==='Medium'?'5–10':vola==='High'?'2–4':'1–2';
+    const projFee=Math.min(tvl,vol24*2)*0.003*0.85;
+    const p1=viable
+      ?`Fee density is currently <strong>${fd.toFixed(3)}%</strong> — ${fd>=0.1?'above the 0.1% viability threshold':'below the 0.1% daily minimum'}. At vol/liq of <strong>${volLiq.toFixed(2)}x</strong>, this token has ${fd>=0.1?'sufficient volume to justify tight concentration':'marginal volume — concentration will help, but volume needs to grow'}. A single Spot DLMM at <strong>${bc.desc}</strong> is estimated to yield <strong>${fmt(projFee)}/day</strong> (${fmt(projFee*365)}/year at current volume). ${fd<0.05?`Fee density is below the operational threshold — switch to a Balanced objective until vol/liq reaches 0.5x.`:''}`
+      :`<strong>Fee generation is not viable at current conditions.</strong> Vol/liq is <strong>${volLiq.toFixed(2)}x</strong> — below the 0.5x minimum. At ${fmt(estFees)}/day on ${fmt(tvl)} deployed, the fee density (${fd.toFixed(4)}%) does not cover the IL risk and ops cost of tight bin management. <strong>Switch to Balanced or Price Stability until daily volume reaches ${fmt(tvl*0.5)}.</strong> Tight bins in a low-volume market go stale, not profitable.`;
+    const p2=pairs.length>4
+      ?`Fee generation is a concentration game, not a TVL game. ${fmt(tvl)} spread across ${pairs.length} pools has a fragmentation score of <strong>${fragScore}/100</strong> — every pool beyond the primary dilutes fee density. The fix: close all but the dominant DLMM and run a single <strong>Spot position · ${bc.desc}</strong> sized to volume demand (<strong>${fmt(vol24*1.5)}</strong> is the optimal TVL at current volume). One focused pool with the right depth outperforms ${pairs.length} diluted positions. Always.`
+      :`Pool structure is acceptable — ${pairs.length} pool${pairs.length!==1?'s':''}, fragmentation score <strong>${fragScore}/100</strong>. ${dlmmTVL>0?`DLMM is ${(dlmmTVL/tvl*100).toFixed(0)}% of TVL — ${dlmmTVL/tvl>0.6?'dominant and working':'should be higher for a fee objective; capital in DAMM earns 40–60% less than a well-positioned DLMM'}.`:'<strong>No DLMM detected.</strong> All capital is in full-range positions that earn a fraction of DLMM efficiency. A single Meteora DLMM Spot pool is the highest-leverage action available.'}`;
+    const p3=`Optimal config: <strong>${bc.desc}</strong>. Each bin covers ${(bc.step/100).toFixed(2)}% of price — sized for this MC tier to balance fee density against rebalancing frequency. Full config: <strong>Spot distribution · ${getRW(vola,'fee')} range · ${bc.desc}</strong>. At <strong>${vola.toLowerCase()}</strong> volatility, bins drift out of range every <strong>${rebalDays} days</strong> — calendar-block that rebalance cadence. Hold 15% of allocation as a float: deploy on each rebalance to reset range without adding new capital. Budget 20–30 min per cycle for the operational cost.`;
+    const p4=`Success: fee density above 0.1% daily, vol/liq sustaining above 0.5x for 7+ consecutive days. <strong>Invalidated if:</strong> (1) daily volume drops below ${fmt(tvl*0.5)} for 3+ days — consolidate and wait; (2) price exits the ${getRW(vola,'fee')} range — rebalance within 24h; (3) a new pool fragments the dominant position. Fee run rate: <strong>${fmt(estFees*7)}/week · ${fmt(estFees*365)}/year</strong>. Migration trigger: <strong>${getMig(s.stage)}</strong>.`;
+    return[p1,p2,p3,p4];
+  }
+
+  if(obj==='stability'){
+    const dammTarget=mc*(s.stage<=1?0.10:s.stage<=2?0.07:0.05);
+    const dammDeficit=Math.max(0,dammTarget-dammTVL);
+    const dlmmShape=vola==='Low'?'Curve':'Bid Ask';
+    const p1=`Price stability has one non-negotiable foundation: <strong>a full-range DAMM backstop.</strong> ${hasDamm?`${name} has ${fmt(dammTVL)} in DAMM — ${dammTVL>=dammTarget?'meeting the minimum requirement':`below the ${fmt(dammTarget)} target. A ${fmt(dammDeficit)} DAMM addition is required before this structure provides genuine stability.`}`:`<strong>${name} has no DAMM position. This is the primary structural gap.</strong> A DAMM pool guarantees a bid at every price point — without it, a coordinated seller exhausts the DLMM range and faces zero bids. Deploy at least ${fmt(dammTarget)} into Meteora DAMM before any other action.`} The DAMM is not for yield — it earns stability. Explicitly de-prioritize fee density for this objective: a lower fee density in exchange for range permanence is the correct tradeoff.`;
+    const p2=`The reflexive loop works both directions: <strong>low liquidity → high price impact → volume avoidance → lower liquidity.</strong> Treasury-owned DAMM breaks this loop. Capital that cannot be withdrawn in a panic provides credible commitment that external LPs cannot. A ${fmt(dammTarget)} permanent DAMM backstop signals a price floor, attracts volume, builds fees, and funds more liquidity — the virtuous version of the same loop. ${liqRatio<5?`The ${liqRatio.toFixed(1)}% liq ratio leaves ${name} exposed to reflexive downside. Increasing TVL to ${fmt(mc*0.05)} is the most important action — not for yield, but to prevent the negative spiral before it starts.`:`The ${liqRatio.toFixed(1)}% liq ratio provides meaningful reflexive protection at this stage.`}`;
+    const bcs=getBinConfig(mc,'stability');
+    const p3=`DLMM configuration for stability: <strong>${dlmmShape} distribution · ${getRW(vola,'stability')} range · ${bcs.desc}.</strong> Wide bins resist out-of-range drift — at ${(bcs.step/100).toFixed(1)}% per bin, this DLMM at ${getRW(vola,'stability')} survives most ${vola.toLowerCase()} volatility events without rebalancing. The ${dlmmShape} shape ${dlmmShape==='Bid Ask'?'maintains symmetric two-sided depth that absorbs both buy and sell pressure, preventing one-directional cascades':'concentrates depth near current price with a gentle taper — persistent bid with downside coverage'}. ${pairs.length>5?`Fragmentation (${pairs.length} pools, score ${fragScore}/100) is counterproductive for stability — consolidating to 2 positions (1 DAMM + 1 wide DLMM) concentrates defensive capital and improves floor integrity.`:'Pool structure is acceptable for stability.'}`;
+    const p4=`Monitor in priority order: (1) <strong>DAMM TVL</strong> — target ${fmt(dammTarget)} minimum; if it drops, restore before anything else; (2) <strong>DLMM range</strong> — if price exits the ${getRW(vola,'stability')} band, widen immediately, do not wait; (3) <strong>net buy/sell flow</strong> — consistent selling absorbed by the DLMM is the system functioning correctly; (4) <strong>large holder movements</strong> — early warning for coordinated selling. ${priceChg<-15?`<strong>Price is down ${Math.abs(priceChg).toFixed(0)}% in 24h — check DLMM range now.</strong> If bins are near the exit, widen to ${getRW('High','stability')} minimum immediately.`:''} Migration trigger: <strong>${getMig(s.stage)}</strong>.`;
+    return[p1,p2,p3,p4];
+  }
+
+  if(obj==='volume'){
+    const medianTrade=mc<250000?200:mc<1000000?750:mc<5000000?2500:7500;
+    const depthNeeded=medianTrade*100;
+    const depthDeficit=Math.max(0,depthNeeded-bestPoolTVL);
+    const routingScore=Math.min(100,Math.round((bestPoolTVL/(depthNeeded||1))*60+(hasMeteora?25:5)+(fragScore>50?15:0)));
+    const p1=`This is a routing game. Jupiter selects routes based on <strong>depth and slippage at the specific trade size</strong> — not total TVL, not pool count. For ${name} at ${fmt(mc)} MC, the typical trade size is ~$${medianTrade.toLocaleString()}. To achieve <0.5% slippage at that size, you need <strong>${fmt(depthNeeded)}</strong> in a single dominant pool. Largest pool today: <strong>${fmt(bestPoolTVL)}</strong>. ${bestPoolTVL>=depthNeeded?`Depth is sufficient — this token is <strong>competitive for Jupiter routing</strong> at the median trade size.`:`<strong>Depth deficit of ${fmt(depthDeficit)}</strong> — ${symbol||name} is losing routes to better-structured tokens. Jupiter routes around thin pools.`}`;
+    const p2=`Fragmentation analysis: score <strong>${fragScore}/100</strong>. ${pairs.length>3?`<strong>Fragmentation is the primary problem.</strong> ${pairs.length} pools competing for the same route means none dominates. Jupiter distributes flow, but thin pools get excluded above their slippage threshold. The correct move: close the ${pairs.length-1} smaller pools and concentrate all capital into a single Meteora DLMM. One <strong>${fmt(tvl)}</strong> pool beats ${pairs.length} <strong>${fmt(tvl/pairs.length)}</strong> pools for routing — always. Fragmentation is costing you volume every day.`:`Pool structure is ${fragScore>60?'well-concentrated for routing':'borderline — consolidating further into the primary pool improves route scoring'}. ${fragScore<=60&&pairs.length>1?`Moving more TVL into the dominant pool improves Jupiter's route weighting for this token.`:'Dominant pool position is competitive.'}`}`;
+    const p3=`DEX matters. At Stage ${s.stage}: <strong>${s.stage<=3?'Meteora DLMM is the optimal primary venue':'Meteora DLMM + Orca Whirlpool CLMM provide the best combined routing coverage'}</strong>. Meteora DLMM's active-bin concentration wins route scoring against passive CPMM at every trade size. ${hasMeteora?`Meteora is in the pool mix — ${fragScore>50?'and with acceptable concentration. Routing position is competitive.':'but the Meteora DLMM needs to be the largest single pool.'}`:`<strong>No Meteora DLMM detected — significant routing disadvantage.</strong> A single concentrated Meteora DLMM Spot pool is the highest-impact action for volume growth.`} ${s.stage>=3&&!dexes.some(d=>d.toLowerCase().includes('orca')||d.toLowerCase().includes('raydium'))?`At Stage ${s.stage}, add Orca Whirlpool or Raydium CLMM as a secondary routing path for path diversity.`:''}`;
+    const p4=`Routing dominance score: <strong>${routingScore}/100</strong>. ${routingScore>=70?'Competitive routing position.':routingScore>=40?'Suboptimal — consolidation alone could lift this 20–30 points.':'Weak position — meaningful volume flow is going to better-structured competitors.'} Priority actions: (1) <strong>consolidate to 1 dominant Meteora DLMM</strong> targeting ${fmt(Math.max(depthNeeded*1.5,tvl*0.8))}; (2) <strong>Spot distribution · ${getBinConfig(mc,'volume').desc} · depth at price > range width</strong>; (3) ${s.stage>=3?'add Orca CLMM secondary routing layer':'hold single-pool strategy until Stage 3'}. Volume won through routing compounds: more volume → better route scoring → more volume. Migration trigger: <strong>${getMig(s.stage)}</strong>.`;
+    return[p1,p2,p3,p4];
+  }
+
+  // Balanced — portfolio theory
+  const dammShare=tvl>0?(dammTVL/tvl*100):0;
+  const dammTarget=mc*0.05;
+  const dlmmYield=dlmmTVL*volLiq*0.003;
+  const stageMC=[50000,250000,1000000,5000000,20000000];
+  const nextMC=stageMC[s.stage]||0;
+  const p1=`Apply portfolio theory to this liquidity structure: <strong>DAMM = defensive allocation · DLMM = yield allocation · reserve = tactical allocation.</strong> Current breakdown: ${fmt(dammTVL)} in DAMM (${dammShare.toFixed(0)}%), ${fmt(dlmmTVL)} in DLMM (${tvl>0?(dlmmTVL/tvl*100).toFixed(0):0}%), remainder in other types. Stage ${s.stage} (${s.label}) target: <strong>${s.damm}% DAMM / ${s.dlmm}% DLMM${s.clmm>0?' / '+s.clmm+'% CLMM':''}</strong>. ${Math.abs(dammShare-s.damm)>15?`DAMM allocation is ${dammShare<s.damm?'underweight':'overweight'} by ${Math.abs(dammShare-s.damm).toFixed(0)}pp — rebalance toward target.`:'Allocation is near stage target.'}`;
+  const p2=`<strong>Defensive allocation (DAMM):</strong> ${hasDamm?`${fmt(dammTVL)} in DAMM provides the full-range price floor.`:'<strong>No DAMM detected — add this before increasing DLMM.</strong>'} DAMM is sized for resilience, not yield. Minimum target: <strong>${fmt(dammTarget)}</strong> — enough to absorb a significant sell event without catastrophic impact. ${dammTVL<dammTarget?`DAMM is ${fmt(dammTarget-dammTVL)} short of minimum. Do not add more DLMM until DAMM is at target — the defensive allocation is the foundation everything else sits on.`:'DAMM backstop is sufficient for current stage.'} Reducing DAMM to improve fee yield is explicitly not balanced.`;
+  const p3=`<strong>Yield allocation (DLMM):</strong> at vol/liq ${volLiq.toFixed(2)}x, the DLMM earns an estimated <strong>${fmt(dlmmYield)}/day</strong>. Config: <strong>${getShape(vola,1.0,'balanced')} distribution · ${getBinConfig(mc,'balanced').desc} · ${getRW(vola,'balanced')} range</strong> — deliberate middle ground between fee density and range permanence. ${volLiq<0.3?'Yield is minimal at current volume. That is acceptable here: the DLMM is structural now, yield-generating as volume grows.':volLiq>2?'Vol/liq is strong — tightening bins slightly improves yield density without materially compromising coverage.':'Vol/liq is adequate for this configuration.'} ${pairs.length>6?`Fragmentation (${pairs.length} pools, score ${fragScore}/100) is diluting yield — consolidate to 2–3 pools.`:''}`;
+  const p4=`<strong>Tactical allocation (reserve — 20%):</strong> not idle — it is migration and emergency rebalancing capital. Next stage threshold: <strong>${fmt(nextMC)} MC</strong>${nextMC>mc?` (${fmt(nextMC-mc)} away)`:' — approaching'}. Reserve activates at that transition: close the oldest DLMM first, deploy reserve into the Stage ${Math.min(s.stage+1,5)} structure, then close legacy positions. Do not deploy reserve into current-stage pools — its value is availability, not deployment. Migration trigger: <strong>${getMig(s.stage)}</strong>.`;
+  return[p1,p2,p3,p4];
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function exportMarkdown(){
+  if(!lastAuditData){alert('Run an audit first.');return;}
+  const d=lastAuditData;
+  const cfg=objConfig(d.objective);
+  const lines=[
+    `# Liquidity Audit: ${d.name} (${d.symbol})`,
+    `**Address:** \`${d.address}\`  `,
+    `**Objective:** ${cfg.label}  `,
+    `**Generated:** ${new Date().toLocaleString()}`,
+    ``,
+    `## Key Metrics`,
+    `| Metric | Value |`,
+    `|---|---|`,
+    `| Price | $${d.price.toPrecision(4)} |`,
+    `| Market Cap | ${fmt(d.mc)} |`,
+    `| Total TVL | ${fmt(d.tvl)} |`,
+    `| Vol 24h | ${fmt(d.vol24)} |`,
+    `| Liq Ratio | ${d.liqRatio.toFixed(1)}% |`,
+    `| Est. Daily Fees | ${fmt(d.estFees)} |`,
+    `| Stage | ${d.stage.stage}: ${d.stage.label} |`,
+    `| Volatility | ${d.vola} |`,
+    ``,
+    `## Pool Inventory`,
+    `| DEX | Type | TVL | Vol 24h | Util | 24h Δ |`,
+    `|---|---|---|---|---|---|`,
+    ...d.pairs.slice(0,12).map(p=>{
+      const tv=parseFloat(p.liquidity?.usd||0),vo=parseFloat(p.volume?.h24||0);
+      const ut=tv>0?(vo/tv*100).toFixed(0)+'%':'—';
+      const ch=p.priceChange?.h24??null;
+      const pt=detectPoolType(p);
+      return `| ${p.dexId||'?'} | ${pt.type} | ${fmt(tv)} | ${fmt(vo)} | ${ut} | ${ch===null?'—':(ch>=0?'+':'')+ch.toFixed(1)+'%'} |`;
+    }),
+    ``,
+    `## Analysis (${cfg.label} Objective)`,
+    ...d.paras.map((p,i)=>`### ${['Liquidity Health','Pool Structure','DLMM Recommendation','Action Items'][i]||'Section '+(i+1)}\n${p.replace(/<[^>]+>/g,'')}`),
+    ``,
+    `---`,
+    `*Generated by Solana Liquidity Terminal*`
+  ];
+  const blob=new Blob([lines.join('\n')],{type:'text/markdown'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`${d.symbol}-liquidity-audit-${Date.now()}.md`;
+  a.click();URL.revokeObjectURL(url);
+}
+
+function exportPrint(){
+  if(!lastAuditData){alert('Run an audit first.');return;}
+  const d=lastAuditData;
+  const cfg=objConfig(d.objective);
+  const s=d.stage;
+  const c=sc(s.stage);
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const lrColor=d.liqRatio<2?'#c0392b':d.liqRatio<5?'#d35400':d.liqRatio>15?'#0e7c57':'#1a6b4a';
+  const priceColor=d.priceChg>=0?'#0e7c57':'#c0392b';
+  const sectionTitles=['Liquidity Health Assessment','Pool Structure & Fragmentation','DLMM Configuration Recommendation','Recommended Actions'];
+
+  // pool rows
+  const pdfPoolRows=d.pairs.slice(0,12).map(p=>{
+    const tv=parseFloat(p.liquidity?.usd||0),vo=parseFloat(p.volume?.h24||0),fe=vo*0.003;
+    const ut=tv>0?(vo/tv*100).toFixed(0)+'%':'—';
+    const ch=p.priceChange?.h24??null;
+    const pt=detectPoolType(p);
+    const chStr=ch===null?'—':(ch>=0?'+':'')+ch.toFixed(1)+'%';
+    const chColor=ch===null?'#999':ch>=0?'#0e7c57':'#c0392b';
+    return `<tr><td>${(p.dexId||'?').replace(/_/g,' ')}</td><td><span style="background:${pt.color}18;color:${pt.color};border:1px solid ${pt.color}44;padding:1px 7px;border-radius:3px;font-size:7pt;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">${pt.type}</span></td><td class="num">${fmt(tv)}</td><td class="num">${fmt(vo)}</td><td class="num">${fmt(fe)}</td><td class="num">${ut}</td><td class="num" style="color:${chColor};font-weight:600;">${chStr}</td></tr>`;
+  }).join('');
+
+  // donut SVG
+  const groups={};
+  d.pairs.forEach(p=>{
+    const tv=parseFloat(p.liquidity?.usd||0);
+    if(tv<=0) return;
+    const pt=detectPoolType(p);
+    if(!groups[pt.group]) groups[pt.group]={tvl:0,color:pt.color};
+    groups[pt.group].tvl+=tv;
+  });
+  const entries=Object.entries(groups).sort((a,b)=>b[1].tvl-a[1].tvl);
+  const sz=180,cx=90,cy=90,r=72,ri=44;
+  let angle=-Math.PI/2,slices='',pdfLegend='';
+  entries.forEach(([name,{tvl,color}])=>{
+    const pct=tvl/d.tvl,sweep=pct*2*Math.PI;
+    if(sweep<0.01) return;
+    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(angle+sweep),y2=cy+r*Math.sin(angle+sweep);
+    const xi1=cx+ri*Math.cos(angle),yi1=cy+ri*Math.sin(angle);
+    const xi2=cx+ri*Math.cos(angle+sweep),yi2=cy+ri*Math.sin(angle+sweep);
+    const large=sweep>Math.PI?1:0;
+    slices+=`<path d="M${xi1.toFixed(1)},${yi1.toFixed(1)} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${xi2.toFixed(1)},${yi2.toFixed(1)} A${ri},${ri} 0 ${large},0 ${xi1.toFixed(1)},${yi1.toFixed(1)} Z" fill="${color}"/>`;
+    pdfLegend+=`<div style="display:flex;align-items:center;gap:8px;font-size:8.5pt;"><div style="width:10px;height:10px;border-radius:3px;background:${color};flex-shrink:0;"></div><span style="flex:1;color:#333;">${name}</span><span style="font-weight:600;color:#111;min-width:60px;text-align:right;">${fmt(tvl)}</span><span style="color:#888;min-width:40px;text-align:right;">${(pct*100).toFixed(1)}%</span></div>`;
+    angle+=sweep;
+  });
+  const donutSVG=`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">${slices}<circle cx="${cx}" cy="${cy}" r="${ri-1}" fill="white"/><text x="${cx}" y="${cy-7}" text-anchor="middle" fill="#111" font-size="13" font-weight="700" font-family="Inter,Helvetica,sans-serif">${fmt(d.tvl)}</text><text x="${cx}" y="${cy+9}" text-anchor="middle" fill="#888" font-size="8" font-family="Inter,Helvetica,sans-serif" letter-spacing="0.08em">TOTAL TVL</text></svg>`;
+
+  // clean analysis
+  const cleanParas=d.paras.map(p=>p.replace(/<strong>/g,'__BOLD__').replace(/<\/strong>/g,'__/BOLD__').replace(/<[^>]+>/g,'').replace(/__BOLD__/g,'<strong>').replace(/__\/BOLD__/g,'</strong>'));
+
+  const cfgColor=cfg.color;
+
+  const html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>Liquidity Audit — ${d.name} (${d.symbol})</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#fff;color:#111;font-family:'Inter',Helvetica,Arial,sans-serif;font-size:10pt;line-height:1.5;}
+.cover{width:100%;min-height:100vh;display:flex;flex-direction:column;padding:60px 64px;page-break-after:always;}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:60px;}
+.brand-dot{width:10px;height:10px;border-radius:50%;background:#1D9E75;}
+.brand-name{font-size:11pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
+.cover-date{font-size:9pt;color:#888;margin-left:auto;}
+.cover-top{display:flex;align-items:center;width:100%;}
+.cover-rule{width:100%;height:2px;background:#111;margin-bottom:40px;}
+.cover-eyebrow{font-size:8.5pt;letter-spacing:0.18em;text-transform:uppercase;color:#888;font-weight:500;margin-bottom:14px;}
+.cover-title{font-size:34pt;font-weight:700;color:#111;line-height:1.1;margin-bottom:6px;}
+.cover-sub{font-size:13pt;font-weight:300;color:#555;margin-bottom:36px;}
+.cover-addr{font-size:7.5pt;font-family:'Courier New',monospace;color:#888;background:#f5f5f5;padding:8px 12px;border-radius:4px;word-break:break-all;margin-bottom:40px;display:block;}
+.cover-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:36px;}
+.cgi{border-top:2px solid #111;padding-top:12px;}
+.cgi-l{font-size:7.5pt;letter-spacing:0.12em;text-transform:uppercase;color:#888;font-weight:500;margin-bottom:4px;}
+.cgi-v{font-size:17pt;font-weight:700;color:#111;}
+.cgi-s{font-size:8pt;color:#888;margin-top:2px;}
+.cover-obj{padding:16px 20px;border-left:4px solid ${cfgColor};background:#f9f9f9;margin-bottom:auto;}
+.cover-obj-l{font-size:7.5pt;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:4px;}
+.cover-obj-v{font-size:12pt;font-weight:700;color:${cfgColor};}
+.cover-footer{margin-top:36px;padding-top:14px;border-top:1px solid #e8e8e8;display:flex;justify-content:space-between;font-size:7.5pt;color:#aaa;}
+.page{padding:48px 64px;page-break-before:always;}
+.ph{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ddd;padding-bottom:12px;margin-bottom:28px;}
+.ph-l{font-size:8.5pt;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+.ph-r{font-size:8pt;color:#aaa;}
+.sec{margin-bottom:28px;}
+.sec-title{font-size:7.5pt;letter-spacing:0.14em;text-transform:uppercase;color:#888;font-weight:700;border-bottom:1px solid #eee;padding-bottom:7px;margin-bottom:14px;}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.mcard{padding:13px 15px;border:1px solid #e8e8e8;border-radius:5px;}
+.mcard.hi{border-color:#111;background:#fafafa;}
+.ml{font-size:7pt;letter-spacing:0.12em;text-transform:uppercase;color:#888;font-weight:500;margin-bottom:4px;}
+.mv{font-size:17pt;font-weight:700;color:#111;line-height:1.1;}
+.ms{font-size:7.5pt;color:#888;margin-top:2px;}
+.arow2{display:flex;gap:18px;margin-bottom:8px;flex-wrap:wrap;}
+.ai{display:flex;align-items:center;gap:6px;font-size:8.5pt;}
+.adot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.abar-out{height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;display:flex;}
+.as-d{background:#1D9E75;}.as-dl{background:#378ADD;}.as-cl{background:#D85A30;}
+.donut-wrap{display:flex;gap:28px;align-items:center;margin-bottom:20px;}
+.pdf-leg{display:flex;flex-direction:column;gap:9px;flex:1;}
+.ptable{width:100%;border-collapse:collapse;font-size:8.5pt;}
+.ptable th{text-align:left;font-size:7pt;letter-spacing:0.1em;text-transform:uppercase;color:#888;font-weight:700;padding:8px 10px;border-bottom:2px solid #111;}
+.ptable td{padding:9px 10px;border-bottom:1px solid #f0f0f0;color:#111;vertical-align:middle;}
+.ptable tr:last-child td{border-bottom:none;}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500;}
+.rec{background:#f9f9f9;border-left:4px solid ${cfgColor};padding:14px 18px;margin:16px 0;border-radius:0 5px 5px 0;}
+.rec-l{font-size:7.5pt;letter-spacing:0.12em;text-transform:uppercase;color:${cfgColor};font-weight:700;margin-bottom:6px;}
+.rec-b{font-size:9pt;color:#333;line-height:1.75;}
+.asec{margin-bottom:24px;}
+.asec-title{font-size:10pt;font-weight:700;color:#111;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.anum{width:22px;height:22px;border-radius:50%;background:#111;color:#fff;font-size:8pt;font-weight:700;text-align:center;line-height:22px;flex-shrink:0;}
+.abody{font-size:9.5pt;line-height:1.85;color:#333;}
+.abody strong{color:#111;font-weight:600;}
+.disc{font-size:7pt;color:#aaa;line-height:1.6;border-top:1px solid #eee;padding-top:14px;margin-top:36px;}
+@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}a{text-decoration:none;color:inherit;}.cover{min-height:100vh;}.page{page-break-before:always;}}
+</style></head><body>
+
+<div class="cover">
+  <div class="cover-top" style="width:100%;display:flex;align-items:center;margin-bottom:60px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:#1D9E75;"></div>
+      <span style="font-size:11pt;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Liquidity Intelligence</span>
+    </div>
+    <span style="margin-left:auto;font-size:9pt;color:#888;">${dateStr}</span>
+  </div>
+  <div class="cover-rule"></div>
+  <div class="cover-eyebrow">Liquidity Audit Report</div>
+  <div class="cover-title">${d.name}</div>
+  <div class="cover-sub">${d.symbol} &nbsp;·&nbsp; Solana Mainnet &nbsp;·&nbsp; Stage ${s.stage}: ${s.label}</div>
+  <code class="cover-addr">${d.address}</code>
+  <div class="cover-grid">
+    <div class="cgi"><div class="cgi-l">Market Cap</div><div class="cgi-v">${fmt(d.mc)}</div><div class="cgi-s">FDV: ${fmt(d.fdv)}</div></div>
+    <div class="cgi"><div class="cgi-l">Total TVL</div><div class="cgi-v">${fmt(d.tvl)}</div><div class="cgi-s">${d.pairs.length} active pool${d.pairs.length!==1?'s':''}</div></div>
+    <div class="cgi"><div class="cgi-l">Volume (24h)</div><div class="cgi-v">${fmt(d.vol24)}</div><div class="cgi-s" style="color:${priceColor};font-weight:600;">Price ${d.priceChg>=0?'+':''}${d.priceChg.toFixed(1)}% 24h</div></div>
+    <div class="cgi"><div class="cgi-l">Liquidity Ratio</div><div class="cgi-v" style="color:${lrColor};">${d.liqRatio.toFixed(1)}%</div><div class="cgi-s">${d.liqRatio<2?'Critical':d.liqRatio<5?'Below target':d.liqRatio>15?'Deep liquidity':'Healthy'}</div></div>
+    <div class="cgi"><div class="cgi-l">Est. Daily Fees</div><div class="cgi-v">${fmt(d.estFees)}</div><div class="cgi-s">${d.feeDensity.toFixed(3)}% density</div></div>
+    <div class="cgi"><div class="cgi-l">Volatility Regime</div><div class="cgi-v" style="font-size:13pt;">${d.vola}</div><div class="cgi-s">Inferred from 24h data</div></div>
+  </div>
+  <div class="cover-obj">
+    <div class="cover-obj-l">Optimization Objective</div>
+    <div class="cover-obj-v">${cfg.label}</div>
+  </div>
+  <div class="cover-footer">
+    <span>Confidential — prepared by Solana Liquidity Terminal</span>
+    <span>Page 1 of 3</span>
+  </div>
+</div>
+
+<div class="page">
+  <div class="ph"><span class="ph-l">${d.name} (${d.symbol}) — Metrics & Pool Inventory</span><span class="ph-r">${dateStr}</span></div>
+  <div class="sec">
+    <div class="sec-title">Key Performance Metrics</div>
+    <div class="mgrid">
+      <div class="mcard hi"><div class="ml">Token Price</div><div class="mv" style="font-size:15pt;">$${d.price.toPrecision(4)}</div><div class="ms" style="color:${priceColor};font-weight:600;">${d.priceChg>=0?'+':''}${d.priceChg.toFixed(1)}% in 24 hours</div></div>
+      <div class="mcard"><div class="ml">Market Cap</div><div class="mv">${fmt(d.mc)}</div><div class="ms">FDV: ${fmt(d.fdv)}</div></div>
+      <div class="mcard"><div class="ml">Liquidity Ratio</div><div class="mv" style="color:${lrColor};">${d.liqRatio.toFixed(1)}%</div><div class="ms">${d.liqRatio<5?'Below 5% target':d.liqRatio>15?'Deep liquidity':'Within healthy range'}</div></div>
+      <div class="mcard"><div class="ml">Total TVL</div><div class="mv">${fmt(d.tvl)}</div><div class="ms">${d.pairs.length} active pools</div></div>
+      <div class="mcard"><div class="ml">Volume (24h)</div><div class="mv">${fmt(d.vol24)}</div><div class="ms">Vol/Liq: ${d.tvl>0?(d.vol24/d.tvl).toFixed(2):'—'}x</div></div>
+      <div class="mcard"><div class="ml">Est. Daily Fees</div><div class="mv">${fmt(d.estFees)}</div><div class="ms">${d.feeDensity.toFixed(3)}% density · ${fmt(d.estFees*365)}/yr</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">Recommended Liquidity Allocation</div>
+    <div class="arow2">
+      <div class="ai"><div class="adot" style="background:#1D9E75;"></div><span>DAMM Pool — ${s.damm}%</span></div>
+      <div class="ai"><div class="adot" style="background:#378ADD;"></div><span>DLMM Pool — ${s.dlmm}%</span></div>
+      ${s.clmm>0?`<div class="ai"><div class="adot" style="background:#D85A30;"></div><span>CLMM Pool — ${s.clmm}%</span></div>`:''}
+    </div>
+    <div class="abar-out"><div class="as-d" style="width:${s.damm}%;"></div><div class="as-dl" style="width:${s.dlmm}%;"></div><div class="as-cl" style="width:${s.clmm}%;"></div></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">TVL Distribution by Pool Type</div>
+    <div class="donut-wrap">${donutSVG}<div class="pdf-leg">${pdfLegend}</div></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">Pool Inventory</div>
+    <table class="ptable">
+      <thead><tr><th>DEX</th><th>Type</th><th class="num">TVL</th><th class="num">Vol 24h</th><th class="num">Fees 24h</th><th class="num">Utilization</th><th class="num">24h Δ</th></tr></thead>
+      <tbody>${pdfPoolRows}</tbody>
+    </table>
+  </div>
+</div>
+
+<div class="page">
+  <div class="ph"><span class="ph-l">${d.name} (${d.symbol}) — Analysis & Recommendations</span><span class="ph-r">${dateStr}</span></div>
+  <div class="rec"><div class="rec-l">Optimization Objective: ${cfg.label}</div><div class="rec-b">All recommendations in this report are calibrated for the <strong>${cfg.label}</strong> objective. Pool structure, DLMM configuration, range width, and action items are optimized toward this goal. If the objective changes, configurations should be revisited.</div></div>
+  ${cleanParas.map((p,i)=>`<div class="asec"><div class="asec-title"><span class="anum">${i+1}</span>${sectionTitles[i]||'Section '+(i+1)}</div><div class="abody">${p}</div></div>`).join('')}
+  <div class="disc">This report was generated by Solana Liquidity Terminal on ${dateStr}. All data is sourced from DexScreener and reflects conditions at the time of the audit. Recommendations are based on a rules-based engine calibrated to the ${cfg.label} objective and the token's current stage classification. This document does not constitute financial advice. Market conditions can change rapidly — all recommendations should be reviewed and validated before capital is deployed or migrated.</div>
+</div>
+
+</body></html>`;
+
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>w.print(),900);
+}
+
+function exportCSV(){
+  if(!lastAuditData){alert('Run an audit first.');return;}
+  const d=lastAuditData;
+  const rows=[['DEX','Type','TVL','Vol24h','Fees24h','Utilization','PriceChange24h','PairAddress']];
+  d.pairs.slice(0,12).forEach(p=>{
+    const tv=parseFloat(p.liquidity?.usd||0),vo=parseFloat(p.volume?.h24||0);
+    const pt=detectPoolType(p);
+    rows.push([p.dexId||'',pt.type,tv.toFixed(2),(vo).toFixed(2),(vo*0.003).toFixed(2),tv>0?(vo/tv*100).toFixed(1)+'%':'—',p.priceChange?.h24??'',p.pairAddress||'']);
+  });
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`${d.symbol}-pools-${Date.now()}.csv`;
+  a.click();URL.revokeObjectURL(url);
+}
+
+// ── LIVE LP ───────────────────────────────────────────────────────────────────
+async function runLiveLP(){
+  const btn=document.getElementById('lp-btn');btn.disabled=true;
+  const addr=document.getElementById('lp-addr').value.trim();
+  const capital=parseFloat(document.getElementById('lp-capital').value)||1000;
+  const risk=document.getElementById('lp-risk').value;
+  const horizon=document.getElementById('lp-horizon').value;
+  const goal=document.getElementById('lp-goal').value;
+  const out=document.getElementById('lp-out');
+  if(!addr){out.innerHTML='<span class="err">Enter a token address.</span>';btn.disabled=false;return;}
+  out.innerHTML='<span class="blink">Fetching token data...</span>';
+  let pairs=[];
+  try{
+    const r=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${addr}`);
+    const d=await r.json();pairs=d.pairs||[];
+  }catch(e){out.innerHTML=`<span class="err">Fetch failed: ${e.message}</span>`;btn.disabled=false;return;}
+  if(!pairs.length){out.innerHTML='<span class="err">No pools found. Use the token mint address, not the pair address.</span>';btn.disabled=false;return;}
+
+  const ti=pairs[0].baseToken||{};
+  const price=parseFloat(pairs[0].priceUsd)||0;
+  const mc=parseFloat(pairs[0].marketCap)||0;
+  const fdv=parseFloat(pairs[0].fdv)||mc;
+  let tvl=0,vol24=0;
+  pairs.forEach(p=>{tvl+=parseFloat(p.liquidity?.usd||0);vol24+=parseFloat(p.volume?.h24||0);});
+  const liqRatio=mc>0?tvl/mc*100:0;
+  const volLiq=tvl>0?vol24/tvl:0;
+  const priceChg=parseFloat(pairs[0]?.priceChange?.h24||0);
+  const avgChg=pairs.slice(0,5).reduce((a,p)=>a+Math.abs(parseFloat(p.priceChange?.h24||0)),0)/Math.min(pairs.length,5);
+  const vola=avgChg>20?'Extreme':avgChg>10?'High':avgChg>5?'Medium':'Low';
+  const s=classifyStage(mc);
+
+  let decision,decColor,rationale,config=null,outcomes=[],risks=[],watchList=[];
+
+  // ── Decision tree ──────────────────────────────────────────────────────────
+  // Universal blockers — apply regardless of MC
+  if(vol24===0){
+    decision='No LP';decColor='#c94a4a';
+    rationale=`Zero 24h volume on ${ti.name||'this token'}. LP positions earn fees only when trades route through them. Deploying capital here earns nothing regardless of configuration. Monitor for volume establishment over 3–5 consecutive days before reconsidering.`;
+    risks=['Token may be inactive, pre-launch, or delisted'];
+    watchList=['Daily volume — wait for >$500/day consistently before reconsidering'];
+  }
+  else if(vola==='Extreme'&&horizon==='Days'){
+    decision='No action';decColor='#888780';
+    rationale=`${ti.name||'This token'} is in an extreme volatility regime (${avgChg.toFixed(0)}% avg 24h move). With a days horizon, DLMM bins will exit range within hours and DAMM will accumulate severe IL on sharp moves. Neither structure works for a short-hold in this regime. Wait for volatility to compress below 10% avg 24h before entering any LP position.`;
+    risks=['Any LP in extreme volatility at a short horizon will nearly always underperform spot or cash'];
+    watchList=['24h avg price change — enter when consistently below 10%','Watch for whether the spike is temporary or a new normal'];
+  }
+  else if(priceChg>20&&(goal==='Maximize PnL'||goal==='Speculate')){
+    decision='Spot buy only';decColor='#BA7517';
+    rationale=`Price is up ${priceChg.toFixed(0)}% in 24h — a strong directional move. LP creates IL drag in both directions: if price continues up, you underperform a spot hold; if it reverses, IL compounds the loss. With a ${goal.toLowerCase()} goal, spot exposure captures the full upside without range risk. ${fmt(capital)} in spot > ${fmt(capital)} in LP during a directional move. Enter LP only after price consolidates for 3+ days in a ±5% range.`;
+    outcomes=[`Spot entry of ${fmt(capital)} captures full upside without IL drag`];
+    risks=['Reversal risk is elevated after a +20% day — size position accordingly','FOMO entry near a top is the most common LP mistake'];
+    watchList=['Price action — wait for consolidation before LP entry','Volume/price divergence as early reversal signal'];
+  }
+  // ── MC-tiered logic: sub-$500K ────────────────────────────────────────────
+  else if(mc<5000){
+    // Sub-$5K: Pass or DAMM + Spot
+    if(vol24<200){
+      decision='Pass';decColor='#888780';
+      rationale=`${ti.name||'This token'} is below $5K MC with under $200/day in volume. At this capital depth, any LP position earns cents per day — the fee income does not justify the risk surface or the attention cost. This is pre-liquidity territory. If you believe in the token, hold spot and wait for volume to establish above $200/day before considering any LP structure.`;
+      risks=['Sub-$5K tokens have extremely high failure rates — position sizing should reflect that','Price impact on any entry or exit will be significant at this liquidity depth'];
+      watchList=['Daily volume — re-evaluate above $200/day','MC growth toward the $5K–$40K range where DAMM becomes viable'];
+    } else {
+      decision='DAMM + Spot';decColor='#1D9E75';
+      const dammAmt=capital*0.6,spotAmt=capital*0.4;
+      const dammFee=dammAmt*volLiq*0.003;
+      config={pool:'Meteora Dynamic AMM (DAMM)',dammSize:fmt(dammAmt)+' — 60%',spotHold:fmt(spotAmt)+' — 40%, hold token (not LP)',range:'Full range — active at any price',rebalancing:'None required'};
+      rationale=`At sub-$5K MC, ${ti.name||'this token'} is at the earliest stage of price discovery. A DAMM pool here can compound remarkably well: as MC grows toward $40K, $100K, or beyond, DAMM TVL grows with it — earning fees at every price point along the way with no bins to exit and no rebalancing required. ${fmt(dammAmt)} in DAMM establishes a real bid floor and earns on every trade. The remaining ${fmt(spotAmt)} stays as spot — clean directional exposure with zero rebalancing pressure. No DLMM at this stage: bins exit range on the first 15–20% move, which is routine at sub-$5K MC, and the rebalancing cost exceeds the fee income.`;
+      outcomes=[`DAMM fees: ~${fmt(dammFee)}/day at current volume`,'Spot: full upside capture, no IL from range exits','DAMM TVL compounds with price — growing MC grows the position value automatically'];
+      risks=['Sub-$5K tokens have extremely high failure rates — only deploy what you can lose entirely','Your entry creates meaningful price impact at this liquidity depth','DAMM IL is real: significant token depreciation means LP underperforms a pure spot hold'];
+      watchList=['Daily volume — sub-$100/day means DAMM fees are negligible','MC toward $40K: trigger to reassess structure and consider adding a DLMM layer','Rug signals: check mint authority, LP concentration, wallet count on Solscan'];
+    }
+  }
+  else if(mc<40000){
+    // $5K–$40K: micro-cap, vol/liq tiered
+    if(volLiq>=0.5){
+      decision='DAMM';decColor='#1D9E75';
+      const dammFee=capital*volLiq*0.003;
+      config={pool:'Meteora Dynamic AMM (DAMM)',size:fmt(capital),range:'Full range — no manual management',rebalancing:'None — DAMM adjusts automatically'};
+      rationale=`At ${fmt(mc)} MC, vol/liq at ${volLiq.toFixed(2)}x is strong enough to make full DAMM worthwhile. Tokens in the $5K–$40K range move 15–30% on a normal day — DLMM bins exit range on the first strong move and sit idle until rebalanced, costing you both fees and attention. DAMM stays active at any price, earns on every trade, and captures full upside if ${ti.name||'this token'} compounds. ${fmt(capital)} fully in DAMM is the right structure: do not dilute it with a DLMM allocation you will have to chase constantly at this MC.`;
+      outcomes=[`Est. yield: ~${fmt(dammFee)}/day (${fmt(dammFee*365)}/yr at current volume)`,'IL spread across the full range — far lower severity than a DLMM that exits range','Rebalancing: none — zero operational overhead'];
+      risks=['Micro-cap tokens have high failure risk — size to what you can afford to lose',liqRatio<3?'Thin overall liquidity: your position has significant price impact on entry/exit':null,'DAMM IL compounds if price falls significantly and stays down'].filter(Boolean);
+      watchList=[`MC toward $40K: trigger to add a DLMM layer alongside DAMM`,`Vol/liq — if it drops below 0.3x, fees thin out; reconsider sizing`,`Migration trigger: ${getMig(s.stage)}`];
+    } else if(volLiq>=0.1){
+      decision='DAMM + Spot';decColor='#1D9E75';
+      const dammAmt=capital*0.5,spotAmt=capital*0.5;
+      const dammFee=dammAmt*volLiq*0.003;
+      config={pool:'Meteora Dynamic AMM (DAMM)',dammSize:fmt(dammAmt)+' — 50%',spotHold:fmt(spotAmt)+' — 50%, hold token (not LP)',range:'Full range',rebalancing:'None required'};
+      rationale=`Vol/liq at ${volLiq.toFixed(2)}x at ${fmt(mc)} MC is workable but not strong enough to justify full DAMM deployment. A 50/50 split makes the most of current conditions: the DAMM half earns fees on every trade and maintains a bid at every price point; the spot half holds clean directional upside with no rebalancing pressure. If volume grows and vol/liq passes 0.5x, shift the spot allocation into DAMM. If volume stays flat, the spot position costs you nothing operationally.`;
+      outcomes=[`DAMM fees: ~${fmt(dammFee)}/day at current volume`,'Spot: full upside on 50% of capital — no range risk or management overhead','If MC doubles: both positions benefit — DAMM TVL grows with price, spot appreciates'];
+      risks=['Volume may not grow — monitor trend over 7–14 days before committing more to DAMM','Micro-cap failure risk: never more than you can lose entirely','Thin liquidity means entry/exit has meaningful price impact'];
+      watchList=['Vol/liq trend — target 0.5x+ before shifting more capital to DAMM','Daily volume absolute level — is it growing week-over-week?',`MC toward $40K: time to reassess full structure`];
+    } else {
+      decision='Spot only';decColor='#BA7517';
+      const dailyFee=capital*volLiq*0.003;
+      rationale=`Vol/liq at ${volLiq.toFixed(2)}x at ${fmt(mc)} MC generates ~${fmt(dailyFee)}/day on ${fmt(capital)} deployed. That does not compensate for IL exposure, the operational overhead, or the rug risk at this stage. Hold ${fmt(capital)} as spot: full directional upside with no position to manage, no range to monitor, and no LP-specific loss vectors. Re-evaluate LP when daily volume consistently exceeds ${fmt(tvl*0.1)} and vol/liq is trending toward 0.1x+.`;
+      outcomes=[`Spot: ${fmt(capital)} in token, full upside, zero LP overhead`];
+      risks=['LP at this vol/liq earns less than $1/day per $1K deployed — not worth the risk surface','Micro-cap failure risk applies to spot too — size accordingly'];
+      watchList=[`Daily volume — target >${fmt(tvl*0.1)}/day before reconsidering LP`,`Vol/liq — wait for trend toward 0.1x+`,'Unique holders growing: sign of organic demand building'];
+    }
+  }
+  else if(mc<150000){
+    // $40K–$150K: wide DLMM + spot hedge
+    decision='Wide DLMM + Spot Hedge';decColor='#378ADD';
+    const dlmmAmt=capital*0.65,spotAmt=capital*0.35;
+    const estFee=dlmmAmt*volLiq*0.003*0.7;
+    const rw=vola==='High'||vola==='Extreme'?'±35%':'±30%';
+    config={pool:'Meteora DLMM',dlmmSize:fmt(dlmmAmt)+' — 65%',spotHold:fmt(spotAmt)+' — 35%, hold token (not LP)',distribution:'Bid Ask',binStep:'Bin step 300–400 · wide two-sided depth',range:rw,rebalancing:'Monitor weekly — rebalance if price exits range'};
+    rationale=`At ${fmt(mc)} MC, price range is starting to establish but volatility is still high enough to blow through tight bins. DAMM alone under-earns at this stage — vol/liq at ${volLiq.toFixed(2)}x is viable enough for some concentration. Wide Bid Ask DLMM at bin step 300–400 provides two-sided depth that survives typical 20–30% moves without exiting; the wide bins mean you do not need to rebalance after every swing. The 35% spot hedge is the key differentiator: if ${ti.name||'this token'} runs 50–100% from here, the spot portion captures the full move while the DLMM earns fees without any rebalancing pressure. Tight DLMM fails here — it exits range on the first strong move and sits idle exactly when the token is most active.`;
+    outcomes=[`DLMM fees: ~${fmt(estFee)}/day at current volume`,'Spot: full upside on 35% of capital — no range risk, no IL',`Bid Ask at ${rw} with bin step 300–400: survives most normal volatility without rebalancing`];
+    risks=[`DLMM exits range if price moves beyond ${rw} — extreme moves can still push it out`,'Spot portion has no downside protection — it falls with the token price',volLiq<0.3?`Vol/liq at ${volLiq.toFixed(2)}x is thin — fees may not justify the DLMM allocation`:null].filter(Boolean);
+    watchList=[`Price vs ${rw} range — rebalance the DLMM immediately if exiting`,`Vol/liq trend — if declining, widen range or shift more to spot`,`MC toward $150K: consider adding a DAMM backstop at that point`];
+  }
+  else if(mc<500000){
+    // $150K–$500K: DLMM-only, two paths based on price action + volatility
+    // Phase 3+ — incorporate ATH proximity and chart support levels as inputs to this decision.
+    const rangebound=Math.abs(priceChg)<=15&&(vola==='Low'||vola==='Medium');
+    if(rangebound){
+      decision='Medium DLMM';decColor='#378ADD';
+      const shape=vola==='Low'?'Curve':'Spot';
+      const rw=vola==='Low'?'±15%':'±20%';
+      const estFee=capital*volLiq*0.003*0.65;
+      config={pool:'Meteora DLMM',size:fmt(capital),distribution:shape,binStep:'Bin step 80–150 · medium concentration',range:rw,rebalancing:'Monitor twice weekly — rebalance if price exits range'};
+      rationale=`At ${fmt(mc)} MC with price ${priceChg>=0?'+':''}${priceChg.toFixed(1)}% in 24h and ${vola.toLowerCase()} volatility, ${ti.name||'this token'} is range-bound — consolidating rather than trending. This is the condition where DLMM concentration earns well without constant rebalancing. A ${shape} distribution at bin step 80–150 puts capital where trades are happening without overexposing to IL from a directional move. The ${rw} range captures normal daily volatility at this MC cleanly. ${fmt(capital)} into a single DLMM pool — no split needed while price is stable. If price breaks out of the ${rw} range, switch to Bid Ask immediately and widen to ±30–40%.`;
+      outcomes=[`Est. yield: ~${fmt(estFee)}/day at current volume`,`${shape} distribution: ${vola==='Low'?'deep midpoint concentration for stable price':'centered depth for fee maximization'}`,`${rw} range covers normal ${vola.toLowerCase()} volatility without rebalancing`];
+      risks=[`Exits range on moves beyond ${rw} — rebalance trigger`,`Volatility shift to High invalidates this setup — widen to Bid Ask ±30–40% immediately`,volLiq<0.3?`Vol/liq at ${volLiq.toFixed(2)}x is thin — fees may not justify active DLMM management`:null].filter(Boolean);
+      watchList=[`Price approaching ±${vola==='Low'?'12':'16'}% from entry — early rebalance warning`,'Volatility regime shift to High: trigger to move to Wide DLMM (Bid Ask ±30–40%)','Vol/liq trend — growing volume multiplies fee capture at this concentration'];
+    } else {
+      decision='Wide DLMM';decColor='#378ADD';
+      const rw=vola==='Extreme'?'±40%':'±35%';
+      const estFee=capital*volLiq*0.003*0.45;
+      config={pool:'Meteora DLMM',size:fmt(capital),distribution:'Bid Ask',binStep:'Bin step 200–300 · wide two-sided depth',range:rw,rebalancing:'Monitor weekly — rebalance if price exits range'};
+      rationale=`At ${fmt(mc)} MC with ${vola.toLowerCase()} volatility${Math.abs(priceChg)>15?` and price ${priceChg>=0?'+':''}${priceChg.toFixed(1)}% in 24h — actively trending`:''}, medium DLMM bins would exit range on the next directional move and sit idle while the token is most active. Wide Bid Ask at bin step 200–300 provides symmetric two-sided depth that absorbs both buy and sell pressure and survives typical ${vola.toLowerCase()} volatility without rebalancing. The wide bins reduce fee density vs a tighter setup — that is the deliberate trade-off: durability over yield. ${fmt(capital)} into a single Bid Ask DLMM pool. When price stabilizes and volatility compresses to Low or Medium, tighten to Spot or Curve at bin step 80–150 to improve fee capture.`;
+      outcomes=[`Est. yield: ~${fmt(estFee)}/day at current volume`,'Bid Ask: symmetric depth absorbs directional moves in both directions',`${rw} range survives most ${vola.toLowerCase()} volatility events without rebalancing`];
+      risks=[`Still exits range on moves beyond ${rw} — extreme events can push it out`,'Lower fee density than medium DLMM — deliberate trade-off for range durability',volLiq<0.3?`Vol/liq at ${volLiq.toFixed(2)}x is thin — fees will be minimal at any bin configuration`:null].filter(Boolean);
+      watchList=[`Price approaching ±${vola==='Extreme'?'35':'28'}% from entry — rebalance warning`,'Volatility compressing to Low/Medium: tighten to Spot or Curve bin step 80–150','Vol/liq growing: tightening the range multiplies fee capture significantly'];
+    }
+  }
+  // ── $500K+: existing logic ────────────────────────────────────────────────
+  else if(volLiq<0.5&&goal==='Generate yield'){
+    decision='No LP';decColor='#c94a4a';
+    const dailyEst=capital*volLiq*0.003;
+    rationale=`Fee generation is not viable at vol/liq ${volLiq.toFixed(2)}x — below the 0.5x minimum. A ${fmt(capital)} position earns ~${fmt(dailyEst)}/day at current volume. That does not compensate for IL exposure and the operational overhead of active management. Switch goal to "Support the token" if you want protocol exposure, or wait until daily volume reaches ${fmt(tvl*0.5)}.`;
+    risks=[`${fmt(dailyEst)}/day yield does not justify IL risk at current volume`];
+    watchList=[`Daily volume — target >${fmt(tvl*0.5)}/day before yield-focused LP`,'Vol/liq — watch for trend toward 0.5x+'];
+  }
+  else if((s.stage<=1||risk==='Conservative'||goal==='Support the token')&&!(risk==='Aggressive'&&volLiq>=1.5)){
+    decision='DAMM / Full-range AMM';decColor='#1D9E75';
+    const dammFee=capital*volLiq*0.003*0.3;
+    config={pool:'Meteora Dynamic AMM (DAMM)',size:fmt(capital),range:'Full range — no manual management required',rebalancing:'None — DAMM adjusts automatically at any price'};
+    rationale=`${s.stage<=1?`At Stage ${s.stage} (${s.label}), fair value is not established — price could 10x or 0.1x from here. `:''}${risk==='Conservative'?'A conservative approach avoids range risk entirely. ':''}${goal==='Support the token'?'Supporting the token means permanent bid presence at every price point — only DAMM delivers that. ':''}A full-range DAMM captures the full upside if the token breaks out, earns fees continuously at any price, and never goes "out of range." It earns lower fees than a concentrated DLMM, but the capital is always active.`;
+    outcomes=[`Est. yield: ~${fmt(dammFee)}/day (lower than DLMM but always earning)`,'IL: present but lower severity than range positions','Rebalancing: none — zero operational overhead'];
+    risks=[s.stage<=1?'Stage 0–1 tokens have high failure risk — size to what you can afford to lose':null,liqRatio<3?'Thin overall liquidity — your entry/exit has meaningful price impact':null,'IL is real: significant token depreciation means LP underperforms hold'].filter(Boolean);
+    watchList=[`Migration trigger: ${getMig(s.stage)}`,'DAMM TVL — verify protocol hasn\'t migrated the pool','Price appreciation — DAMM captures it automatically, no action needed'];
+  }
+  else if(volLiq>=1.5&&risk==='Aggressive'&&vola!=='Extreme'&&horizon!=='Days'){
+    decision='Tight DLMM';decColor='#D85A30';
+    const bc=getBinConfig(mc,'fee');
+    const rw=vola==='High'?'±8%':vola==='Medium'?'±5%':'±3%';
+    const rebalDays=vola==='High'?'2–4':vola==='Medium'?'4–7':'7–14';
+    const estFee=capital*volLiq*0.003*0.8;
+    config={pool:'Meteora DLMM',size:fmt(capital),distribution:'Spot',binStep:bc.desc,range:rw,rebalancing:`Every ${rebalDays} days at ${vola.toLowerCase()} volatility`};
+    rationale=`At vol/liq ${volLiq.toFixed(2)}x, this token has the volume density to make tight concentration profitable. A Spot DLMM at <strong>${bc.desc}</strong> puts capital exactly where trades happen, maximizing fee capture per dollar deployed. At ${vola.toLowerCase()} volatility, expect bins to stay active for ~${rebalDays} days before rebalancing. This is an active strategy — account for the management time before committing capital.`;
+    outcomes=[`Est. yield: ~${fmt(estFee)}/day (${fmt(estFee*365)}/yr at current volume)`,'IL: moderate–high — tight range amplifies IL on sharp moves',`Break-even volume: ~${fmt(capital*0.01/0.003)}/day to justify operational costs`];
+    risks=[`Bins exit range every ${rebalDays} days — missed rebalance = dead bins earning nothing`,'Tight range amplifies IL significantly on any sharp move',volLiq<2?'Vol/liq is borderline — monitor weekly and widen if it drops':null].filter(Boolean);
+    watchList=['Bin utilization — rebalance immediately when price exits range','Vol/liq ratio — widen or exit if it drops below 0.5x','Volume consistency — one outlier day does not justify tight bins long-term'];
+  }
+  else{
+    decision='Wide DLMM';decColor='#378ADD';
+    const bcw=getBinConfig(mc,'balanced');
+    const shape=getShape(vola,1.0,'balanced');
+    const rw=getRW(vola,'balanced');
+    const estFee=capital*volLiq*0.003*0.5;
+    config={pool:'Meteora DLMM',size:fmt(capital),distribution:shape,binStep:bcw.desc,range:rw,rebalancing:'Monitor weekly — rebalance if price exits range'};
+    rationale=`A wide DLMM is the right call for ${ti.name||'this token'} at ${risk.toLowerCase()} risk with a ${horizon.toLowerCase()} horizon. The ${shape} distribution at <strong>${bcw.desc}</strong> provides enough range depth to survive typical ${vola.toLowerCase()} volatility without constant management, while earning meaningfully better fees than full-range DAMM. Not a set-and-forget position — plan a weekly bin utilization check.`;
+    outcomes=[`Est. yield: ~${fmt(estFee)}/day (${fmt(estFee*365)}/yr at current volume)`,'IL: moderate — wide range limits IL vs tight DLMM',estFee>0?`Break-even: ~${Math.round(capital*0.005/Math.max(estFee,0.01))} days of fees to recover typical entry/exit costs`:null].filter(Boolean);
+    risks=[vola==='High'||vola==='Extreme'?`${vola} volatility may still push price outside the ${rw} range`:null,liqRatio<3?'Thin overall liquidity — meaningful price impact on entry/exit':null,`Vol/liq ${volLiq.toFixed(2)}x — ${volLiq<0.5?'borderline; fees may not justify IL risk':'adequate for this configuration'}`].filter(Boolean);
+    watchList=['Price vs active range — rebalance if exiting',`Weekly vol/liq — if declining, widen or shift to DAMM`,`Migration trigger: ${getMig(s.stage)}`];
+  }
+
+  // ── Output ─────────────────────────────────────────────────────────────────
+  const stgC=sc(s.stage);
+  const priceColor=priceChg>=0?'#1D9E75':'#c94a4a';
+  const lrColor=liqRatio<2?'#c94a4a':liqRatio<5?'#BA7517':'#1D9E75';
+  lastLPAddr=addr;
+  out.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:14px;font-weight:500;color:#e8e8e6;">${ti.name||'Unknown'}</span>
+        <span style="color:#555552;font-size:11px;">${ti.symbol||'?'}</span>
+        <span class="badge" style="background:${stgC}22;color:${stgC};border:0.5px solid ${stgC}44;">Stage ${s.stage}: ${s.label}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:10px;color:#555552;">${pairs.length} pool${pairs.length!==1?'s':''} · ${vola} vola · FDV ${fmt(fdv)}</span>
+        <button class="export-btn" onclick="document.getElementById('audit-addr').value=lastLPAddr;const t=[...document.querySelectorAll('.tab')].find(b=>b.textContent.includes('Auditor'));switchTab('auditor',t);runAudit();">→ Full Audit</button>
+      </div>
+    </div>
+    <div class="mrow" style="margin-bottom:10px;">
+      <div class="mc2"><div class="ml">Price</div><div class="mv">${price>0?'$'+price.toPrecision(4):'—'}</div><div class="ms" style="color:${priceColor};">${priceChg>=0?'+':''}${priceChg.toFixed(1)}% 24h</div></div>
+      <div class="mc2"><div class="ml">Market Cap</div><div class="mv">${fmt(mc)}</div></div>
+      <div class="mc2"><div class="ml">TVL</div><div class="mv">${fmt(tvl)}</div></div>
+      <div class="mc2"><div class="ml">Vol 24h</div><div class="mv">${fmt(vol24)}</div></div>
+      <div class="mc2"><div class="ml">Vol / Liq</div><div class="mv">${volLiq.toFixed(2)}x</div><div class="ms">${volLiq>=1?'↑ strong':volLiq>=0.3?'ok':'⚠ thin'}</div></div>
+      <div class="mc2"><div class="ml">Liq Ratio</div><div class="mv" style="color:${lrColor};">${liqRatio.toFixed(1)}%</div><div class="ms">${liqRatio<2?'⚠ critical':liqRatio<5?'⚠ thin':'✓ ok'}</div></div>
+    </div>
+    <div style="border:0.5px solid ${decColor}55;border-radius:8px;overflow:hidden;margin-bottom:12px;">
+      <div style="background:${decColor}18;padding:10px 14px;border-bottom:0.5px solid ${decColor}33;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:${decColor};margin-bottom:4px;">${risk} risk · ${horizon} · ${goal}</div>
+          <div style="font-size:20px;font-weight:600;color:${decColor};letter-spacing:-0.01em;">${decision}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:9px;color:#555552;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Capital</div>
+          <div style="font-size:15px;font-weight:500;color:#e8e8e6;">${fmt(capital)}</div>
+        </div>
+      </div>
+      <div style="padding:12px 14px;background:#0f0f0f;">
+        <p style="font-size:12px;color:#888884;line-height:1.8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:0;">${rationale}</p>
+      </div>
+    </div>
+    ${config?`
+    <div class="sl">Configuration</div>
+    <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#0f0f0f;padding:2px 0;margin-bottom:12px;">
+      ${Object.entries(config).map(([k,v],i,arr)=>`<div style="display:flex;gap:10px;align-items:baseline;padding:6px 12px;${i<arr.length-1?'border-bottom:0.5px solid rgba(255,255,255,0.05)':''}"><span style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#555552;min-width:80px;flex-shrink:0;">${k.replace(/([A-Z])/g,' $1').trim()}</span><span style="font-size:11px;color:#e8e8e6;">${v}</span></div>`).join('')}
+    </div>`:''}
+    ${outcomes.length||risks.length||watchList.length?`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;">
+      ${outcomes.length?`<div style="border:0.5px solid rgba(29,158,117,0.25);border-radius:6px;padding:10px 12px;background:rgba(29,158,117,0.05);">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#1D9E75;margin-bottom:8px;">Expected outcomes</div>
+        ${outcomes.map(o=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#888884;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#1D9E75;flex-shrink:0;">→</span><span>${o}</span></div>`).join('')}
+      </div>`:''}
+      ${risks.length?`<div style="border:0.5px solid rgba(201,74,74,0.25);border-radius:6px;padding:10px 12px;background:rgba(201,74,74,0.05);">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#c94a4a;margin-bottom:8px;">Risk flags</div>
+        ${risks.map(r=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#888884;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#c94a4a;flex-shrink:0;">⚑</span><span>${r}</span></div>`).join('')}
+      </div>`:''}
+      ${watchList.length?`<div style="border:0.5px solid rgba(186,117,23,0.25);border-radius:6px;padding:10px 12px;background:rgba(186,117,23,0.05);">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#BA7517;margin-bottom:8px;">What to watch</div>
+        ${watchList.map(w=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#888884;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#BA7517;flex-shrink:0;">◎</span><span>${w}</span></div>`).join('')}
+      </div>`:''}
+    </div>`:''}
+    <div class="sl" style="margin-top:14px;">Pool inventory</div>
+    <div class="pool-wrap">
+      <div class="ph"><span style="min-width:110px;">DEX</span><span style="min-width:90px;">Type</span><span style="min-width:75px;">TVL</span><span style="min-width:75px;">Vol 24h</span><span style="min-width:65px;">Fees 24h</span><span style="min-width:50px;">Util</span><span style="min-width:60px;">24h Δ</span><span>Links</span></div>
+      ${buildPoolRows(pairs)}
+    </div>`;
+  btn.disabled=false;
+}
+
+// ── PORTFOLIO ─────────────────────────────────────────────────────────────────
+function savePortfolio(){localStorage.setItem('slt_portfolio',JSON.stringify(portfolioTokens));}
+
+function setPortSort(s,el){
+  portSort=s;
+  document.querySelectorAll('[id^="psort-"]').forEach(b=>b.classList.remove('primary'));
+  el.classList.add('primary');
+  renderPortfolio();
+}
+function setPortFilter(f,el){
+  portFilter=f;
+  document.querySelectorAll('[id^="pfilter-"]').forEach(b=>b.classList.remove('primary'));
+  el.classList.add('primary');
+  renderPortfolio();
+}
+function cycleTag(addr,ev){
+  ev.stopPropagation();
+  const idx=portfolioTokens.findIndex(t=>t.address===addr);
+  if(idx===-1) return;
+  const ci=TAG_CYCLE.indexOf(portfolioTokens[idx].tag||null);
+  portfolioTokens[idx].tag=TAG_CYCLE[(ci+1)%TAG_CYCLE.length];
+  savePortfolio();
+  renderPortfolio();
+}
+
+function addPortfolioToken(){
+  const inp=document.getElementById('port-input');
+  const addr=inp.value.trim();
+  if(!addr){return;}
+  if(portfolioTokens.length>=50){alert('Maximum 50 tokens.');return;}
+  if(portfolioTokens.find(t=>t.address===addr)){inp.value='';return;}
+  portfolioTokens.push({address:addr,name:'...',symbol:'...',mc:0,tvl:0,vol24:0,liqRatio:0,priceChg:0,stage:0,stageLabel:'—',loading:true});
+  savePortfolio();
+  inp.value='';
+  renderPortfolio();
+  fetchPortfolioToken(addr);
+}
+
+async function fetchPortfolioToken(addr){
+  try{
+    const r=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${addr}`);
+    const d=await r.json();
+    const pairs=d.pairs||[];
+    const idx=portfolioTokens.findIndex(t=>t.address===addr);
+    if(idx===-1) return;
+    if(!pairs.length){portfolioTokens[idx]={...portfolioTokens[idx],name:'Not found',symbol:'?',loading:false,error:true};savePortfolio();renderPortfolio();return;}
+    const ti=pairs[0].baseToken||{};
+    const mc=parseFloat(pairs[0].marketCap)||0;
+    let tvl=0,vol24=0;
+    pairs.forEach(p=>{tvl+=parseFloat(p.liquidity?.usd||0);vol24+=parseFloat(p.volume?.h24||0);});
+    const s=classifyStage(mc);
+    portfolioTokens[idx]={
+      address:addr,
+      name:ti.name||'Unknown',symbol:ti.symbol||'?',
+      price:parseFloat(pairs[0].priceUsd)||0,
+      mc,tvl,vol24,
+      liqRatio:mc>0?tvl/mc*100:0,
+      priceChg:parseFloat(pairs[0]?.priceChange?.h24||0),
+      estFees:vol24*0.003,
+      stage:s.stage,stageLabel:s.label,
+      pairs:pairs.length,loading:false,error:false
+    };
+    savePortfolio();renderPortfolio();
+  }catch(e){
+    const idx=portfolioTokens.findIndex(t=>t.address===addr);
+    if(idx!==-1){portfolioTokens[idx]={...portfolioTokens[idx],name:'Fetch error',loading:false,error:true};savePortfolio();renderPortfolio();}
+  }
+}
+
+async function refreshPortfolio(){
+  portfolioTokens.forEach(t=>{t.loading=true;});
+  renderPortfolio();
+  for(const t of portfolioTokens) await fetchPortfolioToken(t.address);
+}
+
+function removePortfolioToken(addr){
+  portfolioTokens=portfolioTokens.filter(t=>t.address!==addr);
+  savePortfolio();renderPortfolio();
+}
+
+function openAuditFromPortfolio(addr){
+  document.getElementById('audit-addr').value=addr;
+  const tab=[...document.querySelectorAll('.tab')].find(b=>b.textContent.includes('Auditor'));
+  switchTab('auditor',tab);
+  runAudit();
+}
+
+// ── DISCOVER ─────────────────────────────────────────────────────────────────
+// ── LIVE LP TRENDING ─────────────────────────────────────────────────────────
+
+// ── DISCOVER ─────────────────────────────────────────────────────────────────
+
+let discoverLoaded=false;
+
+async function runDiscover(){
+  if(discoverLoaded) return;
+  discoverLoaded=true;
+  const el=document.getElementById('disc-out');
+  el.innerHTML='<div class="ph2" style="padding:20px 0;color:#555552;">Fetching trending tokens...</div>';
+  try{
+    const r1=await fetch('https://api.dexscreener.com/token-boosts/top/v1');
+    const raw=await r1.json();
+    const boosts=(Array.isArray(raw)?raw:[]).filter(b=>b.chainId==='solana');
+    if(!boosts.length){el.innerHTML='<div class="ph2">No Solana trending data available. <button class="disc-btn" style="margin-left:8px;" onclick="discoverLoaded=false;runDiscover()">Retry</button></div>';return;}
+    const addresses=[...new Set(boosts.map(b=>b.tokenAddress))].slice(0,20);
+    const r2=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${addresses.join(',')}`);
+    const d2=await r2.json();
+    const pairs=d2.pairs||[];
+    const tokenMap={};
+    for(const p of pairs){
+      const addr=p.baseToken?.address;
+      if(!addr) continue;
+      const pVol=parseFloat(p.volume?.h24||0);
+      if(!tokenMap[addr]) tokenMap[addr]={
+        address:addr,name:p.baseToken?.name||'?',symbol:p.baseToken?.symbol||'?',
+        price:parseFloat(p.priceUsd)||0,mc:parseFloat(p.marketCap)||0,
+        priceChg:0,priceH1:0,priceH6:0,
+        tvl:0,vol24:0,volH1:0,volH6:0,pools:0,_topVol:0
+      };
+      tokenMap[addr].tvl+=parseFloat(p.liquidity?.usd||0);
+      tokenMap[addr].vol24+=pVol;
+      tokenMap[addr].volH1+=parseFloat(p.volume?.h1||0);
+      tokenMap[addr].volH6+=parseFloat(p.volume?.h6||0);
+      tokenMap[addr].pools++;
+      if(pVol>tokenMap[addr]._topVol){
+        tokenMap[addr]._topVol=pVol;
+        tokenMap[addr].price=parseFloat(p.priceUsd)||tokenMap[addr].price;
+        tokenMap[addr].priceChg=parseFloat(p.priceChange?.h24)||0;
+        tokenMap[addr].priceH1=parseFloat(p.priceChange?.h1)||0;
+        tokenMap[addr].priceH6=parseFloat(p.priceChange?.h6)||0;
+      }
+    }
+    discTokenData=Object.values(tokenMap).filter(t=>t.mc>0);
+    if(!discTokenData.length){el.innerHTML='<div class="ph2">No token data returned. <button class="disc-btn" style="margin-left:8px;" onclick="discoverLoaded=false;runDiscover()">Retry</button></div>';return;}
+    renderDiscGrid();
+  }catch(e){
+    discoverLoaded=false;
+    el.innerHTML=`<div class="ph2" style="color:#c94a4a;">Failed to load trending data. <button class="disc-btn" style="margin-left:8px;" onclick="runDiscover()">Retry</button></div>`;
+  }
+}
+
+function renderDiscCard(t){
+  const s=classifyStage(t.mc),c=sc(s.stage);
+  const lr=t.tvl>0&&t.mc>0?t.tvl/t.mc*100:0;
+  const lrColor=lr<2?'#c94a4a':lr<5?'#BA7517':'#1D9E75';
+  const chColor=t.priceChg>=0?'#1D9E75':'#c94a4a';
+  const priceStr=t.price===0?'—':t.price<0.00001?'$'+t.price.toPrecision(3):t.price<0.01?'$'+t.price.toFixed(6):t.price<1?'$'+t.price.toFixed(4):'$'+t.price.toFixed(2);
+  return `<div class="disc-card">
+    <div class="disc-header">
+      <span class="disc-sym">${t.symbol}</span>
+      <span class="disc-name">${t.name}</span>
+      <span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;flex-shrink:0;">S${s.stage}</span>
+      <span style="font-size:11px;font-weight:500;color:${chColor};margin-left:auto;flex-shrink:0;">${t.priceChg>=0?'+':''}${t.priceChg.toFixed(1)}%</span>
+    </div>
+    <div class="disc-price">${priceStr}</div>
+    <div class="disc-metrics">
+      <div class="disc-m"><span class="dl">MC</span><span class="dv">${fmt(t.mc)}</span></div>
+      <div class="disc-m"><span class="dl">Vol 24h</span><span class="dv">${fmt(t.vol24)}</span></div>
+      <div class="disc-m"><span class="dl">TVL</span><span class="dv">${fmt(t.tvl)}</span></div>
+      <div class="disc-m"><span class="dl">Liq Ratio</span><span class="dv" style="color:${lrColor};">${lr.toFixed(1)}%</span></div>
+      <div class="disc-m"><span class="dl">Pools</span><span class="dv">${t.pools}</span></div>
+    </div>
+    <div class="disc-actions">
+      <button class="disc-btn primary" onclick="openAuditFromDiscover('${t.address}')">⊕ Audit</button>
+      <button class="disc-btn" onclick="openLiveLPFromDiscover('${t.address}')">⚡ Live LP</button>
+      <button class="disc-btn" id="disc-add-${t.address.slice(-6)}" onclick="addToPortfolioFromDiscover(event,'${t.address}')">+ Portfolio</button>
+    </div>
+  </div>`;
+}
+
+function openAuditFromDiscover(addr){
+  document.getElementById('audit-addr').value=addr;
+  const tab=[...document.querySelectorAll('.tab')].find(b=>b.textContent.includes('Auditor'));
+  switchTab('auditor',tab);
+  runAudit();
+}
+
+function openLiveLPFromDiscover(addr){
+  document.getElementById('lp-addr').value=addr;
+  const tab=[...document.querySelectorAll('.tab')].find(b=>b.textContent.includes('Live LP'));
+  switchTab('livelp',tab);
+  runLiveLP();
+}
+
+function addToPortfolioFromDiscover(ev,addr){
+  ev.stopPropagation();
+  if(portfolioTokens.find(t=>t.address===addr)){ev.target.textContent='✓ Added';ev.target.disabled=true;return;}
+  if(portfolioTokens.length>=50){alert('Maximum 50 tokens.');return;}
+  portfolioTokens.push({address:addr,name:'...',symbol:'...',mc:0,tvl:0,vol24:0,liqRatio:0,priceChg:0,stage:0,stageLabel:'—',loading:true});
+  savePortfolio();
+  fetchPortfolioToken(addr);
+  ev.target.textContent='✓ Added';
+  ev.target.disabled=true;
+}
+
+let discMode='volume';
+let discTime='24';
+let discTokenData=null;
+
+async function searchDiscover(){
+  const raw=document.getElementById('disc-search').value.trim();
+  if(!raw) return;
+  const q=raw.startsWith('$')?raw.slice(1):raw;
+  const el=document.getElementById('disc-out');
+  el.innerHTML='<div class="ph2" style="padding:20px 0;color:#555552;">Searching...</div>';
+  try{
+    const r=await fetch(`https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(q)}`);
+    const d=await r.json();
+    const pairs=(d.pairs||[]).filter(p=>p.chainId==='solana');
+    if(!pairs.length){
+      el.innerHTML=`<div style="margin-bottom:12px;"><button class="disc-btn" onclick="restoreDiscover()">← Trending</button></div><div class="ph2">No Solana results for <strong style="color:#e8e8e6;">${raw}</strong>.</div>`;
+      return;
+    }
+    const tokenMap={};
+    for(const p of pairs){
+      const addr=p.baseToken?.address;
+      if(!addr) continue;
+      if(!tokenMap[addr]) tokenMap[addr]={
+        address:addr,name:p.baseToken?.name||'?',symbol:p.baseToken?.symbol||'?',
+        price:parseFloat(p.priceUsd)||0,mc:parseFloat(p.marketCap)||0,
+        priceChg:parseFloat(p.priceChange?.h24)||0,tvl:0,vol24:0,pools:0
+      };
+      tokenMap[addr].tvl+=parseFloat(p.liquidity?.usd||0);
+      tokenMap[addr].vol24+=parseFloat(p.volume?.h24||0);
+      tokenMap[addr].pools++;
+    }
+    const tokens=Object.values(tokenMap).filter(t=>t.mc>0).sort((a,b)=>b.vol24-a.vol24);
+    el.innerHTML=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><button class="disc-btn" onclick="restoreDiscover()">← Trending</button><span style="font-size:10px;color:#555552;">${tokens.length} result${tokens.length!==1?'s':''} for <strong style="color:#e8e8e6;">${raw}</strong> · sorted by 24h volume</span></div><div class="disc-grid">${tokens.map(renderDiscCard).join('')}</div>`;
+  }catch(e){
+    el.innerHTML=`<div style="margin-bottom:12px;"><button class="disc-btn" onclick="restoreDiscover()">← Trending</button></div><div class="ph2" style="color:#c94a4a;">Search failed. Check your connection and try again.</div>`;
+  }
+}
+
+function getDiscVal(t){
+  if(discMode==='volume'){
+    if(discTime==='1')  return t.volH1||0;
+    if(discTime==='4')  return (t.volH6||0)*(4/6);
+    if(discTime==='12') return ((t.volH6||0)+(t.vol24||0))/2;
+    return t.vol24||0;
+  }
+  if(discTime==='1')  return t.priceH1||0;
+  if(discTime==='4')  return (t.priceH6||0)*(4/6);
+  if(discTime==='12') return ((t.priceH6||0)+(t.priceChg||0))/2;
+  return t.priceChg||0;
+}
+
+function getDiscLabel(){
+  return {'1':'1h','4':'~4h','12':'~12h','24':'24h'}[discTime]||'24h';
+}
+
+function renderDiscGrid(){
+  const el=document.getElementById('disc-out');
+  if(!discTokenData||!discTokenData.length){el.innerHTML='<div class="ph2">No data.</div>';return;}
+  const sorted=[...discTokenData].sort((a,b)=>getDiscVal(b)-getDiscVal(a));
+  const lbl=getDiscLabel();
+  const modeLabel=discMode==='volume'?`vol ${lbl}`:`price chg ${lbl}`;
+  el.innerHTML=`<div style="font-size:10px;color:#555552;margin-bottom:10px;">${discTokenData.length} tokens · sorted by ${modeLabel} · <button class="disc-btn" style="padding:2px 8px;" onclick="discoverLoaded=false;discTokenData=null;runDiscover()">↺ Refresh</button></div><div class="disc-grid">${sorted.map(renderDiscCard).join('')}</div>`;
+}
+
+function setDiscMode(mode,el){
+  discMode=mode;
+  document.querySelectorAll('#disc-vol,#disc-mc').forEach(b=>b.classList.remove('primary'));
+  el.classList.add('primary');
+  if(discTokenData) renderDiscGrid();
+}
+
+function setDiscTime(t,el){
+  discTime=t;
+  document.querySelectorAll('#disc-t1,#disc-t4,#disc-t12,#disc-t24').forEach(b=>b.classList.remove('primary'));
+  el.classList.add('primary');
+  if(discTokenData) renderDiscGrid();
+}
+
+function restoreDiscover(){
+  document.getElementById('disc-search').value='';
+  if(discTokenData&&discTokenData.length){
+    renderDiscGrid();
+  }else{
+    discoverLoaded=false;
+    runDiscover();
+  }
+}
+
+function calcHealthScore(t){
+  let score=0;
+  const lr=t.liqRatio||0;
+  const vl=t.tvl>0?(t.vol24/t.tvl):0;
+  const pc=Math.abs(t.priceChg||0);
+  const pools=t.pairs||1;
+  // Liquidity ratio (0–30)
+  score+=lr>=10?30:lr>=5?22:lr>=3?14:lr>=1?6:0;
+  // Vol/Liq (0–25)
+  score+=vl>=1?25:vl>=0.5?20:vl>=0.2?12:vl>=0.05?5:0;
+  // Price stability — low abs 24h change (0–20)
+  score+=pc<=5?20:pc<=10?15:pc<=20?8:pc<=35?3:0;
+  // Fragmentation — fewer pools = healthier concentration (0–15)
+  score+=pools<=3?15:pools<=6?10:pools<=10?5:0;
+  // Stage maturity (0–10)
+  score+=t.stage>=3?10:t.stage>=1?7:3;
+  return Math.min(100,Math.max(0,Math.round(score)));
+}
+
+function healthMeta(score){
+  if(score>=80) return{label:'Healthy',color:'#1D9E75'};
+  if(score>=60) return{label:'Moderate',color:'#BA7517'};
+  if(score>=40) return{label:'Weak',color:'#D85A30'};
+  return{label:'Critical',color:'#c94a4a'};
+}
+
+function getPortfolioAlert(t,hs){
+  const lr=t.liqRatio||0,ch=t.priceChg||0,pools=t.pairs||1;
+  const vl=t.tvl>0?(t.vol24/t.tvl):0;
+  if(lr<2) return{msg:'Liquidity critically thin — liq ratio below 2%. Price impact will repel volume.',color:'#c94a4a'};
+  if(hs<40) return{msg:'Overall health critical — multiple structure problems compound each other.',color:'#c94a4a'};
+  if(ch<-20) return{msg:`Price down ${Math.abs(ch).toFixed(0)}% in 24h — DLMM bins may have exited range. Check active bin utilization.`,color:'#BA7517'};
+  if(ch>20) return{msg:`Price up ${ch.toFixed(0)}% in 24h — DLMM bins may have exited range. Consider rebalancing.`,color:'#BA7517'};
+  if(pools>8) return{msg:`${pools} pools detected — liquidity fragmented across too many venues. Routing competitiveness is reduced.`,color:'#BA7517'};
+  if(t.stage===0&&vl<0.1) return{msg:'Stage 0 with vol/liq below 0.1x — volume has not established. LP fees will not cover IL.',color:'#BA7517'};
+  return null;
+}
+
+function renderPortfolio(){
+  const el=document.getElementById('portfolio-list');
+  if(!portfolioTokens.length){el.innerHTML='<div class="port-empty">No tokens tracked yet. Add a mint address above.</div>';return;}
+  // sync sort buttons
+  document.querySelectorAll('[id^="psort-"]').forEach(b=>b.classList.remove('primary'));
+  const activeSortBtn=document.getElementById('psort-'+portSort);
+  if(activeSortBtn) activeSortBtn.classList.add('primary');
+  // sync filter buttons
+  document.querySelectorAll('[id^="pfilter-"]').forEach(b=>b.classList.remove('primary'));
+  const activeFilterBtn=document.getElementById('pfilter-'+portFilter);
+  if(activeFilterBtn) activeFilterBtn.classList.add('primary');
+  // filter then sort
+  const visible=portFilter==='all'?[...portfolioTokens]:portfolioTokens.filter(t=>(t.tag||null)===portFilter);
+  if(!visible.length){el.innerHTML='<div class="port-empty">No tokens with this tag.</div>';return;}
+  const sorted=visible.sort((a,b)=>{
+    if(portSort==='stage-desc') return (b.stage||0)-(a.stage||0);
+    if(portSort==='stage-asc')  return (a.stage||0)-(b.stage||0);
+    if(portSort==='liq')        return (b.liqRatio||0)-(a.liqRatio||0);
+    if(portSort==='health')     return calcHealthScore(a)-calcHealthScore(b);
+    if(portSort==='alpha')      return (a.name||a.symbol||'').localeCompare(b.name||b.symbol||'');
+    return 0;
+  });
+  el.innerHTML=sorted.map(t=>{
+    const c=sc(t.stage||0),ch=t.priceChg||0;
+    const lr=t.liqRatio||0;
+    const lrColor=lr<2?'#c94a4a':lr<5?'#BA7517':'#1D9E75';
+    if(t.loading) return `<div class="portfolio-card"><div class="portfolio-card-header"><span class="portfolio-card-name" style="color:#555552;">Loading...</span></div><div class="portfolio-card-addr">${t.address}</div></div>`;
+    if(t.error) return `<div class="portfolio-card"><div class="portfolio-card-header"><span class="portfolio-card-name" style="color:#c94a4a;">${t.name}</span><button onclick="removePortfolioToken('${t.address}')" style="margin-left:auto;background:none;border:none;color:#555552;cursor:pointer;font-size:11px;">✕ remove</button></div><div class="portfolio-card-addr">${t.address}</div></div>`;
+    const hs=calcHealthScore(t),hm=healthMeta(hs),alert=getPortfolioAlert(t,hs);
+    const tm=t.tag?PORT_TAGS[t.tag]:null;
+    return `<div class="portfolio-card" onclick="openAuditFromPortfolio('${t.address}')">
+      <div class="portfolio-card-header">
+        <span class="portfolio-card-name">${t.name}</span>
+        <span class="portfolio-card-sym">${t.symbol}</span>
+        <span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;margin-left:4px;">Stage ${t.stage}: ${t.stageLabel}</span>
+        <span style="margin-left:auto;color:${ch>=0?'#1D9E75':'#c94a4a'};font-size:11px;">${ch>=0?'+':''}${ch.toFixed(1)}% 24h</span>
+        <button onclick="event.stopPropagation();removePortfolioToken('${t.address}')" style="background:none;border:none;color:#555552;cursor:pointer;font-size:11px;margin-left:8px;">✕</button>
+      </div>
+      <div class="portfolio-card-addr">${t.address}</div>
+      <div style="margin:4px 0 2px;">${tm?`<span onclick="event.stopPropagation();cycleTag('${t.address}')" style="cursor:pointer;font-size:9px;letter-spacing:0.06em;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:${tm.color}22;color:${tm.color};border:0.5px solid ${tm.color}44;">${tm.label}</span>`:`<span onclick="event.stopPropagation();cycleTag('${t.address}')" style="cursor:pointer;font-size:9px;letter-spacing:0.04em;padding:2px 8px;border-radius:3px;color:#333332;border:0.5px solid #252525;">+ tag</span>`}</div>
+      <div class="portfolio-metrics">
+        <div class="portfolio-metric"><span class="pm-l">Market Cap</span><span class="pm-v">${fmt(t.mc)}</span></div>
+        <div class="portfolio-metric"><span class="pm-l">TVL</span><span class="pm-v">${fmt(t.tvl)}</span></div>
+        <div class="portfolio-metric"><span class="pm-l">Vol 24h</span><span class="pm-v">${fmt(t.vol24)}</span></div>
+        <div class="portfolio-metric"><span class="pm-l">Liq Ratio</span><span class="pm-v" style="color:${lrColor};">${lr.toFixed(1)}%</span></div>
+        <div class="portfolio-metric"><span class="pm-l">Est. Fees/day</span><span class="pm-v">${fmt(t.estFees||0)}</span></div>
+        <div class="portfolio-metric"><span class="pm-l">Pools</span><span class="pm-v">${t.pairs||'—'}</span></div>
+      </div>
+      <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:#555552;letter-spacing:0.04em;white-space:nowrap;">HEALTH</span>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;"><div style="width:${hs}%;height:100%;background:${hm.color};border-radius:2px;transition:width .3s;"></div></div>
+        <span style="font-size:12px;font-weight:600;color:${hm.color};min-width:24px;text-align:right;">${hs}</span>
+        <span style="font-size:10px;color:${hm.color};min-width:48px;">${hm.label}</span>
+      </div>
+      ${alert?`<div style="margin-top:6px;padding:6px 8px;background:${alert.color}11;border:0.5px solid ${alert.color}33;border-radius:4px;display:flex;align-items:flex-start;gap:6px;"><span style="color:${alert.color};font-size:11px;flex-shrink:0;">⚠</span><span style="font-size:11px;color:${alert.color};line-height:1.4;">${alert.msg}</span></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── ARCHITECT run ─────────────────────────────────────────────────────────────
+function runArchitect(){
+  const mc=parseFloat(document.getElementById('a-mc').value)||50000;
+  const fdv=parseFloat(document.getElementById('a-fdv').value)||500000;
+  const capital=parseFloat(document.getElementById('a-capital').value)||25000;
+  const vol=parseFloat(document.getElementById('a-vol').value)||5000;
+  const treasury=parseFloat(document.getElementById('a-treasury').value)||20;
+  const lpalloc=parseFloat(document.getElementById('a-lpalloc').value)||10;
+  const vola=document.getElementById('a-vola').value;
+  const bsr=parseFloat(document.getElementById('a-bsratio').value)||1.2;
+  const holders=parseFloat(document.getElementById('a-holders').value)||100;
+  const top10=parseFloat(document.getElementById('a-top10').value)||40;
+  const mc30=parseFloat(document.getElementById('a-mc30').value)||250000;
+  const mc90=parseFloat(document.getElementById('a-mc90').value)||1000000;
+  const mc180=parseFloat(document.getElementById('a-mc180').value)||5000000;
+  const s=classifyStage(mc),c=sc(s.stage);
+  const obj=archObjective;
+  const deploy=buildDeployPlan(capital,s,vola,bsr,mc,vol,obj);
+  const migSteps=buildMigSteps(mc,mc30,mc90,mc180,capital,vola,bsr);
+  const paras=archAnalysis({mc,fdv,capital,vol,vola,bsr,treasury,top10,holders,mc30,mc90},deploy,obj);
+  document.getElementById('arch-out').innerHTML=`
+    <div class="mrow">
+      <div class="mc2"><div class="ml">Market Cap</div><div class="mv">${fmt(mc)}</div></div>
+      <div class="mc2"><div class="ml">Capital to Deploy</div><div class="mv">${fmtD(capital)}</div></div>
+      <div class="mc2"><div class="ml">Liq/MC Ratio</div><div class="mv">${(capital/mc*100).toFixed(1)}%</div><div class="ms">${capital/mc*100<3?'⚠ too thin':capital/mc*100<8?'⚠ below target':'✓ healthy'}</div></div>
+      <div class="mc2"><div class="ml">Vol/Liq</div><div class="mv">${(vol/capital).toFixed(2)}x</div></div>
+      <div class="mc2"><div class="ml">Est. Daily Fees</div><div class="mv">${fmtD(deploy.estFees)}</div><div class="ms">at current vol</div></div>
+      <div class="mc2"><div class="ml">CRI Top 10</div><div class="mv">${top10}%</div><div class="ms">${top10>50?'⚠ extreme':top10>35?'⚠ elevated':'✓ ok'}</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin:10px 0;">
+      <span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;font-size:11px;padding:3px 10px;">Stage ${s.stage}: ${s.label}</span>
+      <span style="font-size:11px;color:#888884;">Shape → <strong style="color:#e8e8e6;">${deploy.shape}</strong> · ${deploy.rw}</span>
+    </div>
+    <div class="lrow">
+      <span class="ldot" style="background:#1D9E75;"></span><span class="llbl">DAMM ${deploy.damm}% · ${fmtD(deploy.dammAmt)}</span>
+      <span class="ldot" style="background:#378ADD;"></span><span class="llbl">DLMM ${deploy.dlmm}% · ${fmtD(deploy.dlmmAmt)}</span>
+      ${deploy.clmm>0?`<span class="ldot" style="background:#D85A30;"></span><span class="llbl">CLMM ${deploy.clmm}% · ${fmtD(deploy.clmmAmt)}</span>`:''}
+      <span class="ldot" style="background:#2a2a2a;border:0.5px solid #444;"></span><span class="llbl">Reserve ${fmtD(deploy.resAmt)}</span>
+    </div>
+    <div class="abar"><div class="fd" style="width:${deploy.damm}%"></div><div class="fdl" style="width:${deploy.dlmm}%"></div><div class="fcl" style="width:${deploy.clmm}%"></div><div style="background:#222;flex:1;"></div></div>
+    <div class="sl" style="margin-top:18px;">Deployment plan</div>
+    <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;overflow-x:auto;margin-bottom:16px;">
+      <table class="dtable"><thead><tr><th>Pool</th><th>Amount</th><th>Configuration</th><th>Migration trigger</th></tr></thead>
+      <tbody>${deploy.rows}</tbody></table>
+    </div>
+    <div class="sl">Migration roadmap</div>
+    <div style="margin-bottom:16px;">${migSteps||'<span style="color:#555552;font-size:11px;">No migrations needed — targets within current stage.</span>'}</div>
+    <div class="sl">Lifecycle capital plan</div>
+    <div style="overflow-x:auto;margin-bottom:16px;">
+      <table class="lt" style="min-width:680px;">
+        <colgroup><col style="width:65px"><col style="width:95px"><col style="width:90px"><col style="width:90px"><col style="width:80px"><col style="width:110px"><col style="width:65px"><col></colgroup>
+        <thead><tr><th>MC</th><th>Stage</th><th>DAMM</th><th>DLMM</th><th>CLMM</th><th>Shape</th><th>Range</th><th>Migration trigger</th></tr></thead>
+        <tbody>${lifecycle(mc,vola,bsr,capital)}</tbody>
+      </table>
+    </div>
+    <div class="analysis"><div class="analysis-label">◈ Architecture analysis</div>${paras.map(p=>`<p>${p}</p>`).join('')}</div>`;
+}
+
+// ── AUDITOR run ───────────────────────────────────────────────────────────────
+async function runAudit(){
+  const btn=document.getElementById('audit-btn');btn.disabled=true;
+  const addr=document.getElementById('audit-addr').value.trim();
+  if(!addr){document.getElementById('audit-out').innerHTML='<span class="err">Enter a token address.</span>';btn.disabled=false;return;}
+  const out=document.getElementById('audit-out');
+  out.innerHTML='<span class="blink">Fetching from DexScreener...</span>';
+  let pairs=[];
+  try{
+    const r=await fetch(`https://api.dexscreener.com/latest/dex/tokens/${addr}`);
+    const d=await r.json();pairs=d.pairs||[];
+  }catch(e){
+    out.innerHTML=`<span class="err">Fetch failed: ${e.message}<br><br>Open this file directly in your browser (File → Open). Chrome and Firefox both work fine.</span>`;
+    btn.disabled=false;return;
+  }
+  if(!pairs.length){
+    out.innerHTML='<span class="err">No pools found. Use the token mint address, not the pair address.<br>$ORE: oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp</span>';
+    btn.disabled=false;return;
+  }
+  const ti=pairs[0].baseToken||{};
+  const price=parseFloat(pairs[0].priceUsd)||0;
+  const mc=parseFloat(pairs[0].marketCap)||0;
+  const fdv=parseFloat(pairs[0].fdv)||mc;
+  let tvl=0,vol24=0;
+  pairs.forEach(p=>{tvl+=parseFloat(p.liquidity?.usd||0);vol24+=parseFloat(p.volume?.h24||0);});
+  const liqRatio=tvl>0&&mc>0?tvl/mc*100:0;
+  const volLiq=tvl>0?vol24/tvl:0;
+  const priceChg=parseFloat(pairs[0]?.priceChange?.h24||0);
+  const avgChg=pairs.slice(0,5).reduce((a,p)=>a+Math.abs(parseFloat(p.priceChange?.h24||0)),0)/Math.min(pairs.length,5);
+  const vola=avgChg>20?'Extreme':avgChg>10?'High':avgChg>5?'Medium':'Low';
+  const s=classifyStage(mc),c=sc(s.stage);
+  const estFees=vol24*0.003;
+  const feeDensity=tvl>0?estFees/tvl*100:0;
+  const obj=auditObjective,cfg=objConfig(obj);
+  const sh=getShape(vola,1.0,obj),rwv=getRW(vola,obj);
+  let recDamm=s.damm,recDlmm=s.dlmm,recClmm=s.clmm;
+  if(obj==='fee'){recDlmm=Math.min(100,recDlmm+10);recDamm=Math.max(0,recDamm-10);}
+  if(obj==='stability'){recDamm=Math.min(100,recDamm+10);recDlmm=Math.max(0,recDlmm-10);}
+  const poolRows=buildPoolRows(pairs);
+  const donut=buildDonutChart(pairs,tvl);
+  const paras=auditAnalysis({name:ti.name||'Unknown',symbol:ti.symbol||'?',mc,fdv,tvl,vol24,liqRatio,volLiq,pairs,priceChg,vola,stage:s.stage},obj);
+  const slipData=[500,1000,5000,10000].map(sz=>{const imp=estSlippage(sz,pairs);return{sz,imp,col:imp<0.5?'#1D9E75':imp<1?'#BA7517':imp<3?'#D85A30':'#c94a4a',lbl:imp<0.5?'Excellent':imp<1?'Acceptable':imp<3?'High':'Very high'};});
+  const microCapHTML=buildMicroCapSection(mc,volLiq,tvl);
+  const fragScore=calcFragScore(pairs);
+  const fragLabel=fragScore>=75?'Healthy':fragScore>=50?'Moderate':fragScore>=25?'Fragmented':'Severely Fragmented';
+  const fragColor=fragScore>=75?'#1D9E75':fragScore>=50?'#BA7517':fragScore>=25?'#D85A30':'#c94a4a';
+  const domTVL=pairs.reduce((mx,p)=>Math.max(mx,parseFloat(p.liquidity?.usd||0)),0);
+  const domPct=tvl>0?(domTVL/tvl*100):0;
+  const fragExpl=`Largest pool holds ${domPct.toFixed(0)}% of TVL across ${pairs.length} pool${pairs.length!==1?'s':''}.`;
+  const fragNote=fragScore>=75?'Concentration is healthy — routing is competitive and fee density is near-optimal.'
+    :fragScore>=50?`Moderate spread. Consolidating the ${pairs.length-1} smaller pools into the primary would improve both routing and fee density.`
+    :fragScore>=25?`TVL is spread across ${pairs.length} pools with no dominant position. No single pool has sufficient depth to win Jupiter routing at most trade sizes — consolidation is overdue.`
+    :`Severe fragmentation across ${pairs.length} pools. This structure is actively losing volume to better-structured tokens. Consolidation is the single highest-impact action available.`;
+  const routingScore=calcRoutingScore(pairs,tvl,mc);
+  const routingLabel=routingScore>=70?'Dominant':routingScore>=45?'Competitive':routingScore>=20?'Weak':'Non-competitive';
+  const routingColor=routingScore>=70?'#1D9E75':routingScore>=45?'#BA7517':routingScore>=20?'#D85A30':'#c94a4a';
+  const rMedianTrade=mc<250000?200:mc<1000000?750:mc<5000000?2500:7500;
+  const rDepthNeeded=rMedianTrade*100;
+  const rBestTVL=pairs.reduce((mx,p)=>Math.max(mx,parseFloat(p.liquidity?.usd||0)),0);
+  const rDepthGap=Math.max(0,rDepthNeeded-rBestTVL);
+  const rBestPool=pairs.reduce((mx,p)=>parseFloat(p.liquidity?.usd||0)>parseFloat(mx.liquidity?.usd||0)?p:mx,pairs[0]);
+  const rBestPT=detectPoolType(rBestPool);
+  const rDepthRatio=rBestTVL/(rDepthNeeded||1);
+  const routingFactors=[
+    `Depth: ${fmt(rBestTVL)} in largest pool vs ${fmt(rDepthNeeded)} target for &lt;0.5% slippage at $${rMedianTrade.toLocaleString()} median trade — ${rDepthRatio>=1?'<span style="color:#1D9E75;">sufficient</span>':`<span style="color:#c94a4a;">deficit of ${fmt(rDepthGap)}</span>`}.`,
+    `Fragmentation: ${fragScore}/100 — ${fragScore>=75?'concentrated, favours routing':'fragmented, hurts routing'}.`,
+    `Venue: dominant pool is <strong style="color:#e8e8e6;">${rBestPT.type}</strong> on <strong style="color:#e8e8e6;">${(rBestPool?.dexId||'unknown').replace(/_/g,' ')}</strong> — ${rBestPT.group==='Meteora DLMM'?'<span style="color:#1D9E75;">optimal for Jupiter routing</span>':'<span style="color:#BA7517;">Meteora DLMM scores higher</span>'}.`
+  ];
+  const routingAction=routingScore>=70
+    ?`Maintain this structure — the primary risk is TVL withdrawal or a new competing pool fragmenting the dominant position.`
+    :routingScore>=45
+    ?(rDepthGap>0?`Closing the ${fmt(rDepthGap)} depth gap in the primary pool would push the score into Dominant.`:`Depth is sufficient — the routing limiter is ${fragScore<50?'pool fragmentation; consolidate into one dominant position':'venue; migrating the primary pool to Meteora DLMM would improve route scoring'}.`)
+    :routingScore>=20
+    ?`Two changes: ${pairs.length>3?'consolidate fragmented pools into one dominant position, and ':''}${rBestPT.group!=='Meteora DLMM'?'migrate primary liquidity to Meteora DLMM for optimal routing':'add '+fmt(rDepthGap)+' to primary pool depth to hit the slippage target'}.`
+    :`Not competing for Jupiter routing at current structure. Build a single concentrated Meteora DLMM targeting ${fmt(rDepthNeeded)} depth as the starting point.`;
+
+  // store for export
+  lastAuditData={address:addr,name:ti.name||'Unknown',symbol:ti.symbol||'?',price,mc,fdv,tvl,vol24,liqRatio,volLiq,priceChg,vola,estFees,feeDensity,stage:s,pairs,objective:obj,paras};
+  lastAuditAddr=addr;
+
+  const riskHTML=buildRiskSection(mc,fdv,tvl,vol24,liqRatio,volLiq,priceChg,pairs);
+
+  out.innerHTML=`${riskHTML}
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+      <div>
+        <span style="font-size:14px;font-weight:500;color:#e8e8e6;">${ti.name||'Unknown'}</span>
+        <span style="color:#555552;font-size:11px;margin-left:6px;">${ti.symbol||'?'}</span>
+        <span style="margin-left:8px;background:${cfg.color}18;color:${cfg.color};border:0.5px solid ${cfg.color}44;border-radius:4px;padding:1px 8px;font-size:10px;">${cfg.label}</span>
+      </div>
+      <div class="export-bar" style="margin-bottom:0;">
+        <button class="export-btn" onclick="document.getElementById('lp-addr').value=lastAuditAddr;const t=[...document.querySelectorAll('.tab')].find(b=>b.textContent.includes('Live LP'));switchTab('livelp',t);runLiveLP();">→ Live LP</button>
+        <button class="export-btn" onclick="exportMarkdown()">↓ Markdown</button>
+        <button class="export-btn" onclick="exportCSV()">↓ CSV</button>
+        <button class="export-btn" onclick="exportPrint()">⎙ Print / PDF</button>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#555552;margin-bottom:14px;word-break:break-all;">${addr}</div>
+    <div class="mrow">
+      <div class="mc2"><div class="ml">Price</div><div class="mv">${price>0?'$'+price.toPrecision(4):'—'}</div><div class="ms" style="color:${priceChg>=0?'#1D9E75':'#c94a4a'};">${priceChg>=0?'+':''}${priceChg.toFixed(1)}% 24h</div></div>
+      <div class="mc2"><div class="ml">Market Cap</div><div class="mv">${fmt(mc)}</div></div>
+      <div class="mc2"><div class="ml">Total TVL</div><div class="mv">${fmt(tvl)}</div></div>
+      <div class="mc2"><div class="ml">Vol 24h</div><div class="mv">${fmt(vol24)}</div></div>
+      <div class="mc2"><div class="ml">Liq Ratio</div><div class="mv">${liqRatio.toFixed(1)}%</div><div class="ms">${liqRatio<2?'⚠ critical':liqRatio<5?'⚠ thin':liqRatio>15?'↑ deep':'✓ healthy'}</div></div>
+      <div class="mc2"><div class="ml">Est. Daily Fees</div><div class="mv">${fmt(estFees)}</div></div>
+    </div>
+    <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='grid'?'none':'grid';this.querySelector('.dtgl').textContent=this.nextElementSibling.style.display==='grid'?'▾':'▸';" style="cursor:pointer;display:flex;align-items:center;gap:5px;font-size:10px;color:#444442;margin-bottom:8px;user-select:none;">
+      <span class="dtgl">▸</span>
+      <span>FDV ${fmt(fdv)} · ${pairs.length} pool${pairs.length!==1?'s':''} · ${vola} volatility · ${feeDensity.toFixed(3)}% fee density</span>
+    </div>
+    <div style="display:none;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:5px;margin-bottom:10px;">
+      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">FDV</div><div style="font-size:12px;color:#888884;">${fmt(fdv)}</div></div>
+      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Pools</div><div style="font-size:12px;color:#888884;">${pairs.length}</div></div>
+      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Volatility</div><div style="font-size:12px;color:#888884;">${vola}</div></div>
+      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Fee Density</div><div style="font-size:12px;color:#888884;">${feeDensity.toFixed(3)}%</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+      <span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;">Stage ${s.stage}: ${s.label}</span>
+    </div>
+    <div class="lrow">
+      <span class="ldot" style="background:#1D9E75;"></span><span class="llbl">DAMM ${recDamm}% rec.</span>
+      <span class="ldot" style="background:#378ADD;"></span><span class="llbl">DLMM ${recDlmm}% rec.</span>
+      <span class="ldot" style="background:#D85A30;"></span><span class="llbl">CLMM ${recClmm}% rec.</span>
+    </div>
+    <div class="abar"><div class="fd" style="width:${recDamm}%"></div><div class="fdl" style="width:${recDlmm}%"></div><div class="fcl" style="width:${recClmm}%"></div></div>
+    <div style="font-size:11px;color:#888884;margin:8px 0 14px;">Rec. shape: <span style="color:#e8e8e6;">${sh}</span> · Range: <span style="color:#e8e8e6;">${rwv}</span> · <span style="color:#e8e8e6;">${getBinConfig(mc,obj).desc}</span> · Treasury LP: <span style="color:#e8e8e6;">${getTLP(s.stage)}</span></div>
+
+    <div class="sl">TVL by pool type</div>
+    ${donut}
+
+    <div class="sl">Pool inventory</div>
+    <div class="pool-wrap">
+      <div class="ph"><span style="min-width:110px;">DEX</span><span style="min-width:90px;">Type</span><span style="min-width:75px;">TVL</span><span style="min-width:75px;">Vol 24h</span><span style="min-width:65px;">Fees 24h</span><span style="min-width:50px;">Util</span><span style="min-width:60px;">24h Δ</span><span>Links</span></div>
+      ${poolRows}
+    </div>
+
+    <div class="sl">Slippage estimator</div>
+    <div class="mrow" style="margin-bottom:4px;">
+      ${slipData.map(d=>`<div class="mc2"><div class="ml">$${d.sz>=1000?d.sz/1000+'k':d.sz} trade</div><div class="mv" style="color:${d.col};">${d.imp<0.1?'<0.1':d.imp.toFixed(2)}%</div><div class="ms" style="color:${d.col};">${d.lbl}</div></div>`).join('')}
+    </div>
+    <div style="font-size:10px;color:#555552;margin-bottom:16px;">Estimated against the deepest single pool using pool type concentration factors. Actual impact depends on active bin depth — treat as directional.</div>
+
+    ${microCapHTML}
+
+    <div class="sl">Fragmentation score</div>
+    <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#0f0f0f;padding:14px 16px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:baseline;gap:5px;">
+          <span style="font-size:28px;font-weight:600;color:${fragColor};">${fragScore}</span>
+          <span style="font-size:11px;color:#555552;">/100</span>
+        </div>
+        <span class="badge" style="background:${fragColor}22;color:${fragColor};border:0.5px solid ${fragColor}44;">${fragLabel}</span>
+        <div style="flex:1;min-width:100px;">
+          <div style="height:4px;border-radius:2px;background:#1e1e1e;overflow:hidden;">
+            <div style="height:100%;width:${fragScore}%;background:${fragColor};border-radius:2px;transition:width .3s;"></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#555552;margin-bottom:6px;">${fragExpl}</div>
+      <div style="font-size:12px;color:#888884;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${fragNote}</div>
+    </div>
+
+    <div class="sl">Routing dominance score</div>
+    <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#0f0f0f;padding:14px 16px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:baseline;gap:5px;">
+          <span style="font-size:28px;font-weight:600;color:${routingColor};">${routingScore}</span>
+          <span style="font-size:11px;color:#555552;">/100</span>
+        </div>
+        <span class="badge" style="background:${routingColor}22;color:${routingColor};border:0.5px solid ${routingColor}44;">${routingLabel}</span>
+        <div style="flex:1;min-width:100px;">
+          <div style="height:4px;border-radius:2px;background:#1e1e1e;overflow:hidden;">
+            <div style="height:100%;width:${routingScore}%;background:${routingColor};border-radius:2px;"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
+        ${routingFactors.map(f=>`<div style="display:flex;gap:8px;font-size:11px;color:#555552;line-height:1.6;"><span style="color:#333;flex-shrink:0;">·</span><span>${f}</span></div>`).join('')}
+      </div>
+      <div style="font-size:12px;color:#888884;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;border-top:0.5px solid rgba(255,255,255,0.06);padding-top:10px;">${routingAction}</div>
+    </div>
+
+    <div id="audit-lp-section"><div style="padding:8px 0;font-size:10px;color:#333;"><span class="blink">Loading LP ownership data…</span></div></div>
+
+    <div class="analysis">
+      <div class="analysis-label">◈ Audit analysis &nbsp;<span class="obj-tag" style="background:${cfg.color}18;color:${cfg.color};border:0.5px solid ${cfg.color}44;padding:1px 8px;border-radius:10px;">${cfg.label} objective</span></div>
+      ${paras.map(p=>`<p>${p}</p>`).join('')}
+    </div>`;
+  loadLPOwnershipSection(pairs);
+  btn.disabled=false;
+}
+
+// ── clock ─────────────────────────────────────────────────────────────────────
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
+
+// restore portfolio on load
+renderPortfolio();
+</script>
+</body>
+</html>
