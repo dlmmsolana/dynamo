@@ -12,46 +12,110 @@ This is an internal team tool, free to use, with no monetization. The output qua
 
 ---
 
-## Current State (v0.2 — Static HTML)
+## Current State (v1.0 — Next.js on Vercel)
 
-The current build is a single `index.html` file. It runs locally in a browser with no backend, no auth, no database. Data is fetched client-side from DexScreener and Jupiter public APIs. Everything works via file open in Chrome/Firefox.
+The app has been fully migrated from the single `index.html` file to a Next.js 16 App Router application deployed on Vercel. The static HTML file (`index.html`) is retained as a reference only — all active development happens in `app/`.
 
-### What exists today
+### Deployment
 
-**Auditor tab**
-- Input: Solana token mint address
-- Fetches live pool data from DexScreener API
-- Shows: price, MC, TVL, vol 24h, liq ratio, est. daily fees, fee density, stage classification, volatility regime
-- Pool inventory table: DEX, pool type (DLMM/DAMM/CLMM/CPMM/etc), TVL, vol, fees, utilization, 24h delta, links to DexScreener + Solscan + native DEX UI
-- TVL donut chart by pool type group (Meteora DLMM, Meteora DAMM, Orca CLMM, etc)
-- Recommended allocation bar (DAMM/DLMM/CLMM split)
-- 4 optimization objectives: Fee Generation, Price Stability, Volume Growth, Balanced
-- Rules-based written analysis (4 paragraphs) that adapts per objective — **currently too similar between objectives, major known gap**
-- Export: Markdown download, CSV pool data download, Print/PDF (opens professional 3-page white document in new window)
+- **Live URL:** Vercel (configured, deployed)
+- **Auth:** Supabase email/password (PKCE flow via `@supabase/ssr` v0.12.0)
+- **Data:** DexScreener API proxied through Next.js API routes (server-side, avoids CORS)
+- **Storage:** Portfolio uses Supabase `portfolio_tokens` table when logged in; falls back to `slt_portfolio` localStorage when not
 
-**Architect tab**
-- Input form: supply, FDV, MC, total capital to deploy, treasury %, LP %, growth targets (30/90/180/365d), vol, volatility, B/S ratio, holders, top-10 concentration
-- Rules engine: stage classification (0–5), DAMM/DLMM/CLMM split, DLMM shape (Spot/Curve/Bid Ask/Skewed Bullish/Skewed Bearish/Multi Range), range width
-- Dollar-specific deployment plan table (how much $ into each pool type, est. daily fees, migration triggers)
-- Migration roadmap (step-by-step triggers for 30/90/180d targets)
-- Lifecycle capital plan table ($ amounts at each MC milestone)
-- Written analysis (4 paragraphs)
+### App structure (`app/`)
 
-**Portfolio tab**
-- Add up to 10 token mint addresses
-- Fetches live data per token from DexScreener
-- Shows card per token: name, symbol, stage badge, MC, TVL, vol, liq ratio, est. fees, pool count, 24h price change
-- Click card → jumps to full audit
-- Persists in localStorage (browser only, no auth)
+```
+app/
+├── app/
+│   ├── api/
+│   │   ├── dexscreener/route.ts          ← GET /api/dexscreener?address=
+│   │   ├── dexscreener/trending/route.ts ← GET /api/dexscreener/trending
+│   │   └── dexscreener/search/route.ts   ← GET /api/dexscreener/search?q=
+│   ├── auditor/
+│   │   ├── page.tsx                      ← Suspense wrapper
+│   │   └── AuditorClient.tsx             ← Full audit tab ('use client')
+│   ├── livelp/
+│   │   ├── page.tsx
+│   │   └── LiveLPClient.tsx              ← LP decision tool ('use client')
+│   ├── discover/
+│   │   ├── page.tsx
+│   │   └── DiscoverClient.tsx            ← Trending feed + search ('use client')
+│   ├── architect/
+│   │   ├── page.tsx
+│   │   └── ArchitectClient.tsx           ← Architecture designer ('use client')
+│   ├── portfolio/
+│   │   ├── page.tsx                      ← Server component (Supabase auth + data fetch)
+│   │   └── PortfolioClient.tsx           ← Portfolio dashboard ('use client')
+│   ├── login/                            ← Supabase auth page
+│   ├── auth/callback/                    ← PKCE callback handler
+│   ├── layout.tsx                        ← Nav bar with all 5 tabs
+│   └── globals.css                       ← All shared CSS (dark terminal aesthetic)
+├── lib/
+│   ├── auditor/
+│   │   ├── format.ts      ← fmt(), fmtD()
+│   │   ├── classify.ts    ← classifyStage(), sc(), getShape(), getRW(), getMig(),
+│   │   │                     getTLP(), objConfig(), getBinConfig()
+│   │   ├── pools.ts       ← detectPoolType(), poolLinks(), buildPoolRows()
+│   │   ├── scores.ts      ← estSlippage(), calcFragScore(), calcRoutingScore()
+│   │   ├── chart.ts       ← buildDonutChart()
+│   │   ├── risk.ts        ← buildRiskSection()
+│   │   ├── microcap.ts    ← buildMicroCapSection(), buildMicroCapTable()
+│   │   ├── ownership.ts   ← solRpc(), loadLPOwnershipSection(),
+│   │   │                     buildLPOwnershipHTML()
+│   │   └── analysis.ts    ← auditAnalysis() — 4 specialist voices per objective
+│   ├── livelp/
+│   │   └── decision.ts    ← computeMetrics(), computeLPDecision()
+│   ├── discover/
+│   │   └── render.ts      ← renderDiscCard(), renderDiscGrid(), getDiscVal(),
+│   │                         getDiscTimeLabel()
+│   └── architect/
+│       └── plan.ts        ← buildDeployPlan(), buildMigSteps(), lifecycle(),
+│                             archAnalysis()
+└── proxy.ts               ← Next.js middleware (named 'proxy', guards env vars)
+```
 
-### Known issues / gaps in v0.1
-- Optimization objectives produce analysis that is too similar — needs fundamentally different strategies per objective, not just tweaked wording
-- No auth — portfolio is hardcoded to localStorage, not user accounts
-- No backend — all data fetched client-side, no caching, no history
-- No "Live LP" decision tool (planned — see below)
-- Architect is prominent but should be secondary to Auditor
-- No real-time updates or alerts
-- PDF export works but the cover page liq ratio sub-label had a JS syntax bug (fixed in v0.1.1)
+### What each tab does
+
+**Auditor** (`/auditor`)
+- Input: Solana token mint address + optimization objective (fee/stability/volume/balanced)
+- Fetches live pool data via `/api/dexscreener`
+- Outputs: risk filter, metrics row, collapsible details, TVL donut chart, allocation bar, slippage estimator, fragmentation score, routing dominance score, pool inventory table, LP ownership section (async, DAMM pools only), micro-cap IL comparison (sub-$40K), 4-paragraph specialist analysis
+- Export: Markdown download, CSV pool data, Print/PDF
+- Cross-navigation: `→ Live LP` button passes addr via `router.push('/livelp?addr=...')`
+
+**Live LP** (`/livelp`)
+- Input: token address, capital ($), risk (Conservative/Moderate/Aggressive), horizon (Days/Weeks/Months), goal (Maximize PnL/Generate yield/Support the token/Speculate)
+- Full 8-branch decision tree across all MC tiers (sub-$5K → $500K+)
+- Outputs: decision card with rationale, recommended config, expected outcomes, risk flags, watch list, pool inventory
+- Cross-navigation: `→ Full Audit` button; receives `?addr=` param from Auditor/Discover
+
+**Discover** (`/discover`)
+- Trending feed via `/api/dexscreener/trending` (DexScreener token-boosts top, batch pair fetch)
+- Volume mode and MC Change mode × 4 timeframes (1h / ~4h / ~12h / 24h)
+- Search bar: ticker, name, or contract address via `/api/dexscreener/search`
+- Each card: ⊕ Audit → `/auditor`, ⚡ Live LP → `/livelp`, + Portfolio → localStorage
+- "← Trending" restores feed after search
+
+**Architect** (`/architect`)
+- Input form: supply, FDV, MC, capital, treasury %, LP %, growth targets (30/90/180/365d), vol, volatility, B/S ratio, holders, top-10 concentration, optimization objective
+- Outputs: metrics row, stage badge, allocation bar (DAMM/DLMM/CLMM/reserve), deployment plan table, migration roadmap, lifecycle capital plan, 4-paragraph analysis
+- No API calls — pure rules engine, runs synchronously on form submit
+
+**Portfolio** (`/portfolio`)
+- Supabase-backed when logged in; localStorage fallback when not. No redirect — works for both auth states.
+- Per-token live data via `/api/dexscreener` proxy; health score, alerts, tag cycling, sort, filter, remove.
+- Import banner syncs unsynced localStorage tokens to Supabase on first login.
+- Token name click navigates to Auditor.
+
+### Key architectural patterns
+
+- **HTML string rendering:** All tab output is assembled as HTML strings by lib functions and rendered via `dangerouslySetInnerHTML`. This preserves 100% of the original logic and avoids rewriting the complex output templates as JSX.
+- **`window._dynamo` object:** Interactive onclick handlers inside HTML strings (e.g., export buttons, micro-cap capital toggle, LP ownership expand, Discover card actions) call functions exposed on `window._dynamo` via `useEffect`.
+- **`useSearchParams` + Suspense:** Every client component that reads `?addr=` is wrapped in `<Suspense>` in its `page.tsx`.
+- **Cross-tab navigation:** `router.push('/tab?addr=...')` from any tab; receiving tab reads `useSearchParams().get('addr')` and auto-runs on mount.
+- **Async LP fill:** `runAudit` renders synchronously fast; a `useEffect` watching `outputHTML` finds `#audit-lp-section` in the DOM and fills it with `loadLPOwnershipSection(pairs)` asynchronously.
+- **DexScreener proxy:** All DexScreener fetches go through `/api/dexscreener*` routes (30–60s revalidate cache) to avoid CORS issues in production.
 
 ---
 
@@ -190,28 +254,26 @@ Should I LP this token?
 - Jupiter Price API v2 (no key)
 - localStorage for portfolio
 
-### Target (v1.0 — Vercel deploy)
+### Current (v1.0 — Next.js on Vercel) ✓
 
 **Frontend**
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- shadcn/ui components
-- Recharts for data visualization
-- React Query for data fetching + caching
+- Next.js 16.2.9 (App Router, Turbopack)
+- TypeScript (strict)
+- CSS via `globals.css` (no Tailwind — plain CSS in dark terminal aesthetic)
+- No component library — all UI is custom HTML string templates
 
 **Backend / Data**
-- Vercel serverless functions (API routes)
-- Supabase (auth + portfolio database)
-- DexScreener API (pool data)
-- Jupiter Price API (prices)
-- Helius RPC (on-chain data: holder counts, supply, etc.) — requires free API key
-- Birdeye API (historical data, volume trends) — requires free API key
+- Next.js API routes (Vercel serverless functions)
+- Supabase `@supabase/ssr` v0.12.0 — auth only (email/password, PKCE flow)
+- DexScreener API (pool data, trending, search) — no key, proxied server-side
+- Solana public RPC `api.mainnet-beta.solana.com` — client-side only (LP ownership section)
+- Meteora AMM API `amm-v2.meteora.ag` — client-side (LP mint resolution)
 
 **Infrastructure**
 - Vercel (hosting + serverless)
-- Supabase (auth + Postgres DB)
-- No paid APIs required for core functionality
+- Supabase (auth + Postgres DB — portfolio table exists but not yet wired to UI)
+
+### Target additions (Phase 3 remaining)
 
 ### Data models (Supabase)
 
@@ -251,7 +313,7 @@ create table audit_snapshots (
 
 ## Roadmap
 
-### Phase 1 — Current (v0.1, static HTML) ✓
+### Phase 1 — Static HTML (v0.1) ✓
 - [x] Auditor with live DexScreener data
 - [x] Pool type detection and links
 - [x] TVL donut chart
@@ -261,22 +323,34 @@ create table audit_snapshots (
 - [x] Portfolio tracker (localStorage)
 - [x] PDF/Markdown/CSV export
 
-### Phase 2 — Quality pass (still static HTML)
-- [ ] Fundamentally differentiated objective strategies (biggest gap)
-- [ ] Live LP tab with decision tree
-- [ ] Slippage estimator in Auditor
-- [ ] Pool fragmentation score
-- [ ] Routing dominance score
-- [ ] Deeper Architect objective differentiation
-- [ ] Better PDF layout
+### Phase 2 — Quality pass (static HTML) ✓
+- [x] Fundamentally differentiated objective strategies (4 specialist voices)
+- [x] Live LP tab with 8-branch decision tree
+- [x] Slippage estimator in Auditor
+- [x] Pool fragmentation score (HHI-based)
+- [x] Routing dominance score (3-factor)
+- [x] Architect objective differentiation
+- [x] Discover tab with trending + search + timeframe modes
+- [x] Portfolio health scores, alerts, sort/filter, tags
+- [x] MC-aware bin step config (`getBinConfig`)
+- [x] Sub-$40K micro-cap IL comparison table
+- [x] Rug/pass risk filter (8 signals, 0–100 score)
+- [x] LP ownership concentration (DAMM pools, lock escrow detection)
+- [x] Cross-navigation buttons (Auditor ↔ Live LP)
+- [x] UI declutter, collapsible details row
 
-### Phase 3 — Vercel deploy (Next.js migration)
-- [ ] Migrate to Next.js + TypeScript
-- [ ] Supabase auth (email/password)
-- [ ] Persistent portfolio per user
-- [ ] Server-side data fetching with caching
-- [ ] Helius RPC integration (holder data)
-- [ ] Birdeye integration (historical data)
+### Phase 3 — Next.js migration (v1.0) ✓
+- [x] Next.js 16 App Router + TypeScript
+- [x] Supabase auth (email/password, PKCE, SSR)
+- [x] Vercel deployment working
+- [x] DexScreener API proxied server-side (CORS fix + 30s cache)
+- [x] Auditor fully migrated (all lib modules + AuditorClient)
+- [x] Live LP fully migrated (decision tree + LiveLPClient)
+- [x] Discover fully migrated (trending API route, search API route, DiscoverClient)
+- [x] Architect fully migrated (plan lib + ArchitectClient)
+- [x] Portfolio tab migration (localStorage → Supabase `portfolio_tokens` table, with localStorage fallback)
+- [ ] Helius RPC integration (holder counts, mint/freeze authority)
+- [ ] Birdeye integration (historical OHLCV and volume trends)
 - [ ] Multi-chain scaffold (ETH/Base ready, Solana active)
 
 ### Phase 4 — Intelligence layer
@@ -394,11 +468,18 @@ Treasury Liquidity Exposure (TLE) = Treasury Liquidity / Total Supply
 
 ## Development Conventions (for Claude Code)
 
-### File naming
-- `index.html` — current static build
-- `CLAUDE.md` — this file
-- `CURRENT_STATE.md` — snapshot of what's built, updated each session
-- `ROADMAP.md` — living roadmap document
+### Repository layout
+- `index.html` — static HTML reference build (v0.2, do not edit)
+- `app/` — the active Next.js application (all development goes here)
+- `CLAUDE.md` — this file (update the Session Log at the end of every session)
+
+### Next.js patterns in this codebase
+- **Never** use `'use client'` in a file that also does `async` data fetching — keep server/client boundary clean
+- All client components that use `useSearchParams` must be wrapped in `<Suspense>` in the parent `page.tsx`
+- `window._dynamo` is the bridge between HTML string onclick attributes and React state — expose new interactive functions there in `useEffect`
+- HTML string lib functions live in `lib/`; they return strings, have no React dependencies, and are pure TypeScript
+- The middleware file is `proxy.ts` (not `middleware.ts`) — the function inside is named `proxy`
+- `next.config.ts` has `output: 'standalone'` and no `rootDirectory` override — Vercel infers this correctly
 
 ### When working on recommendations/analysis
 - Each optimization objective must read like a different specialist wrote it
@@ -407,17 +488,26 @@ Treasury Liquidity Exposure (TLE) = Treasury Liquidity / Total Supply
 - Every recommendation must include: what to do, why, what success looks like, what would invalidate it
 
 ### When working on the frontend
-- Dark terminal aesthetic for the app UI
+- Dark terminal aesthetic for the app UI (background `#0a0a0a`, text `#e8e8e6`)
 - White professional layout for PDF exports only
 - Pool type colors are fixed: DAMM=#1D9E75, DLMM=#378ADD, CLMM=#D85A30, CPMM=#7F77DD
 - Stage colors: 0=#888780, 1=#1D9E75, 2=#378ADD, 3=#BA7517, 4=#D85A30, 5=#993556
+- All CSS lives in `app/globals.css` — no Tailwind, no CSS modules
 
 ### API notes
-- DexScreener: `https://api.dexscreener.com/latest/dex/tokens/{address}` — no key, CORS open
-- Jupiter Price v2: `https://api.jup.ag/price/v2?ids={address}` — no key, CORS open
-- Helius: requires free API key, use for holder counts and on-chain data
-- Birdeye: requires free API key, use for historical OHLCV and volume trends
-- Meteora: public API available for bin data — needs research before integrating
+- DexScreener tokens: `/api/dexscreener?address=` — proxied, 30s revalidate
+- DexScreener trending: `/api/dexscreener/trending` — proxied, 60s boosts / 30s pairs
+- DexScreener search: `/api/dexscreener/search?q=` — proxied, no cache
+- Solana RPC: `https://api.mainnet-beta.solana.com` — called client-side directly (CORS open)
+- Meteora AMM API: `https://amm-v2.meteora.ag/pools?address={addr}` — called client-side (no key)
+- Helius: requires free API key — integrate in Phase 3 for holder counts, mint/freeze authority
+- Birdeye: requires free API key — integrate in Phase 3 for historical OHLCV
+
+### localStorage schema
+- Key: `slt_portfolio`
+- Value: `Array<{ address, name, symbol, mc, tvl, vol24, liqRatio, priceChg, stage, stageLabel, loading?, tag? }>`
+- Written by: Discover `+ Portfolio` button via `window._dynamo.addToPortfolio`
+- Read by: Portfolio page (migration pending)
 
 ### Multi-chain scaffold
 - All token objects must carry a `chain` field defaulting to `'solana'`
@@ -629,3 +719,122 @@ All items planned in Session 4 built in order. 2P not yet started.
 - Async load pattern: main `runAudit` render is synchronous and fast; LP section shows "Loading…" blink then fills in async. No blocking of audit output.
 
 **Phase 2 complete.** All items 2A–2P done. Next: Phase 3 (Next.js migration).
+
+### Session 8 (Phase 3 — scaffold + Auditor migration, 2026-06-10)
+
+**Scaffold**
+- `npx create-next-app@latest app` — Next.js 16, TypeScript, App Router, no Tailwind
+- Supabase added: `@supabase/ssr` v0.12.0, `createBrowserClient` / `createServerClient`
+- Auth: email/password login page (`/login`), PKCE callback handler (`/auth/callback`)
+- `proxy.ts` middleware: guards Supabase env vars so all routes 200 without keys; function named `proxy` (Next.js 16 requires non-`middleware` export name)
+- `vercel.json` at repo root with `framework: nextjs` only — no `rootDirectory` override (caused 404s when present)
+- All 5 tab routes created as placeholder pages
+
+**Auditor migration**
+- `lib/auditor/format.ts` — `fmt()`, `fmtD()`
+- `lib/auditor/classify.ts` — `classifyStage()`, `sc()`, `getShape()`, `getRW()`, `getMig()`, `getTLP()`, `objConfig()`, `getBinConfig()`
+- `lib/auditor/pools.ts` — `detectPoolType()`, `poolLinks()`, `buildPoolRows()`
+- `lib/auditor/scores.ts` — `estSlippage()`, `calcFragScore()`, `calcRoutingScore()`
+- `lib/auditor/chart.ts` — `buildDonutChart()`
+- `lib/auditor/risk.ts` — `buildRiskSection()`
+- `lib/auditor/microcap.ts` — `buildMicroCapSection()`, `buildMicroCapTable()`
+- `lib/auditor/ownership.ts` — `solRpc()`, `loadLPOwnershipSection()`, `buildLPOwnershipHTML()`
+- `lib/auditor/analysis.ts` — `auditAnalysis()` (4 specialist voices)
+- `app/api/dexscreener/route.ts` — GET proxy, 30s revalidate
+- `app/auditor/AuditorClient.tsx` — full client component; `window._dynamo` exposes `setMicroCapRef`, `exportMarkdown`, `exportCSV`, `exportPrint`, `goToLiveLP`; async LP ownership fill via `useEffect` on `outputHTML`
+- `app/auditor/page.tsx` — Suspense wrapper
+- `app/globals.css` — all shared CSS classes added
+
+**Vercel deployment lessons learned**
+
+- **`rootDirectory` is not a valid `vercel.json` property.** Vercel's schema rejects it and the build fails with a validation error. Set the Root Directory in the Vercel dashboard (Project → Settings → General → Root Directory) instead. The `vercel.json` at the repo root should only contain `{ "framework": "nextjs" }` — nothing else.
+
+- **Framework Preset must be set manually when Next.js is in a subdirectory.** Vercel auto-detects Next.js only when `package.json` is at the repo root. When the app lives in `app/`, open Project → Settings → General → Framework Preset and set it to Next.js explicitly, then set Root Directory to `app`. Without this, Vercel treats it as a static site and every route 404s.
+
+- **`proxy.ts` middleware must guard missing Supabase env vars with an early `return NextResponse.next()`, never a throw.** If `NEXT_PUBLIC_SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_ANON_KEY` are absent (e.g., a preview deployment with no env vars configured), throwing causes the middleware to crash and return 404 on every route — including the root `/`. The guard pattern:
+  ```ts
+  export function proxy(request: NextRequest) {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return NextResponse.next();
+    }
+    // ... normal session refresh logic
+  }
+  ```
+
+- **Auth callback must handle both PKCE (`?code=`) and token-hash (`?token_hash=&type=`) flows.** Supabase can send either depending on project config and client version. Magic links use token-hash; OAuth and email confirmation use PKCE. If the callback only handles `code`, token-hash logins fail silently with `auth_callback_failed`. Handle both:
+  ```ts
+  const code = searchParams.get('code');
+  const token_hash = searchParams.get('token_hash');
+  const type = searchParams.get('type') as EmailOtpType | null;
+  if (code) {
+    await supabase.auth.exchangeCodeForSession(code);
+  } else if (token_hash && type) {
+    await supabase.auth.verifyOtp({ token_hash, type });
+  }
+  ```
+
+- **Supabase allowed redirect URLs must include the production Vercel URL before deploying.** Supabase blocks any redirect URL not on the allowlist — a localhost-only config causes `auth_callback_failed` in production with no clear error message. Add the production URL (e.g., `https://your-app.vercel.app/**`) in Supabase Dashboard → Authentication → URL Configuration → Redirect URLs. Add new Vercel deployment URLs before sharing with the team.
+
+### Session 9 (Phase 3 — Live LP + Discover + Architect migration, 2026-06-10)
+
+**Live LP migration**
+- `lib/livelp/decision.ts` — `computeMetrics()`, `computeLPDecision()`: full 8-branch decision tree (No LP / No action / Spot buy / Pass / DAMM+Spot / Wide DLMM+Spot / Medium DLMM / Wide DLMM / Tight DLMM / DAMM / default Wide DLMM) across all MC tiers
+- `app/livelp/LiveLPClient.tsx` — client component; form with 5 inputs; fetches `/api/dexscreener`; `window._dynamo.goToAudit` for cross-navigation; pool inventory via `buildPoolRows`; `?addr=` auto-run from Auditor
+- `app/livelp/page.tsx` — Suspense wrapper
+
+**Discover migration**
+- `app/api/dexscreener/trending/route.ts` — fetches token-boosts/top/v1, batch-fetches pairs, processes into `DiscToken[]`; 60s boosts cache, 30s pairs cache
+- `app/api/dexscreener/search/route.ts` — proxies DexScreener search, returns sorted `DiscToken[]`
+- `lib/discover/render.ts` — `renderDiscCard()`, `renderDiscGrid()`, `getDiscVal()`, `getDiscTimeLabel()`
+- `app/discover/DiscoverClient.tsx` — trending loads on mount (once); mode/time are React state; grid HTML via `useMemo`; search shows results with `← Trending`; `window._dynamo.{openAudit, openLiveLP, addToPortfolio, refreshTrending, restoreDiscover}`; `addedAddresses` state synced to `slt_portfolio` localStorage
+
+**Architect migration**
+- `lib/architect/plan.ts` — `buildDeployPlan()`, `buildMigSteps()`, `lifecycle()`, `archAnalysis()` (all 4 objectives)
+- `app/architect/ArchitectClient.tsx` — pure sync (no API calls); objective buttons are React state; `runArchitect()` reads form DOM values, calls lib functions, sets `outputHTML`
+- `app/architect/page.tsx` — Suspense wrapper
+
+**Build result after all 4 tabs:**
+```
+Route (app)
+├ ○ /auditor
+├ ○ /livelp
+├ ○ /discover
+├ ○ /architect
+├ ƒ /api/dexscreener
+├ ƒ /api/dexscreener/trending
+├ ƒ /api/dexscreener/search
+├ ƒ /auth/callback
+├ ƒ /login
+└ ƒ /portfolio  ← placeholder
+```
+
+**Phase 3 remaining: Portfolio tab migration** — read `slt_portfolio` from localStorage, add Supabase persistence, port health scores / alerts / sort / filter / tags, connect "+ Portfolio" from Discover to live portfolio page.
+
+### Session 10 (Phase 3 — Portfolio tab migration, 2026-06-11)
+
+**Portfolio tab fully migrated ✓**
+
+- `app/portfolio/page.tsx` — server component; reads Supabase `portfolio_tokens` table when user is logged in; falls through to localStorage mode (no redirect) when unauthenticated or Supabase is unavailable. Passes `userId: string | null` to client.
+- `app/portfolio/PortfolioClient.tsx` — complete implementation:
+  - **Dual storage mode**: Supabase when `userId` is set; `slt_portfolio` + `slt_portfolio_meta` localStorage keys when not.
+  - **localStorage helpers**: `lsRead`, `lsAddAddress`, `lsRemoveAddress`, `lsSetTag`, `lsBuildRows` — reads `address` from Discover's existing `slt_portfolio` entries; stores tags/added_at in separate `slt_portfolio_meta` key to avoid clobbering Discover's data.
+  - **Live data fetch**: uses `/api/dexscreener?address=` proxy (fixed from direct DexScreener call).
+  - **Sort options**: MC ↓, TVL ↓, Vol ↓, 24h Δ, Newest (loading entries always sort last).
+  - **Filter**: All / Watching / Active LP / Research / Other.
+  - **Tags**: click cycles null → watching → active-lp → research → other; persisted to Supabase or localStorage.
+  - **Remove**: per-card remove button; deletes from Supabase or localStorage.
+  - **Health score**: 5-factor 0–100 (liq ratio, vol/liq, price stability, stage, pool count); color-coded + mini health bar.
+  - **Alerts**: liq ratio < 2% (red), health < 40 (red), ±20% price move (amber), > 8 pools (amber).
+  - **Navigate to Auditor**: clicking token name pushes `/auditor?addr=...`.
+  - **Sign-in banner**: shown when using localStorage mode with link to `/login?next=/portfolio`.
+  - **Import banner**: shown when logged in and localStorage has tokens not yet in Supabase — "Import N" button bulk-inserts them.
+  - **Add token**: mint address input; writes to Supabase or localStorage; fetches live data immediately.
+  - Max 50 tokens enforced.
+
+**Build result:**
+```
+└ ƒ /portfolio   ← dynamic (server-rendered on demand)
+```
+`npm run build` passes clean. TypeScript clean.
+
+**Phase 3 complete.** All tabs migrated. Next: Phase 4 (intelligence layer) or Helius/Birdeye integrations.
