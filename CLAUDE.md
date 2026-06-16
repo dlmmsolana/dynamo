@@ -880,3 +880,15 @@ Reworked the DAMM flow per user feedback — token-amount entry was annoying and
 - **Fixed MC ladder**: `DAMM_TARGET_MCS = [50k,100k,150k,250k,500k,1m,2.5m,5m,10m]` — auto-simulated, no add/remove. Entry-MC row highlighted.
 - **Exact dollars**: new `usd()` formatter in `render.ts` (whole dollars + thousands separators, cents under $100) replaces `fmtD` everywhere in the simulator (both DAMM and DLMM) — fixes the $1K/$2K rounding. DAMM table now shows per-side dollar columns (Token Side / Quote Side, always equal) plus exact LP Value and vs-Holding.
 - `tsx` check: $1000 @ 50k → entry 1.00× $0 vsHold; 5m → exactly $10,000 (10×); 10m → $14,142.14 (14.142×). Build clean.
+
+### Session 14 (UI readability + Simulator table polish, 2026-06-16)
+
+**App-wide text readability pass** — secondary/label text was far too dim against the bright `#e8e8e6` numbers. Lifted the whole secondary tier in `globals.css` (shared classes → affects every tab): `#555552→#9c9c97` (dim labels: `.ml`, `.sl`, table `th`, `.sub`), `#888884→#bdbdb7` (muted), `#444442→#8c8c87` (faintest); plus `--text-dim #555→#8c8c8c`, `--text-muted #888→#b2b2b2`. Matching inline colors updated in `lib/simulator/render.ts` + `SimulatorClient.tsx`. Numbers unchanged — hierarchy preserved, contrast improved.
+
+**Simulator DAMM table polish** (per user feedback):
+- Merged the two always-equal per-side columns into one compact `Token / Quote Side` cell (`$559 / $559`) instead of two wide columns.
+- Added a **PnL** column (LP value − starting value, green/red) immediately to the right. Final order: Market Cap · LP Value · Token / Quote Side · PnL · Multiple · vs. Holding.
+- DAMM defaults changed to **Starting LP Value $500**, **Entry MC $10,000**.
+- `tsx` check ($500 @ 10k): 250k → $2,500 (+$2,000, 5×); 1m → $5,000 (+$4,500, 10×); 10m → $15,811.39 (+$15,311.39, 31.62×). Build clean.
+
+**Session 11–14 all deployed to `main`** (Vercel GitHub-integration auto-deploy). Next open item: Helius integration — unlocks holder/authority data **and** live DLMM bin utilization (key-free Meteora DLMM REST API is decommissioned; see Phase 4 note).
