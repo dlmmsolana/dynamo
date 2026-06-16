@@ -838,3 +838,25 @@ Route (app)
 `npm run build` passes clean. TypeScript clean.
 
 **Phase 3 complete.** All tabs migrated. Next: Phase 4 (intelligence layer) or Helius/Birdeye integrations.
+
+### Session 11 (Simulator tab — LP growth projection, 2026-06-16)
+
+New **Simulator** tab (6th, appended after Architect) projecting LP position value from **price appreciation only — no fees, no rebalancing** (static-position snapshot). Two pool types via a mode toggle.
+
+**DAMM v2 — full-range constant product**
+- `lib/simulator/damm.ts` — `simulateDamm({ tokenAmt, quoteAmt, entryMC, targetMCs })`.
+- Value scales with √price: `V_final = V0·√(MC_final/MC0)`. `V0 = tokenAmt·P0 + quoteAmt` where implied `P0 = quoteAmt/tokenAmt` (balanced deposit → `V0 = 2·quoteAmt`). Position is always 50/50 by value, so no supply input needed.
+- Output columns: MC | LP value | multiple | **vs. holding** (negative = IL vs hold, where `V_hold = quoteAmt·(1+ratio)`).
+
+**DLMM — discrete bins (the deep model)**
+- `lib/simulator/dlmm.ts` — `genBins()` (geometric, center price `b_k = low·(1+s)^(k+0.5)`, `s=binStep/10000`, capped at `MAX_BINS=2000`), `shapeWeights()` (spot=uniform, curve=peak-center, bidask=U-shape), `buildBins()`, `compositionAtPrice()`, `valueAtPrice()`, `simulateDlmm()`.
+- Per-bin constant-sum conversion at `b_k`: base-side bin sells to quote once `pf ≥ b_k`; quote-side bin buys base once `pf ≤ b_k`. Sum → value at any price.
+- **Structure toggle**: `two` (base above entry, quote below), `dca-out` (1-sided, 100% token, range above entry, sells up), `dca-in` (1-sided, 100% quote, range below entry, buys down). Client clamps current price to the near edge for 1-sided (`dca-out`: entry=min(entry,low); `dca-in`: entry=max(entry,high)) so entry value reconciles with deposit.
+- Optional entry MC → `supply = entryMC/entryPrice` enables MC labels in the sweep.
+- Output: deposit/entry/bottom/top metric row + price sweep table (price | MC | value | × | token qty | quote held) with inline `.abar` bars + written read-out (shape + structure + bin-step behavior).
+
+**Files**: `app/simulator/{page.tsx,SimulatorClient.tsx}` (modeled on Architect — DOM-read inputs via `g(id)`, HTML string → `dangerouslySetInnerHTML`; mode/side/shape are React state). `lib/simulator/{damm,dlmm,render}.ts` (pure TS, reuse `fmt`/`fmtD`). `components/TabNav.tsx` — added Simulator tab. No new CSS; reuses `.obj-btn`/`.igrid`/`.dtable`/`.mrow`/`.analysis`/`.abar`. Toggle active state via inline style (no color sub-class dependency).
+
+**Verified**: `npm run build` clean, `/simulator` static. Math sanity via `tsx`: DAMM ¼MC→0.5×, 2×MC→1.414×, 4×MC→2.0× with negative vs-hold; DLMM 2-sided entry≈deposit, bidask>spot>curve at both extremes; 1-sided entry reconciles with deposit after clamp.
+
+**Scope (v1)**: no fees, no rebalancing, no time decay; DAMM v2 concentration not modeled; SOL quote shown in quote units (no SOL/USD drift). Candidates for v2.
