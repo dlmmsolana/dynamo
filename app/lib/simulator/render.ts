@@ -1,13 +1,22 @@
 // HTML-string builders for the Simulator results. Pure TS, no React.
 // Reuses .mrow/.mc2, .dtable, .analysis, .abar classes from globals.css.
 
-import { fmt, fmtD } from '../auditor/format';
+import { fmt } from '../auditor/format';
 import type { DammResult } from './damm';
 import type { DlmmResult, Side, Shape } from './dlmm';
 
 const GREEN = '#1D9E75';
 const RED = '#D85A30';
 const BLUE = '#378ADD';
+
+// Exact dollar figure — whole dollars with thousands separators (cents under $100).
+// Used for all LP value / per-side figures so they aren't rounded to $1K/$2K.
+function usd(v: number): string {
+  if (!isFinite(v)) return '—';
+  const a = Math.abs(v);
+  const body = a > 0 && a < 100 ? a.toFixed(2) : Math.round(a).toLocaleString('en-US');
+  return (v < 0 ? '-$' : '$') + body;
+}
 
 function num(n: number, dp = 4): string {
   if (!isFinite(n)) return '—';
@@ -28,35 +37,38 @@ const NOTE =
   '<div style="font-size:10px;color:#555552;margin-top:10px;">Price appreciation only — no trading fees, no rebalancing, no time decay. Projection assumes a static position.</div>';
 
 // ── DAMM ─────────────────────────────────────────────────────────────
-export function renderDammResult(r: DammResult, currency: string): string {
+export function renderDammResult(r: DammResult, meta: { currency: string; entryMC: number }): string {
   if (!r.rows.length) {
-    return '<span class="ph2">Enter token amount, paired quote, entry MC, and at least one target MC.</span>';
+    return '<span class="ph2">Enter a starting LP value and entry market cap.</span>';
   }
 
   const rows = r.rows
     .map((row) => {
       const up = row.vsHold >= 0;
-      return `<tr>
-        <td><span class="amt">${fmt(row.mc)}</span></td>
-        <td><span class="amt">${fmtD(row.value)}</span><div class="sub">${row.sideValue ? fmtD(row.sideValue) + ' token · ' + fmtD(row.sideValue) + ' quote' : ''}</div></td>
+      const atEntry = Math.abs(row.mc - meta.entryMC) / meta.entryMC < 1e-9;
+      return `<tr${atEntry ? ' style="background:rgba(255,255,255,0.03);"' : ''}>
+        <td>${fmt(row.mc)}${atEntry ? ' <span style="color:#888884;">· entry</span>' : ''}</td>
+        <td><span class="amt">${usd(row.value)}</span></td>
+        <td>${usd(row.tokenSide)}</td>
+        <td>${usd(row.quoteSide)}</td>
         <td style="color:${row.multiple >= 1 ? GREEN : RED};">${row.multiple.toFixed(2)}×</td>
-        <td style="color:${up ? GREEN : RED};">${up ? '+' : ''}${fmtD(row.vsHold)}<div class="sub">hold: ${fmtD(row.holdValue)}</div></td>
+        <td style="color:${up ? GREEN : RED};">${up ? '+' : ''}${usd(row.vsHold)}<div class="sub">hold: ${usd(row.holdValue)}</div></td>
       </tr>`;
     })
     .join('');
 
   return `
     <div class="mrow">
-      <div class="mc2"><div class="ml">Initial LP Value</div><div class="mv">${fmtD(r.v0)}</div></div>
-      <div class="mc2"><div class="ml">Implied Entry Price</div><div class="mv">${priceLabel(r.entryPrice)}</div></div>
+      <div class="mc2"><div class="ml">Starting LP Value</div><div class="mv">${usd(r.v0)}</div></div>
+      <div class="mc2"><div class="ml">Entry Market Cap</div><div class="mv">${fmt(r.entryMC)}</div></div>
       <div class="mc2"><div class="ml">Pool Type</div><div class="mv" style="color:${GREEN};">DAMM v2</div><div class="ms">full-range · 50/50</div></div>
-      <div class="mc2"><div class="ml">Quote</div><div class="mv">${currency}</div></div>
+      <div class="mc2"><div class="ml">Quote</div><div class="mv">${meta.currency}</div></div>
     </div>
 
     <div class="sl" style="margin-top:14px;">Projected LP value by market cap</div>
     <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;overflow-x:auto;">
       <table class="dtable">
-        <thead><tr><th>Market Cap</th><th>LP Value</th><th>Multiple</th><th>vs. Holding</th></tr></thead>
+        <thead><tr><th>Market Cap</th><th>LP Value</th><th>Token Side</th><th>Quote Side</th><th>Multiple</th><th>vs. Holding</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>
@@ -64,7 +76,7 @@ export function renderDammResult(r: DammResult, currency: string): string {
     <div class="analysis">
       <div class="analysis-label">◈ How this position behaves</div>
       <p>A full-range DAMM (constant-product) position grows with the <strong>square root</strong> of price. Doubling the market cap raises LP value by ~1.41×, not 2× — the gap to a straight hold is impermanent loss, shown in the last column. There is no range to exit and no rebalancing burden, so the position captures appreciation indefinitely but always lags a pure hold on the way up (and loses less than a hold on the way down).</p>
-      <p>At every market cap the position is <strong>50% token / 50% quote by value</strong>. The "vs. Holding" column compares against keeping the original ${fmtD(r.v0 / 2)} of tokens plus quote untouched — fees (not modeled here) are what compensate an LP for this divergence.</p>
+      <p>At every market cap the position stays <strong>50% token / 50% quote by value</strong> — that's why the Token Side and Quote Side dollar figures are always equal. The "vs. Holding" column compares against keeping the original ${usd(r.v0 / 2)} of token plus ${usd(r.v0 / 2)} of quote untouched; fees (not modeled here) are what compensate an LP for this divergence.</p>
     </div>
     ${NOTE}`;
 }
@@ -101,11 +113,11 @@ export function renderDlmmResult(
       return `<tr${isEntry ? ' style="background:rgba(255,255,255,0.03);"' : ''}>
         <td>${priceLabel(row.price)}${tag}</td>
         <td>${row.mc !== null ? fmt(row.mc) : '—'}</td>
-        <td><span class="amt">${fmtD(row.value)}</span>
+        <td><span class="amt">${usd(row.value)}</span>
           <div class="abar" style="height:4px;margin-top:4px;"><div class="fdl" style="width:${barW}%;"></div><div style="background:#222;flex:1;"></div></div></td>
         <td style="color:${row.multiple >= 1 ? GREEN : RED};">${row.multiple.toFixed(2)}×</td>
         <td>${num(row.baseTokens)}</td>
-        <td>${fmtD(row.quoteHeld)}</td>
+        <td>${usd(row.quoteHeld)}</td>
       </tr>`;
     })
     .join('');
@@ -115,9 +127,9 @@ export function renderDlmmResult(
 
   return `
     <div class="mrow">
-      <div class="mc2"><div class="ml">Deposit Value</div><div class="mv">${fmtD(r.depositValue)}</div><div class="ms">entry ≈ ${fmtD(r.entryValue)}</div></div>
-      <div class="mc2"><div class="ml">At Range Bottom</div><div class="mv" style="color:${BLUE};">${fmtD(r.bottomValue)}</div><div class="ms">${bottomMult.toFixed(2)}× · ${priceLabel(meta.low)}</div></div>
-      <div class="mc2"><div class="ml">At Range Top</div><div class="mv" style="color:${RED};">${fmtD(r.topValue)}</div><div class="ms">${topMult.toFixed(2)}× · ${priceLabel(meta.high)}</div></div>
+      <div class="mc2"><div class="ml">Deposit Value</div><div class="mv">${usd(r.depositValue)}</div><div class="ms">entry ≈ ${usd(r.entryValue)}</div></div>
+      <div class="mc2"><div class="ml">At Range Bottom</div><div class="mv" style="color:${BLUE};">${usd(r.bottomValue)}</div><div class="ms">${bottomMult.toFixed(2)}× · ${priceLabel(meta.low)}</div></div>
+      <div class="mc2"><div class="ml">At Range Top</div><div class="mv" style="color:${RED};">${usd(r.topValue)}</div><div class="ms">${topMult.toFixed(2)}× · ${priceLabel(meta.high)}</div></div>
       <div class="mc2"><div class="ml">Bins</div><div class="mv">${r.binCount}</div><div class="ms">${meta.binStep} bps step</div></div>
     </div>
 
@@ -148,11 +160,11 @@ function dlmmNarrative(
   const ps: string[] = [];
 
   if (meta.side === 'dca-out') {
-    ps.push(`This is a <strong>1-sided sell (DCA-out)</strong> position: 100% token deposited across bins from ${priceLabel(meta.low)} to ${priceLabel(meta.high)}, all above the entry. As price climbs, each bin sells its tokens into quote at that bin's price. At the top you hold <strong>${fmtD(r.topValue)}</strong> entirely in quote — that is the total proceeds of selling the full position laddered up the range.`);
+    ps.push(`This is a <strong>1-sided sell (DCA-out)</strong> position: 100% token deposited across bins from ${priceLabel(meta.low)} to ${priceLabel(meta.high)}, all above the entry. As price climbs, each bin sells its tokens into quote at that bin's price. At the top you hold <strong>${usd(r.topValue)}</strong> entirely in quote — that is the total proceeds of selling the full position laddered up the range.`);
   } else if (meta.side === 'dca-in') {
-    ps.push(`This is a <strong>1-sided buy (DCA-in)</strong> position: 100% quote deposited across bins from ${priceLabel(meta.low)} to ${priceLabel(meta.high)}, all below entry. As price falls, each bin spends its quote buying tokens at that bin's price. At the bottom you hold <strong>${fmtD(r.bottomValue)}</strong> entirely in token — your average entry is laddered down the range.`);
+    ps.push(`This is a <strong>1-sided buy (DCA-in)</strong> position: 100% quote deposited across bins from ${priceLabel(meta.low)} to ${priceLabel(meta.high)}, all below entry. As price falls, each bin spends its quote buying tokens at that bin's price. At the bottom you hold <strong>${usd(r.bottomValue)}</strong> entirely in token — your average entry is laddered down the range.`);
   } else {
-    ps.push(`This is a <strong>2-sided</strong> position centered near ${priceLabel(meta.entryPrice)}: bins above entry hold token (sold as price rises), bins below hold quote (deployed into token as price falls). At the range top (${priceLabel(meta.high)}) it converts fully to quote — <strong>${fmtD(r.topValue)}</strong>; at the bottom (${priceLabel(meta.low)}) fully to token — <strong>${fmtD(r.bottomValue)}</strong>.`);
+    ps.push(`This is a <strong>2-sided</strong> position centered near ${priceLabel(meta.entryPrice)}: bins above entry hold token (sold as price rises), bins below hold quote (deployed into token as price falls). At the range top (${priceLabel(meta.high)}) it converts fully to quote — <strong>${usd(r.topValue)}</strong>; at the bottom (${priceLabel(meta.low)}) fully to token — <strong>${usd(r.bottomValue)}</strong>.`);
   }
 
   const shapeNote =

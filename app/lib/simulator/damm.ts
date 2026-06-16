@@ -2,54 +2,62 @@
 // Position value scales with √price. With circulating supply constant,
 // MC ratio == price ratio, so V_final = V0 · √(MC_final / MC0).
 // Price appreciation only — no fees, no rebalancing.
+//
+// A full-range constant-product position is always 50/50 by value, so the
+// starting LP value (in $) is all we need — no token/quote amounts required.
 
 export interface DammInput {
-  tokenAmt: number;   // base tokens deposited
-  quoteAmt: number;   // quote ($ USDC / SOL value) deposited
-  entryMC: number;    // market cap at deposit
-  targetMCs: number[]; // market caps to project to
+  startValue: number;   // initial LP position value ($)
+  entryMC: number;      // market cap at deposit
+  targetMCs?: number[]; // optional override; defaults to DAMM_TARGET_MCS
 }
 
 export interface DammRow {
   mc: number;
   value: number;     // LP position value at this MC
   multiple: number;  // value / V0
-  sideValue: number; // token side == quote side == value/2 (50/50 by value at any price)
+  tokenSide: number; // $ on the token side (== value/2)
+  quoteSide: number; // $ on the quote side (== value/2)
   vsHold: number;    // LP value − hold value (negative == impermanent loss vs holding)
   holdValue: number;
 }
 
 export interface DammResult {
-  v0: number;        // initial LP value
-  entryPrice: number; // implied entry price = quote/token (balanced deposit)
+  v0: number;       // initial LP value
+  entryMC: number;
   rows: DammRow[];
 }
 
+// Fixed market-cap ladder simulated for every DAMM run.
+export const DAMM_TARGET_MCS = [
+  50_000, 100_000, 150_000, 250_000, 500_000,
+  1_000_000, 2_500_000, 5_000_000, 10_000_000,
+];
+
 export function simulateDamm(input: DammInput): DammResult {
-  const { tokenAmt, quoteAmt, entryMC } = input;
+  const v0 = input.startValue;
+  const entryMC = input.entryMC;
+  const targets = input.targetMCs ?? DAMM_TARGET_MCS;
 
-  // Balanced constant-product deposit: token value == quote value at entry.
-  // Implied entry price P0 = quote / token; initial LP value V0 = token·P0 + quote = 2·quote.
-  const entryPrice = tokenAmt > 0 ? quoteAmt / tokenAmt : 0;
-  const v0 = tokenAmt * entryPrice + quoteAmt; // == 2·quoteAmt when balanced
-
-  const rows: DammRow[] = input.targetMCs
+  const rows: DammRow[] = targets
     .filter((mc) => mc > 0 && entryMC > 0)
     .sort((a, b) => a - b)
     .map((mc) => {
       const ratio = mc / entryMC;
       const value = v0 * Math.sqrt(ratio);
-      // Hold: same tokenAmt + quoteAmt, unprovided. token side scales with ratio.
-      const holdValue = quoteAmt * ratio + quoteAmt; // quoteAmt·ratio (token side) + quoteAmt (quote side)
+      // Hold = original 50/50 split left untouched: token side scales with
+      // the MC ratio, quote side stays flat.
+      const holdValue = (v0 / 2) * ratio + (v0 / 2);
       return {
         mc,
         value,
         multiple: v0 > 0 ? value / v0 : 0,
-        sideValue: value / 2,
+        tokenSide: value / 2,
+        quoteSide: value / 2,
         vsHold: value - holdValue,
         holdValue,
       };
     });
 
-  return { v0, entryPrice, rows };
+  return { v0, entryMC, rows };
 }

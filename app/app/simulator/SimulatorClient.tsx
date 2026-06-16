@@ -37,16 +37,11 @@ export default function SimulatorClient() {
   const gn = (id: string, fallback: number) => parseFloat(g(id) || '') || fallback;
 
   function runDamm() {
-    const tokenAmt = gn('d-token', 5_000_000);
-    const quoteAmt = gn('d-quote', 500);
+    const startValue = gn('d-value', 1000);
     const entryMC = gn('d-mc', 50_000);
     const currency = g('d-cur') || 'USDC';
-    const targetMCs = (g('d-targets') || '')
-      .split(',')
-      .map((x) => parseFloat(x.trim()))
-      .filter((x) => x > 0);
-    const result = simulateDamm({ tokenAmt, quoteAmt, entryMC, targetMCs });
-    setOutputHTML(renderDammResult(result, currency));
+    const result = simulateDamm({ startValue, entryMC });
+    setOutputHTML(renderDammResult(result, { currency, entryMC }));
   }
 
   function runDlmm() {
@@ -117,12 +112,12 @@ export default function SimulatorClient() {
           <div className="sl" style={{ marginTop: 12 }}>Position</div>
           <div className="igrid">
             <div className="field">
-              <label>Token Amount Deposited</label>
-              <input id="d-token" type="number" defaultValue="5000000" />
+              <label>Starting LP Value ($)</label>
+              <input id="d-value" type="number" defaultValue="1000" />
             </div>
             <div className="field">
-              <label>Paired Quote ($)</label>
-              <input id="d-quote" type="number" defaultValue="500" />
+              <label>Entry Market Cap ($)</label>
+              <input id="d-mc" type="number" defaultValue="50000" />
             </div>
             <div className="field">
               <label>Quote Currency</label>
@@ -131,14 +126,9 @@ export default function SimulatorClient() {
                 <option>SOL</option>
               </select>
             </div>
-            <div className="field">
-              <label>Entry Market Cap ($)</label>
-              <input id="d-mc" type="number" defaultValue="50000" />
-            </div>
-            <div className="field" style={{ gridColumn: '1 / -1' }}>
-              <label>Target Market Caps (comma-separated $)</label>
-              <input id="d-targets" type="text" defaultValue="100000, 250000, 500000, 1000000, 5000000" />
-            </div>
+          </div>
+          <div style={{ fontSize: 10, color: '#555552', marginTop: -6, marginBottom: 6 }}>
+            DAMM is a 50/50 full-range pool, so the starting LP value is split evenly across both sides. Simulated against a fixed MC ladder: $50K → $10M.
           </div>
         </>
       ) : (

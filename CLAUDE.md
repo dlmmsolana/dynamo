@@ -871,3 +871,12 @@ Foundational multi-chain plumbing (Phase 3 item). Solana stays active; Ethereum/
 - Pool-type detection remains Solana-specific — flagged for chain-awareness when ETH/Base are activated (not done here).
 
 **Verified**: `npm run build` clean; `tsx` unit check 7/7 (valid SOL mints, EVM addr on ethereum, EVM-on-solana rejected, garbage rejected; `chainFromDexId`/`ACTIVE_CHAINS` correct).
+
+### Session 13 (Simulator DAMM UX rework, 2026-06-16)
+
+Reworked the DAMM flow per user feedback — token-amount entry was annoying and output was over-rounded.
+
+- **Input simplified**: `simulateDamm` now takes `{ startValue, entryMC }` (was `tokenAmt/quoteAmt/entryMC/targetMCs`). Since full-range DAMM is always 50/50 by value, the starting LP value in $ is sufficient — no token/quote amounts or implied entry price needed. Form is now 3 fields: Starting LP Value, Entry MC, Quote Currency.
+- **Fixed MC ladder**: `DAMM_TARGET_MCS = [50k,100k,150k,250k,500k,1m,2.5m,5m,10m]` — auto-simulated, no add/remove. Entry-MC row highlighted.
+- **Exact dollars**: new `usd()` formatter in `render.ts` (whole dollars + thousands separators, cents under $100) replaces `fmtD` everywhere in the simulator (both DAMM and DLMM) — fixes the $1K/$2K rounding. DAMM table now shows per-side dollar columns (Token Side / Quote Side, always equal) plus exact LP Value and vs-Holding.
+- `tsx` check: $1000 @ 50k → entry 1.00× $0 vsHold; 5m → exactly $10,000 (10×); 10m → $14,142.14 (14.142×). Build clean.
