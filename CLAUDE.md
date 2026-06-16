@@ -860,3 +860,14 @@ New **Simulator** tab (6th, appended after Architect) projecting LP position val
 **Verified**: `npm run build` clean, `/simulator` static. Math sanity via `tsx`: DAMM ¼MC→0.5×, 2×MC→1.414×, 4×MC→2.0× with negative vs-hold; DLMM 2-sided entry≈deposit, bidask>spot>curve at both extremes; 1-sided entry reconciles with deposit after clamp.
 
 **Scope (v1)**: no fees, no rebalancing, no time decay; DAMM v2 concentration not modeled; SOL quote shown in quote units (no SOL/USD drift). Candidates for v2.
+
+### Session 12 (Multi-chain scaffold, 2026-06-16)
+
+Foundational multi-chain plumbing (Phase 3 item). Solana stays active; Ethereum/Base are registered + validatable but not surfaced in UI or pool logic yet.
+
+- `lib/chains.ts` — `Chain` type (`solana|ethereum|base`), `CHAINS` registry (`{ label, dexscreenerId, validate, addressHint, active }`), `validateAddress(addr, chain=DEFAULT_CHAIN)` (Solana base58 32–44; EVM `0x`+40 hex), `chainFromDexId()`, `ACTIVE_CHAINS`, `DEFAULT_CHAIN='solana'`.
+- **Address validation wired into all 3 entry points**: `AuditorClient.runAudit`, `LiveLPClient.runLiveLP`, `PortfolioClient.addToken` — reject malformed input with `CHAINS.solana.addressHint` message before any fetch/insert.
+- **`chain` field threaded through token objects** (per convention): `PortfolioRow.chain` (types.ts) set at every construction — `portfolio/page.tsx` (Supabase read defaults `'solana'`, no DB column needed), `lsBuildRows`, `sbAdd`, localStorage `addToken` path; `DiscToken.chain` set in both trending + search API routes; Auditor `lastAuditDataRef` carries `chain`; Discover `addToPortfolio` localStorage entry carries `chain`.
+- Pool-type detection remains Solana-specific — flagged for chain-awareness when ETH/Base are activated (not done here).
+
+**Verified**: `npm run build` clean; `tsx` unit check 7/7 (valid SOL mints, EVM addr on ethereum, EVM-on-solana rejected, garbage rejected; `chainFromDexId`/`ACTIVE_CHAINS` correct).

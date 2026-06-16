@@ -77,7 +77,7 @@ export default function DiscoverClient() {
         }
         if (list.length >= 50) { alert('Maximum 50 tokens.'); return; }
         list.push({
-          address: addr, name: '...', symbol: '...', mc: 0, tvl: 0,
+          address: addr, chain: 'solana', name: '...', symbol: '...', mc: 0, tvl: 0,
           vol24: 0, liqRatio: 0, priceChg: 0, stage: 0, stageLabel: '—',
           loading: true,
         } as unknown as { address: string });

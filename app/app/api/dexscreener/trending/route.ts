@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import type { Chain } from '@/lib/chains';
 
 export interface DiscToken {
   address: string;
+  chain: Chain;
   name: string;
   symbol: string;
   price: number;
@@ -49,6 +51,7 @@ export async function GET() {
       if (!tokenMap[addr]) {
         tokenMap[addr] = {
           address: addr,
+          chain: 'solana',
           name: p.baseToken?.name || '?',
           symbol: p.baseToken?.symbol || '?',
           price: parseFloat(p.priceUsd) || 0,

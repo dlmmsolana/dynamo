@@ -1,3 +1,5 @@
+import type { Chain } from './chains';
+
 export type Tag = 'watching' | 'active-lp' | 'research' | 'other' | null;
 
 export interface PortfolioRow {
@@ -6,6 +8,7 @@ export interface PortfolioRow {
   mint_address: string;
   tag: Tag;
   added_at: string;
+  chain: Chain;
 }
 
 export interface TokenLive {

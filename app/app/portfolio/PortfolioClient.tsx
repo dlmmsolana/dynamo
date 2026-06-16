@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import type { PortfolioEntry, PortfolioRow, Tag, TokenLive } from '@/lib/types';
+import { validateAddress, CHAINS } from '@/lib/chains';
 
 // ── constants ─────────────────────────────────────────────────────────────────
 
@@ -94,6 +95,7 @@ function lsBuildRows(addresses: string[], meta: Record<string, LSMeta>): Portfol
     mint_address: addr,
     tag: meta[addr]?.tag ?? null,
     added_at: meta[addr]?.added_at ?? new Date().toISOString(),
+    chain: 'solana' as const,
   }));
 }
 
@@ -266,7 +268,7 @@ export default function PortfolioClient({ userId, userEmail, initialRows }: Prop
       .select('id, user_id, mint_address, tag, added_at')
       .single();
     if (error || !data) { alert(error?.message ?? 'Failed to add token.'); return null; }
-    return data as PortfolioRow;
+    return { ...data, chain: 'solana' as const } as PortfolioRow;
   }
 
   async function importFromLocalStorage() {
@@ -291,6 +293,7 @@ export default function PortfolioClient({ userId, userEmail, initialRows }: Prop
   async function addToken() {
     const addr = input.trim();
     if (!addr) return;
+    if (!validateAddress(addr)) { alert(`Invalid address — expected a ${CHAINS.solana.addressHint}.`); return; }
     if (entries.length >= 50) { alert('Maximum 50 tokens.'); return; }
     if (entries.find((e) => e.mint_address === addr)) { setInput(''); return; }
 
@@ -305,7 +308,7 @@ export default function PortfolioClient({ userId, userEmail, initialRows }: Prop
       const lsMeta = lsAddAddress(addr);
       const row: PortfolioRow = {
         id: addr, user_id: '', mint_address: addr,
-        tag: lsMeta.tag, added_at: lsMeta.added_at,
+        tag: lsMeta.tag, added_at: lsMeta.added_at, chain: 'solana',
       };
       setEntries((prev) => [{ ...row, live: blankLive() }, ...prev]);
       setAdding(false);

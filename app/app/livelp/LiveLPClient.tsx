@@ -6,6 +6,7 @@ import { fmt } from '../../lib/auditor/format';
 import { classifyStage, sc } from '../../lib/auditor/classify';
 import { buildPoolRows } from '../../lib/auditor/pools';
 import { computeMetrics, computeLPDecision } from '../../lib/livelp/decision';
+import { validateAddress, CHAINS } from '../../lib/chains';
 
 export default function LiveLPClient() {
   const searchParams = useSearchParams();
@@ -34,6 +35,7 @@ export default function LiveLPClient() {
     const addrEl   = document.getElementById('lp-addr') as HTMLInputElement;
     const addr = (addrOverride || addrEl?.value?.trim() || '').trim();
     if (!addr) { setError('Enter a token mint address.'); return; }
+    if (!validateAddress(addr)) { setError(`Invalid address — expected a ${CHAINS.solana.addressHint}.`); return; }
 
     const capitalEl = document.getElementById('lp-capital') as HTMLInputElement;
     const riskEl    = document.getElementById('lp-risk') as HTMLSelectElement;

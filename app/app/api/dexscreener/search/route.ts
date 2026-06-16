@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
       if (!tokenMap[addr]) {
         tokenMap[addr] = {
           address: addr,
+          chain: 'solana',
           name: p.baseToken?.name || '?',
           symbol: p.baseToken?.symbol || '?',
           price: parseFloat(p.priceUsd) || 0,

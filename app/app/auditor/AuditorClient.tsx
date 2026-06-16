@@ -12,6 +12,7 @@ import { buildRiskSection } from '@/lib/auditor/risk';
 import { buildMicroCapSection, buildMicroCapTable } from '@/lib/auditor/microcap';
 import { buildDonutChart } from '@/lib/auditor/chart';
 import { loadLPOwnershipSection } from '@/lib/auditor/ownership';
+import { validateAddress, CHAINS } from '@/lib/chains';
 
 export default function AuditorClient() {
   const router = useRouter();
@@ -338,6 +339,10 @@ export default function AuditorClient() {
       setOutputHTML('<span class="err">Enter a token address.</span>');
       return;
     }
+    if (!validateAddress(targetAddr)) {
+      setOutputHTML(`<span class="err">Invalid address — expected a ${CHAINS.solana.addressHint}.</span>`);
+      return;
+    }
     setLoading(true);
     setOutputHTML('<span class="blink">Fetching from DexScreener...</span>');
 
@@ -422,7 +427,7 @@ export default function AuditorClient() {
       : `Not competing for Jupiter routing at current structure. Build a single concentrated Meteora DLMM targeting ${fmt(rDepthNeeded)} depth as the starting point.`;
 
     // Store for export and micro-cap
-    lastAuditDataRef.current = { address: targetAddr, name: ti.name || 'Unknown', symbol: ti.symbol || '?', price, mc, fdv, tvl, vol24, liqRatio, volLiq, priceChg, vola, estFees, feeDensity, stage: s, pairs, objective: targetObj, paras };
+    lastAuditDataRef.current = { address: targetAddr, chain: 'solana', name: ti.name || 'Unknown', symbol: ti.symbol || '?', price, mc, fdv, tvl, vol24, liqRatio, volLiq, priceChg, vola, estFees, feeDensity, stage: s, pairs, objective: targetObj, paras };
     lastAuditAddrRef.current = targetAddr;
     if (mc < 40000) {
       microCapParamsRef.current = { mc, volLiq, tvl, ref: 1000 };
