@@ -45,12 +45,14 @@ export function renderDammResult(r: DammResult, meta: { currency: string; entryM
   const rows = r.rows
     .map((row) => {
       const up = row.vsHold >= 0;
+      const pnl = row.value - r.v0;
+      const pnlUp = pnl >= 0;
       const atEntry = Math.abs(row.mc - meta.entryMC) / meta.entryMC < 1e-9;
       return `<tr${atEntry ? ' style="background:rgba(255,255,255,0.03);"' : ''}>
         <td>${fmt(row.mc)}${atEntry ? ' <span style="color:#bdbdb7;">· entry</span>' : ''}</td>
         <td><span class="amt">${usd(row.value)}</span></td>
-        <td>${usd(row.tokenSide)}</td>
-        <td>${usd(row.quoteSide)}</td>
+        <td style="white-space:nowrap;">${usd(row.tokenSide)} <span style="color:#9c9c97;">/</span> ${usd(row.quoteSide)}</td>
+        <td style="color:${pnlUp ? GREEN : RED};font-weight:500;">${pnlUp ? '+' : ''}${usd(pnl)}</td>
         <td style="color:${row.multiple >= 1 ? GREEN : RED};">${row.multiple.toFixed(2)}×</td>
         <td style="color:${up ? GREEN : RED};">${up ? '+' : ''}${usd(row.vsHold)}<div class="sub">hold: ${usd(row.holdValue)}</div></td>
       </tr>`;
@@ -68,7 +70,7 @@ export function renderDammResult(r: DammResult, meta: { currency: string; entryM
     <div class="sl" style="margin-top:14px;">Projected LP value by market cap</div>
     <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;overflow-x:auto;">
       <table class="dtable">
-        <thead><tr><th>Market Cap</th><th>LP Value</th><th>Token Side</th><th>Quote Side</th><th>Multiple</th><th>vs. Holding</th></tr></thead>
+        <thead><tr><th>Market Cap</th><th>LP Value</th><th>Token / Quote Side</th><th>PnL</th><th>Multiple</th><th>vs. Holding</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>

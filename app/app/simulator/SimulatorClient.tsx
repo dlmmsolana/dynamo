@@ -37,8 +37,8 @@ export default function SimulatorClient() {
   const gn = (id: string, fallback: number) => parseFloat(g(id) || '') || fallback;
 
   function runDamm() {
-    const startValue = gn('d-value', 1000);
-    const entryMC = gn('d-mc', 50_000);
+    const startValue = gn('d-value', 500);
+    const entryMC = gn('d-mc', 10_000);
     const currency = g('d-cur') || 'USDC';
     const result = simulateDamm({ startValue, entryMC });
     setOutputHTML(renderDammResult(result, { currency, entryMC }));
@@ -113,11 +113,11 @@ export default function SimulatorClient() {
           <div className="igrid">
             <div className="field">
               <label>Starting LP Value ($)</label>
-              <input id="d-value" type="number" defaultValue="1000" />
+              <input id="d-value" type="number" defaultValue="500" />
             </div>
             <div className="field">
               <label>Entry Market Cap ($)</label>
-              <input id="d-mc" type="number" defaultValue="50000" />
+              <input id="d-mc" type="number" defaultValue="10000" />
             </div>
             <div className="field">
               <label>Quote Currency</label>
