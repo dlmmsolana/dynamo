@@ -84,7 +84,7 @@ export default function SimulatorClient() {
       <div style={{ fontSize: 9, color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
         Simulator — LP Growth Projection
       </div>
-      <div style={{ fontSize: 11, color: '#888884', marginBottom: 16 }}>
+      <div style={{ fontSize: 11, color: '#bdbdb7', marginBottom: 16 }}>
         Projects LP position value across price / market cap from price appreciation alone — no fees.
       </div>
 
@@ -127,7 +127,7 @@ export default function SimulatorClient() {
               </select>
             </div>
           </div>
-          <div style={{ fontSize: 10, color: '#555552', marginTop: -6, marginBottom: 6 }}>
+          <div style={{ fontSize: 10, color: '#9c9c97', marginTop: -6, marginBottom: 6 }}>
             DAMM is a 50/50 full-range pool, so the starting LP value is split evenly across both sides. Simulated against a fixed MC ladder: $50K → $10M.
           </div>
         </>

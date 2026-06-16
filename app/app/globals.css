@@ -6,8 +6,8 @@
   --surface2: #1a1a1a;
   --border: #2a2a2a;
   --text: #e8e8e8;
-  --text-muted: #888;
-  --text-dim: #555;
+  --text-muted: #b2b2b2;
+  --text-dim: #8c8c8c;
   --accent: #378ADD;
 
   /* Pool type colors */
@@ -57,7 +57,7 @@ a:hover {
   font-size: 8px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #444442;
+  color: #8c8c87;
   margin-bottom: 6px;
   padding-bottom: 4px;
   border-bottom: 0.5px solid rgba(255,255,255,0.06);
@@ -65,7 +65,7 @@ a:hover {
 
 .hint {
   font-size: 10px;
-  color: #555552;
+  color: #9c9c97;
   margin-bottom: 14px;
 }
 
@@ -124,11 +124,11 @@ a:hover {
   background: #1e1e1e;
   border: 0.5px solid rgba(255,255,255,0.08);
   border-radius: 20px;
-  color: #555552;
+  color: #9c9c97;
   cursor: pointer;
   transition: all 0.15s;
 }
-.obj-btn:hover { color: #888884; border-color: rgba(255,255,255,0.16); }
+.obj-btn:hover { color: #bdbdb7; border-color: rgba(255,255,255,0.16); }
 .obj-btn.active.fee       { border-color: #1D9E75; color: #1D9E75; background: rgba(29,158,117,0.1); }
 .obj-btn.active.stability { border-color: #378ADD; color: #378ADD; background: rgba(55,138,221,0.1); }
 .obj-btn.active.volume    { border-color: #BA7517; color: #BA7517; background: rgba(186,117,23,0.1); }
@@ -156,9 +156,9 @@ a:hover {
   border-radius: 6px;
   padding: 7px 10px;
 }
-.mc2 .ml { font-size: 8px; color: #555552; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; }
+.mc2 .ml { font-size: 8px; color: #9c9c97; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; }
 .mc2 .mv { font-size: 14px; font-weight: 500; color: #e8e8e6; }
-.mc2 .ms { font-size: 9px; color: #555552; margin-top: 1px; }
+.mc2 .ms { font-size: 9px; color: #9c9c97; margin-top: 1px; }
 
 /* Stage / type badge */
 .badge {
@@ -192,7 +192,7 @@ a:hover {
   flex-wrap: wrap;
 }
 .ldot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
-.llbl { font-size: 10px; color: #888884; }
+.llbl { font-size: 10px; color: #bdbdb7; }
 
 /* Pool inventory */
 .pool-wrap {
@@ -207,7 +207,7 @@ a:hover {
   padding: 5px 10px;
   background: #161616;
   font-size: 9px;
-  color: #555552;
+  color: #9c9c97;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   border-bottom: 0.5px solid rgba(255,255,255,0.08);
@@ -234,7 +234,7 @@ a:hover {
 }
 .dtable th {
   text-align: left;
-  color: #555552;
+  color: #9c9c97;
   font-weight: 400;
   font-size: 9px;
   letter-spacing: 0.1em;
@@ -251,13 +251,13 @@ a:hover {
 }
 .dtable tr:last-child td { border-bottom: none; }
 .dtable .amt { font-size: 15px; font-weight: 500; color: #e8e8e6; white-space: nowrap; }
-.dtable .sub { font-size: 10px; color: #555552; margin-top: 2px; }
+.dtable .sub { font-size: 10px; color: #9c9c97; margin-top: 2px; }
 
 /* Lifecycle table */
 .lt { width: 100%; border-collapse: collapse; font-size: 11px; }
 .lt th {
   text-align: left;
-  color: #555552;
+  color: #9c9c97;
   font-weight: 400;
   font-size: 9px;
   letter-spacing: 0.1em;
@@ -285,7 +285,7 @@ a:hover {
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #555552;
+  color: #9c9c97;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -300,7 +300,7 @@ a:hover {
 .analysis p {
   font-size: 12px;
   line-height: 1.8;
-  color: #888884;
+  color: #bdbdb7;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   margin-bottom: 10px;
 }
@@ -326,9 +326,9 @@ a:hover {
 }
 .chart-legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; }
 .chart-legend-dot  { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
-.chart-legend-label { color: #888884; flex: 1; }
+.chart-legend-label { color: #bdbdb7; flex: 1; }
 .chart-legend-val   { color: #e8e8e6; font-weight: 500; text-align: right; }
-.chart-legend-pct   { color: #555552; font-size: 10px; width: 36px; text-align: right; }
+.chart-legend-pct   { color: #9c9c97; font-size: 10px; width: 36px; text-align: right; }
 
 /* Export bar */
 .export-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -341,7 +341,7 @@ a:hover {
   background: #1e1e1e;
   border: 0.5px solid rgba(255,255,255,0.1);
   border-radius: 4px;
-  color: #888884;
+  color: #bdbdb7;
   cursor: pointer;
   transition: all 0.15s;
   display: inline-flex;
@@ -360,7 +360,7 @@ a:hover {
   background: #1e1e1e;
   border: 0.5px solid rgba(255,255,255,0.1);
   border-radius: 4px;
-  color: #888884;
+  color: #bdbdb7;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -369,10 +369,10 @@ a:hover {
 .disc-btn.primary:hover { background: rgba(29,158,117,0.2); }
 
 /* Loading / error */
-.blink { color: #555552; animation: bl 1s step-end infinite; }
+.blink { color: #9c9c97; animation: bl 1s step-end infinite; }
 @keyframes bl { 0%, 100% { opacity: 1 } 50% { opacity: 0.2 } }
 .err { color: #c94a4a; font-size: 11px; line-height: 1.8; }
-.ph2 { color: #555552; font-size: 11px; }
+.ph2 { color: #9c9c97; font-size: 11px; }
 
 /* Migration step */
 .mstep { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
@@ -383,7 +383,7 @@ a:hover {
 }
 .mstep-body { flex: 1; }
 .mstep-trigger { font-size: 11px; color: #e8e8e6; font-weight: 500; margin-bottom: 3px; }
-.mstep-action  { font-size: 11px; color: #888884; line-height: 1.6; }
+.mstep-action  { font-size: 11px; color: #bdbdb7; line-height: 1.6; }
 
 /* Input grid (Architect) */
 .igrid {
@@ -393,7 +393,7 @@ a:hover {
   margin-bottom: 14px;
 }
 .field { display: flex; flex-direction: column; gap: 4px; }
-.field label { font-size: 9px; color: #555552; letter-spacing: 0.08em; text-transform: uppercase; }
+.field label { font-size: 9px; color: #9c9c97; letter-spacing: 0.08em; text-transform: uppercase; }
 .field input,
 .field select {
   font-family: inherit;
@@ -427,11 +427,11 @@ a:hover {
 .disc-card:hover { border-color: rgba(255,255,255,0.18); }
 .disc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
 .disc-sym  { font-size: 12px; font-weight: 600; color: #e8e8e6; }
-.disc-name { font-size: 10px; color: #555552; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.disc-name { font-size: 10px; color: #9c9c97; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .disc-price { font-size: 14px; font-weight: 500; color: #e8e8e6; margin-bottom: 6px; }
 .disc-metrics { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
 .disc-m { display: flex; flex-direction: column; gap: 2px; }
-.disc-m .dl { font-size: 9px; color: #555552; text-transform: uppercase; letter-spacing: 0.08em; }
+.disc-m .dl { font-size: 9px; color: #9c9c97; text-transform: uppercase; letter-spacing: 0.08em; }
 .disc-m .dv { font-size: 12px; font-weight: 500; color: #e8e8e6; }
 .disc-actions { display: flex; gap: 6px; }
 
@@ -448,11 +448,11 @@ a:hover {
 .portfolio-card:hover { border-color: rgba(255,255,255,0.18); }
 .portfolio-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .portfolio-card-name { font-size: 13px; font-weight: 500; color: #e8e8e6; }
-.portfolio-card-sym  { font-size: 11px; color: #555552; }
+.portfolio-card-sym  { font-size: 11px; color: #9c9c97; }
 .portfolio-card-addr { font-size: 9px; color: #333; word-break: break-all; margin-bottom: 6px; }
 .portfolio-metrics { display: flex; gap: 16px; flex-wrap: wrap; }
 .portfolio-metric { display: flex; flex-direction: column; gap: 2px; }
-.portfolio-metric .pm-l { font-size: 9px; color: #555552; text-transform: uppercase; letter-spacing: 0.08em; }
+.portfolio-metric .pm-l { font-size: 9px; color: #9c9c97; text-transform: uppercase; letter-spacing: 0.08em; }
 .portfolio-metric .pm-v { font-size: 13px; font-weight: 500; color: #e8e8e6; }
 .port-add-row { display: flex; gap: 8px; margin-bottom: 10px; }
 .port-add-row input {
@@ -467,7 +467,7 @@ a:hover {
   outline: none;
 }
 .port-add-row input:focus { border-color: rgba(255,255,255,0.2); }
-.port-empty { color: #555552; font-size: 11px; padding: 20px 0; text-align: center; }
+.port-empty { color: #9c9c97; font-size: 11px; padding: 20px 0; text-align: center; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }

@@ -34,7 +34,7 @@ function priceLabel(p: number): string {
 }
 
 const NOTE =
-  '<div style="font-size:10px;color:#555552;margin-top:10px;">Price appreciation only — no trading fees, no rebalancing, no time decay. Projection assumes a static position.</div>';
+  '<div style="font-size:10px;color:#9c9c97;margin-top:10px;">Price appreciation only — no trading fees, no rebalancing, no time decay. Projection assumes a static position.</div>';
 
 // ── DAMM ─────────────────────────────────────────────────────────────
 export function renderDammResult(r: DammResult, meta: { currency: string; entryMC: number }): string {
@@ -47,7 +47,7 @@ export function renderDammResult(r: DammResult, meta: { currency: string; entryM
       const up = row.vsHold >= 0;
       const atEntry = Math.abs(row.mc - meta.entryMC) / meta.entryMC < 1e-9;
       return `<tr${atEntry ? ' style="background:rgba(255,255,255,0.03);"' : ''}>
-        <td>${fmt(row.mc)}${atEntry ? ' <span style="color:#888884;">· entry</span>' : ''}</td>
+        <td>${fmt(row.mc)}${atEntry ? ' <span style="color:#bdbdb7;">· entry</span>' : ''}</td>
         <td><span class="amt">${usd(row.value)}</span></td>
         <td>${usd(row.tokenSide)}</td>
         <td>${usd(row.quoteSide)}</td>
@@ -108,7 +108,7 @@ export function renderDlmmResult(
       const isEntry = Math.abs(row.price - meta.entryPrice) / meta.entryPrice < 1e-6;
       const isLow = Math.abs(row.price - meta.low) / meta.low < 1e-6;
       const isHigh = Math.abs(row.price - meta.high) / meta.high < 1e-6;
-      const tag = isEntry ? ' <span style="color:#888884;">· entry</span>' : isLow ? ' <span style="color:' + BLUE + ';">· bottom</span>' : isHigh ? ' <span style="color:' + RED + ';">· top</span>' : '';
+      const tag = isEntry ? ' <span style="color:#bdbdb7;">· entry</span>' : isLow ? ' <span style="color:' + BLUE + ';">· bottom</span>' : isHigh ? ' <span style="color:' + RED + ';">· top</span>' : '';
       const barW = Math.max(2, (row.value / maxVal) * 100);
       return `<tr${isEntry ? ' style="background:rgba(255,255,255,0.03);"' : ''}>
         <td>${priceLabel(row.price)}${tag}</td>
@@ -135,7 +135,7 @@ export function renderDlmmResult(
 
     <div style="display:flex;align-items:center;gap:8px;margin:10px 0;flex-wrap:wrap;">
       <span class="badge" style="background:${BLUE}22;color:${BLUE};border:0.5px solid ${BLUE}44;font-size:11px;padding:3px 10px;">DLMM</span>
-      <span style="font-size:11px;color:#888884;">${SIDE_LABEL[meta.side]} · ${SHAPE_LABEL[meta.shape]} shape · range ${priceLabel(meta.low)} → ${priceLabel(meta.high)}</span>
+      <span style="font-size:11px;color:#bdbdb7;">${SIDE_LABEL[meta.side]} · ${SHAPE_LABEL[meta.shape]} shape · range ${priceLabel(meta.low)} → ${priceLabel(meta.high)}</span>
     </div>
 
     <div class="sl">Value across the range</div>
