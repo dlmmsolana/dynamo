@@ -349,16 +349,16 @@ create table audit_snapshots (
 - [x] Discover fully migrated (trending API route, search API route, DiscoverClient)
 - [x] Architect fully migrated (plan lib + ArchitectClient)
 - [x] Portfolio tab migration (localStorage → Supabase `portfolio_tokens` table, with localStorage fallback)
-- [ ] Helius RPC integration (holder counts, mint/freeze authority)
+- [ ] Helius RPC integration (holder counts, mint/freeze authority) — **also unblocks Live bin utilization** (see Phase 4 note)
 - [ ] Birdeye integration (historical OHLCV and volume trends)
-- [ ] Multi-chain scaffold (ETH/Base ready, Solana active)
+- [x] Multi-chain scaffold (ETH/Base ready, Solana active) — Session 12
 
 ### Phase 4 — Intelligence layer
 - [ ] Backtesting engine: ingest historical Solana token data, answer questions like:
   - Which DLMM distributions worked best between $100k–$1M MC?
   - What liq/MC ratios correlate with sustainable growth?
   - At what stage should DAMM typically migrate to DLMM?
-- [ ] Live bin utilization via Meteora API
+- [ ] Live bin utilization — **blocked: the key-free `dlmm-api.meteora.ag` REST API is decommissioned (origin 404s every path, cache-bust confirmed, 2026-06-16).** Per-bin data now requires the on-chain `@meteora-ag/dlmm` SDK via a real RPC (public RPC blocks `getProgramAccounts` on Meteora programs — see Session 7) or a paid provider (Bitquery). **Bundle with the Helius integration above.**
 - [ ] Automated alert system (email or webhook when token needs attention)
 - [ ] LP performance tracker (track actual positions, not just tokens)
 
