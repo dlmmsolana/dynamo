@@ -8,7 +8,7 @@
 :root {
   --bg:#0f0f0f;--bg2:#161616;--bg3:#1e1e1e;
   --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
-  --text:#e8e8e6;--text2:#888884;--text3:#555552;
+  --text:#e8e8e6;--text2:#bdbdb7;--text3:#9c9c97;
   --green:#1D9E75;--blue:#378ADD;--orange:#D85A30;--amber:#BA7517;--red:#c94a4a;--purple:#7F77DD;
   --mono:'SF Mono','Fira Code','Cascadia Code',monospace;
   --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
@@ -19,21 +19,21 @@ body{background:#0f0f0f;color:#e8e8e6;font-family:'SF Mono','Fira Code','Cascadi
 .app{max-width:1020px;margin:0 auto;padding:24px 16px 80px;}
 .header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
 .hdot{width:8px;height:8px;border-radius:50%;background:#1D9E75;flex-shrink:0;}
-.htitle{font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#888884;}
-.hright{margin-left:auto;font-size:11px;color:#555552;}
+.htitle{font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#bdbdb7;}
+.hright{margin-left:auto;font-size:11px;color:#9c9c97;}
 .chrome{border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;}
 .tabbar{display:flex;border-bottom:0.5px solid rgba(255,255,255,0.08);background:#0f0f0f;padding:0 16px;border-radius:10px 10px 0 0;flex-wrap:wrap;}
-.tab{padding:10px 16px;font-size:11px;font-family:inherit;color:#555552;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:0.1em;text-transform:uppercase;background:none;border-top:none;border-left:none;border-right:none;transition:color .15s,border-color .15s;white-space:nowrap;}
-.tab:hover{color:#888884;}
+.tab{padding:10px 16px;font-size:11px;font-family:inherit;color:#9c9c97;cursor:pointer;border-bottom:2px solid transparent;letter-spacing:0.1em;text-transform:uppercase;background:none;border-top:none;border-left:none;border-right:none;transition:color .15s,border-color .15s;white-space:nowrap;}
+.tab:hover{color:#bdbdb7;}
 .tab.active{color:#e8e8e6;border-bottom-color:#1D9E75;}
-.sbar{display:flex;align-items:center;gap:16px;padding:5px 16px;border-bottom:0.5px solid rgba(255,255,255,0.08);background:#0f0f0f;font-size:10px;color:#555552;letter-spacing:0.06em;flex-wrap:wrap;}
+.sbar{display:flex;align-items:center;gap:16px;padding:5px 16px;border-bottom:0.5px solid rgba(255,255,255,0.08);background:#0f0f0f;font-size:10px;color:#9c9c97;letter-spacing:0.06em;flex-wrap:wrap;}
 .sdot{width:5px;height:5px;border-radius:50%;background:#1D9E75;display:inline-block;margin-right:5px;}
 .panel{display:none;background:#161616;padding:16px;border-radius:0 0 10px 10px;}
 .panel.active{display:block;}
-.sl{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:#444442;margin-bottom:6px;padding-bottom:4px;border-bottom:0.5px solid rgba(255,255,255,0.06);}
+.sl{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:#8c8c87;margin-bottom:6px;padding-bottom:4px;border-bottom:0.5px solid rgba(255,255,255,0.06);}
 .igrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:14px;}
 .field{display:flex;flex-direction:column;gap:4px;}
-.field label{font-size:9px;color:#555552;letter-spacing:0.08em;text-transform:uppercase;}
+.field label{font-size:9px;color:#9c9c97;letter-spacing:0.08em;text-transform:uppercase;}
 .field input,.field select{font-family:inherit;font-size:12px;padding:6px 8px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;color:#e8e8e6;width:100%;outline:none;}
 .field input:focus,.field select:focus{border-color:rgba(255,255,255,0.2);}
 .field select option{background:#1e1e1e;}
@@ -42,48 +42,48 @@ body{background:#0f0f0f;color:#e8e8e6;font-family:'SF Mono','Fira Code','Cascadi
 .rbtn:active{transform:scale(0.98);}
 .rbtn:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
 .obj-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-.obj-btn{font-family:inherit;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:20px;color:#555552;cursor:pointer;transition:all .15s;}
-.obj-btn:hover{color:#888884;border-color:rgba(255,255,255,0.16);}
+.obj-btn{font-family:inherit;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:20px;color:#9c9c97;cursor:pointer;transition:all .15s;}
+.obj-btn:hover{color:#bdbdb7;border-color:rgba(255,255,255,0.16);}
 .obj-btn.active.fee{border-color:#1D9E75;color:#1D9E75;background:rgba(29,158,117,0.1);}
 .obj-btn.active.stability{border-color:#378ADD;color:#378ADD;background:rgba(55,138,221,0.1);}
 .obj-btn.active.volume{border-color:#BA7517;color:#BA7517;background:rgba(186,117,23,0.1);}
 .obj-btn.active.balanced{border-color:#7F77DD;color:#7F77DD;background:rgba(127,119,221,0.1);}
 .out{border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#0f0f0f;padding:12px;font-size:12px;line-height:1.6;}
-.ph2{color:#555552;font-size:11px;}
+.ph2{color:#9c9c97;font-size:11px;}
 .mrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:5px;margin-bottom:10px;}
 .mc2{background:#161616;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:7px 10px;}
-.mc2 .ml{font-size:8px;color:#555552;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;}
+.mc2 .ml{font-size:8px;color:#9c9c97;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;}
 .mc2 .mv{font-size:14px;font-weight:500;color:#e8e8e6;}
-.mc2 .ms{font-size:9px;color:#555552;margin-top:1px;}
+.mc2 .ms{font-size:9px;color:#9c9c97;margin-top:1px;}
 .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;}
 .abar{height:6px;border-radius:3px;background:#1e1e1e;overflow:hidden;display:flex;margin:6px 0;}
 .fd{background:#1D9E75;}.fdl{background:#378ADD;}.fcl{background:#D85A30;}
 .lrow{display:flex;gap:16px;margin-bottom:8px;align-items:center;flex-wrap:wrap;}
 .ldot{width:7px;height:7px;border-radius:2px;flex-shrink:0;}
-.llbl{font-size:10px;color:#888884;}
+.llbl{font-size:10px;color:#bdbdb7;}
 .lt{width:100%;border-collapse:collapse;font-size:11px;}
-.lt th{text-align:left;color:#555552;font-weight:400;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:6px;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.lt th{text-align:left;color:#9c9c97;font-weight:400;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:6px;border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .lt td{padding:7px 6px;border-bottom:0.5px solid rgba(255,255,255,0.08);color:#e8e8e6;vertical-align:middle;}
 .lt tr:last-child td{border-bottom:none;}
 .pool-wrap{border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;margin-bottom:10px;overflow-x:auto;}
-.ph{display:flex;align-items:center;padding:5px 10px;background:#161616;font-size:9px;color:#555552;letter-spacing:0.1em;text-transform:uppercase;border-bottom:0.5px solid rgba(255,255,255,0.08);gap:8px;min-width:720px;}
+.ph{display:flex;align-items:center;padding:5px 10px;background:#161616;font-size:9px;color:#9c9c97;letter-spacing:0.1em;text-transform:uppercase;border-bottom:0.5px solid rgba(255,255,255,0.08);gap:8px;min-width:720px;}
 .pr{display:flex;align-items:center;padding:8px 10px;border-bottom:0.5px solid rgba(255,255,255,0.08);font-size:11px;gap:8px;min-width:720px;}
 .pr:last-child{border-bottom:none;}
 .dtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;}
-.dtable th{text-align:left;color:#555552;font-weight:400;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:6px 8px;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.dtable th{text-align:left;color:#9c9c97;font-weight:400;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:6px 8px;border-bottom:0.5px solid rgba(255,255,255,0.08);}
 .dtable td{padding:9px 8px;border-bottom:0.5px solid rgba(255,255,255,0.08);color:#e8e8e6;vertical-align:top;line-height:1.5;}
 .dtable tr:last-child td{border-bottom:none;}
 .dtable .amt{font-size:15px;font-weight:500;color:#e8e8e6;white-space:nowrap;}
-.dtable .sub{font-size:10px;color:#555552;margin-top:2px;}
+.dtable .sub{font-size:10px;color:#9c9c97;margin-top:2px;}
 .mstep{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
 .mstep-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px;}
 .mstep-body{flex:1;}
 .mstep-trigger{font-size:11px;color:#e8e8e6;font-weight:500;margin-bottom:3px;}
-.mstep-action{font-size:11px;color:#888884;line-height:1.6;}
+.mstep-action{font-size:11px;color:#bdbdb7;line-height:1.6;}
 .analysis{margin-top:10px;padding:12px;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#161616;}
-.analysis-label{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555552;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.analysis-label{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#9c9c97;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .obj-tag{font-size:9px;padding:1px 7px;border-radius:10px;letter-spacing:0.06em;}
-.analysis p{font-size:12px;line-height:1.8;color:#888884;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin-bottom:10px;}
+.analysis p{font-size:12px;line-height:1.8;color:#bdbdb7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin-bottom:10px;}
 .analysis p:last-child{margin-bottom:0;}
 .analysis strong{color:#e8e8e6;font-weight:500;}
 /* chart */
@@ -92,51 +92,51 @@ body{background:#0f0f0f;color:#e8e8e6;font-family:'SF Mono','Fira Code','Cascadi
 .chart-legend{flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px;justify-content:center;}
 .chart-legend-item{display:flex;align-items:center;gap:8px;font-size:11px;}
 .chart-legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
-.chart-legend-label{color:#888884;flex:1;}
+.chart-legend-label{color:#bdbdb7;flex:1;}
 .chart-legend-val{color:#e8e8e6;font-weight:500;text-align:right;}
-.chart-legend-pct{color:#555552;font-size:10px;width:36px;text-align:right;}
+.chart-legend-pct{color:#9c9c97;font-size:10px;width:36px;text-align:right;}
 /* portfolio */
 .portfolio-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
 .portfolio-card{background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:12px 14px;cursor:pointer;transition:border-color .15s;}
 .portfolio-card:hover{border-color:rgba(255,255,255,0.18);}
 .portfolio-card-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .portfolio-card-name{font-size:13px;font-weight:500;color:#e8e8e6;}
-.portfolio-card-sym{font-size:11px;color:#555552;}
+.portfolio-card-sym{font-size:11px;color:#9c9c97;}
 .portfolio-card-addr{font-size:9px;color:#333;word-break:break-all;margin-bottom:6px;}
 .portfolio-metrics{display:flex;gap:16px;flex-wrap:wrap;}
 .portfolio-metric{display:flex;flex-direction:column;gap:2px;}
-.portfolio-metric .pm-l{font-size:9px;color:#555552;text-transform:uppercase;letter-spacing:0.08em;}
+.portfolio-metric .pm-l{font-size:9px;color:#9c9c97;text-transform:uppercase;letter-spacing:0.08em;}
 .portfolio-metric .pm-v{font-size:13px;font-weight:500;color:#e8e8e6;}
 .port-add-row{display:flex;gap:8px;margin-bottom:10px;}
 .port-add-row input{flex:1;font-family:inherit;font-size:12px;padding:7px 10px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;color:#e8e8e6;outline:none;}
 .port-add-row input:focus{border-color:rgba(255,255,255,0.2);}
-.port-empty{color:#555552;font-size:11px;padding:20px 0;text-align:center;}
+.port-empty{color:#9c9c97;font-size:11px;padding:20px 0;text-align:center;}
 /* discover */
 .disc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:4px;}
 .disc-card{background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:9px 12px;transition:border-color .15s;}
 .disc-card:hover{border-color:rgba(255,255,255,0.18);}
 .disc-header{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
 .disc-sym{font-size:12px;font-weight:600;color:#e8e8e6;}
-.disc-name{font-size:10px;color:#555552;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.disc-name{font-size:10px;color:#9c9c97;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .disc-price{font-size:14px;font-weight:500;color:#e8e8e6;margin-bottom:6px;}
 .disc-metrics{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
 .disc-m{display:flex;flex-direction:column;gap:2px;}
-.disc-m .dl{font-size:9px;color:#555552;text-transform:uppercase;letter-spacing:0.08em;}
+.disc-m .dl{font-size:9px;color:#9c9c97;text-transform:uppercase;letter-spacing:0.08em;}
 .disc-m .dv{font-size:12px;font-weight:500;color:#e8e8e6;}
 .disc-actions{display:flex;gap:6px;}
-.disc-btn{font-family:inherit;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.1);border-radius:4px;color:#888884;cursor:pointer;transition:all .15s;}
+.disc-btn{font-family:inherit;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.1);border-radius:4px;color:#bdbdb7;cursor:pointer;transition:all .15s;}
 .disc-btn:hover{border-color:rgba(255,255,255,0.25);color:#e8e8e6;}
 .disc-btn.primary{background:#1D9E7520;border-color:#1D9E7550;color:#1D9E75;}
 .disc-btn.primary:hover{background:#1D9E7535;}
 /* export */
 .export-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-.export-btn{font-family:inherit;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:5px 12px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.1);border-radius:4px;color:#888884;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
+.export-btn{font-family:inherit;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:5px 12px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.1);border-radius:4px;color:#bdbdb7;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
 .export-btn:hover{color:#e8e8e6;border-color:rgba(255,255,255,0.22);}
 /* misc */
-.blink{color:#555552;animation:bl 1s step-end infinite;}
+.blink{color:#9c9c97;animation:bl 1s step-end infinite;}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:0.2}}
 .err{color:#c94a4a;font-size:11px;line-height:1.8;}
-.hint{font-size:10px;color:#555552;margin-bottom:14px;}
+.hint{font-size:10px;color:#9c9c97;margin-bottom:14px;}
 .arow{display:flex;gap:8px;margin-bottom:6px;align-items:center;}
 .arow input{flex:1;font-family:inherit;font-size:12px;padding:8px 10px;background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;color:#e8e8e6;outline:none;}
 .arow input:focus{border-color:rgba(255,255,255,0.2);}
@@ -160,6 +160,7 @@ body{background:#0f0f0f;color:#e8e8e6;font-family:'SF Mono','Fira Code','Cascadi
       <button class="tab" onclick="switchTab('auditor',this)">⊕ Auditor</button>
       <button class="tab" onclick="switchTab('portfolio',this)">◎ Portfolio</button>
       <button class="tab" onclick="switchTab('architect',this)">⬡ Architect</button>
+      <button class="tab" onclick="switchTab('simulator',this)">⊞ Simulator</button>
     </div>
     <div class="sbar">
       <span><span class="sdot"></span>Solana Mainnet</span>
@@ -270,7 +271,7 @@ body{background:#0f0f0f;color:#e8e8e6;font-family:'SF Mono','Fira Code','Cascadi
       </div>
       <div class="hint">Add up to 50 token addresses. Data fetches from DexScreener. Click any card to open full audit.</div>
       <div style="display:flex;align-items:center;gap:6px;margin:8px 0 4px;">
-        <span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555552;margin-right:2px;">Filter</span>
+        <span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#9c9c97;margin-right:2px;">Filter</span>
         <button class="disc-btn primary" id="pfilter-all" onclick="setPortFilter('all',this)">All</button>
         <button class="disc-btn" id="pfilter-watching" onclick="setPortFilter('watching',this)">Watching</button>
         <button class="disc-btn" id="pfilter-active-lp" onclick="setPortFilter('active-lp',this)">Active LP</button>
@@ -278,7 +279,7 @@ body{background:#0f0f0f;color:#e8e8e6;font-family:'SF Mono','Fira Code','Cascadi
         <button class="disc-btn" id="pfilter-other" onclick="setPortFilter('other',this)">Other</button>
       </div>
       <div style="display:flex;align-items:center;gap:6px;margin:0 0 10px;">
-        <span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#555552;margin-right:2px;">Sort</span>
+        <span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#9c9c97;margin-right:2px;">Sort</span>
         <button class="disc-btn" id="psort-stage-desc" onclick="setPortSort('stage-desc',this)">Stage ↓</button>
         <button class="disc-btn" id="psort-stage-asc" onclick="setPortSort('stage-asc',this)">Stage ↑</button>
         <button class="disc-btn" id="psort-liq" onclick="setPortSort('liq',this)">Liq Ratio</button>
@@ -286,6 +287,41 @@ body{background:#0f0f0f;color:#e8e8e6;font-family:'SF Mono','Fira Code','Cascadi
         <button class="disc-btn" id="psort-alpha" onclick="setPortSort('alpha',this)">A–Z</button>
       </div>
       <div id="portfolio-list" class="portfolio-list"><div class="port-empty">No tokens tracked yet. Add a mint address above.</div></div>
+    </div>
+
+    <!-- ── SIMULATOR ── -->
+    <div class="panel" id="panel-simulator">
+      <div class="sl">LP value simulator <span style="font-size:10px;font-weight:400;color:#9c9c97;">price appreciation only — no fees, no rebalancing</span></div>
+      <div class="obj-row" id="sim-mode-row">
+        <button class="obj-btn balanced active" onclick="setSimMode('damm',this)">◇ DAMM v2 · Full Range</button>
+        <button class="obj-btn volume" onclick="setSimMode('dlmm',this)">▦ DLMM · Discrete Bins</button>
+      </div>
+
+      <div id="sim-damm-inputs">
+        <div class="igrid">
+          <div class="field"><label>Starting LP Value ($)</label><input id="sim-damm-value" type="number" value="500" min="1"/></div>
+          <div class="field"><label>Entry Market Cap ($)</label><input id="sim-damm-mc" type="number" value="10000" min="1"/></div>
+          <div class="field"><label>Quote Currency</label><select id="sim-damm-quote"><option>USDC</option><option>SOL</option></select></div>
+        </div>
+        <div class="hint">Full-range DAMM is always 50/50 by value. LP value scales with √price. Fixed market-cap ladder is simulated automatically.</div>
+      </div>
+
+      <div id="sim-dlmm-inputs" style="display:none;">
+        <div class="igrid">
+          <div class="field"><label>Entry Price ($)</label><input id="sim-dlmm-price" type="number" value="0.001" step="any" min="0"/></div>
+          <div class="field"><label>Bin Step (bps)</label><input id="sim-dlmm-step" type="number" value="100" min="1"/></div>
+          <div class="field"><label>Range Low ($)</label><input id="sim-dlmm-low" type="number" value="0.0005" step="any" min="0"/></div>
+          <div class="field"><label>Range High ($)</label><input id="sim-dlmm-high" type="number" value="0.003" step="any" min="0"/></div>
+          <div class="field"><label>Capital ($)</label><input id="sim-dlmm-capital" type="number" value="1000" min="1"/></div>
+          <div class="field"><label>Shape</label><select id="sim-dlmm-shape"><option value="spot">Spot (uniform)</option><option value="curve">Curve (peak center)</option><option value="bidask">Bid Ask (U-shape)</option></select></div>
+          <div class="field"><label>Structure</label><select id="sim-dlmm-structure"><option value="two">Two-sided</option><option value="dca-out">DCA Out (1-sided token)</option><option value="dca-in">DCA In (1-sided quote)</option></select></div>
+          <div class="field"><label>Entry MC ($, optional)</label><input id="sim-dlmm-mc" type="number" value="" min="0"/></div>
+        </div>
+        <div class="hint">Discrete-bin model. Each bin converts constant-sum at its center price. Entry MC enables market-cap labels in the sweep.</div>
+      </div>
+
+      <button class="rbtn" id="sim-btn" onclick="runSimulator()">▶ Run Simulation</button>
+      <div class="out" id="sim-out"><span class="ph2">Choose a pool type, set your parameters, then run.</span></div>
     </div>
 
   </div>
@@ -309,6 +345,25 @@ let lastAuditAddr='';
 // Any token account whose owner is itself owned by this program ID is a lock escrow PDA.
 const METEORA_AMM_PROGRAM='Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB';
 const SOLANA_RPC='https://api.mainnet-beta.solana.com';
+
+// ── multi-chain scaffold ──────────────────────────────────────────────────────
+// Solana is active; Ethereum/Base are registered + validatable but not surfaced in
+// pool logic yet. All token objects carry a `chain` field defaulting to 'solana'.
+const DEFAULT_CHAIN='solana';
+const CHAINS={
+  solana:  {label:'Solana',  dexscreenerId:'solana',  active:true,
+            addressHint:'Enter a valid Solana mint address (base58, 32–44 characters).',
+            validate:a=>/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a)},
+  ethereum:{label:'Ethereum',dexscreenerId:'ethereum',active:false,
+            addressHint:'Enter a valid Ethereum address (0x followed by 40 hex characters).',
+            validate:a=>/^0x[a-fA-F0-9]{40}$/.test(a)},
+  base:    {label:'Base',    dexscreenerId:'base',    active:false,
+            addressHint:'Enter a valid Base address (0x followed by 40 hex characters).',
+            validate:a=>/^0x[a-fA-F0-9]{40}$/.test(a)},
+};
+const ACTIVE_CHAINS=Object.keys(CHAINS).filter(c=>CHAINS[c].active);
+function validateAddress(addr,chain){chain=chain||DEFAULT_CHAIN;const c=CHAINS[chain];return !!(c&&c.validate(addr));}
+function chainFromDexId(id){return Object.keys(CHAINS).find(k=>CHAINS[k].dexscreenerId===id)||DEFAULT_CHAIN;}
 
 // ── utils ────────────────────────────────────────────────────────────────────
 function setObj(o,el){
@@ -420,14 +475,14 @@ function detectPoolType(p){
     return{type:'AMM',color:'#BA7517',group:'Raydium AMM'};
   }
   if(dex.includes('pump')) return{type:'Bonding Curve',color:'#D85A30',group:'PumpSwap'};
-  return{type:'AMM',color:'#555552',group:'Other'};
+  return{type:'AMM',color:'#9c9c97',group:'Other'};
 }
 function poolLinks(p){
   const dex=(p.dexId||'').toLowerCase(),pa=p.pairAddress||'';
   const a=(href,color,lbl)=>`<a href="${href}" target="_blank" style="color:${color};text-decoration:none;font-size:10px;border:0.5px solid ${color}44;border-radius:3px;padding:1px 5px;white-space:nowrap;">${lbl} ↗</a>`;
   const out=[];
-  if(p.url) out.push(a(p.url,'#555552','DS'));
-  if(pa) out.push(a(`https://solscan.io/account/${pa}`,'#555552','SC'));
+  if(p.url) out.push(a(p.url,'#9c9c97','DS'));
+  if(pa) out.push(a(`https://solscan.io/account/${pa}`,'#9c9c97','SC'));
   if(dex.includes('orca')&&pa) out.push(a(`https://www.orca.so/pools?address=${pa}`,'#7F77DD','Orca'));
   if(dex.includes('meteora')&&pa) out.push(a(`https://app.meteora.ag/pools/${pa}`,'#1D9E75','Met'));
   if(dex.includes('raydium')&&pa) out.push(a(`https://raydium.io/liquidity/?ammId=${pa}`,'#BA7517','Ray'));
@@ -440,13 +495,13 @@ function buildPoolRows(pairs){
     const ch=p.priceChange?.h24??null;
     const pt=detectPoolType(p);
     return `<div class="pr">
-      <span style="min-width:110px;color:#888884;font-size:10px;text-transform:uppercase;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(p.dexId||'?').replace(/_/g,' ')}</span>
+      <span style="min-width:110px;color:#bdbdb7;font-size:10px;text-transform:uppercase;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(p.dexId||'?').replace(/_/g,' ')}</span>
       <span style="min-width:90px;"><span style="background:${pt.color}20;color:${pt.color};border:0.5px solid ${pt.color}50;border-radius:3px;padding:1px 6px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;">${pt.type}</span></span>
       <span style="min-width:75px;">${fmt(tv)}</span>
       <span style="min-width:75px;">${fmt(vo)}</span>
       <span style="min-width:65px;">${fmt(fe)}</span>
-      <span style="min-width:50px;color:#888884;">${ut}</span>
-      <span style="min-width:60px;color:${ch===null?'#555552':ch>=0?'#1D9E75':'#c94a4a'};">${ch===null?'—':(ch>=0?'+':'')+ch.toFixed(1)+'%'}</span>
+      <span style="min-width:50px;color:#bdbdb7;">${ut}</span>
+      <span style="min-width:60px;color:${ch===null?'#9c9c97':ch>=0?'#1D9E75':'#c94a4a'};">${ch===null?'—':(ch>=0?'+':'')+ch.toFixed(1)+'%'}</span>
       <span style="display:flex;gap:4px;flex-wrap:wrap;">${poolLinks(p)}</span>
     </div>`;
   }).join('');
@@ -543,12 +598,12 @@ function buildLPOwnershipHTML(results,errors,hasPumpSwap,hasOtherTypes){
   let html=`<div class="sl">LP ownership concentration</div>`;
 
   if(hasPumpSwap){
-    html+=`<div style="font-size:10px;color:#555552;margin-bottom:8px;padding:6px 10px;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;background:#0f0f0f;">PumpSwap bonding curve pools excluded — ownership concentration is structural by design and not a risk signal.</div>`;
+    html+=`<div style="font-size:10px;color:#9c9c97;margin-bottom:8px;padding:6px 10px;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;background:#0f0f0f;">PumpSwap bonding curve pools excluded — ownership concentration is structural by design and not a risk signal.</div>`;
   }
 
   if(errors.length){
     errors.forEach(e=>{
-      html+=`<div style="font-size:10px;color:#555552;margin-bottom:6px;padding:5px 10px;border:0.5px solid rgba(201,74,74,0.2);border-radius:4px;">Pool ${sh(e.pairAddress)} — LP data unavailable: ${e.msg}</div>`;
+      html+=`<div style="font-size:10px;color:#9c9c97;margin-bottom:6px;padding:5px 10px;border:0.5px solid rgba(201,74,74,0.2);border-radius:4px;">Pool ${sh(e.pairAddress)} — LP data unavailable: ${e.msg}</div>`;
     });
   }
 
@@ -562,31 +617,31 @@ function buildLPOwnershipHTML(results,errors,hasPumpSwap,hasOtherTypes){
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:11px;color:#e8e8e6;">${pool.poolName}</span>
-            <span style="font-size:9px;color:#444442;">${sh(pool.pairAddress)}</span>
+            <span style="font-size:9px;color:#8c8c87;">${sh(pool.pairAddress)}</span>
           </div>
           <span class="badge" style="background:${fc}22;color:${fc};border:0.5px solid ${fc}44;">${fl}</span>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
           <div style="background:#161613;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 10px;flex:1;min-width:80px;">
-            <div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Top-3 unlocked</div>
+            <div style="font-size:8px;color:#8c8c87;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Top-3 unlocked</div>
             <div style="font-size:16px;font-weight:600;color:${fc};">${pool.top3Pct.toFixed(1)}%</div>
-            <div style="font-size:9px;color:#444442;">of total supply</div>
+            <div style="font-size:9px;color:#8c8c87;">of total supply</div>
           </div>
           <div style="background:#161613;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 10px;flex:1;min-width:80px;">
-            <div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">🔒 Locked LP</div>
-            <div style="font-size:16px;font-weight:600;color:#888884;">${pool.lockedPct.toFixed(1)}%</div>
-            <div style="font-size:9px;color:#444442;">of total supply</div>
+            <div style="font-size:8px;color:#8c8c87;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">🔒 Locked LP</div>
+            <div style="font-size:16px;font-weight:600;color:#bdbdb7;">${pool.lockedPct.toFixed(1)}%</div>
+            <div style="font-size:9px;color:#8c8c87;">of total supply</div>
           </div>
           <div style="background:#161613;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 10px;flex:1;min-width:80px;">
-            <div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Unlocked holders</div>
-            <div style="font-size:16px;font-weight:600;color:#888884;">${pool.unlockedCount}</div>
-            <div style="font-size:9px;color:#444442;">shown of top 20</div>
+            <div style="font-size:8px;color:#8c8c87;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Unlocked holders</div>
+            <div style="font-size:16px;font-weight:600;color:#bdbdb7;">${pool.unlockedCount}</div>
+            <div style="font-size:9px;color:#8c8c87;">shown of top 20</div>
           </div>
         </div>
         ${pool.flagConcentrated
           ?`<div style="font-size:10px;color:#c94a4a;margin-bottom:8px;">Top 3 unlocked wallets hold ${pool.top3Pct.toFixed(1)}% of LP supply — significant single-party withdrawal risk. Concentration calculated on unlocked LP only.</div>`
-          :`<div style="font-size:9px;color:#444442;margin-bottom:6px;">Concentration calculated on unlocked LP only.</div>`}
-        <div onclick="const d=document.getElementById('${uid}');d.style.display=d.style.display==='block'?'none':'block';this.querySelector('.dtgl').textContent=d.style.display==='block'?'▾':'▸';" style="cursor:pointer;display:flex;align-items:center;gap:4px;font-size:9px;color:#555552;user-select:none;">
+          :`<div style="font-size:9px;color:#8c8c87;margin-bottom:6px;">Concentration calculated on unlocked LP only.</div>`}
+        <div onclick="const d=document.getElementById('${uid}');d.style.display=d.style.display==='block'?'none':'block';this.querySelector('.dtgl').textContent=d.style.display==='block'?'▾':'▸';" style="cursor:pointer;display:flex;align-items:center;gap:4px;font-size:9px;color:#9c9c97;user-select:none;">
           <span class="dtgl">▸</span> Show holders
         </div>
       </div>
@@ -595,9 +650,9 @@ function buildLPOwnershipHTML(results,errors,hasPumpSwap,hasOtherTypes){
         <div style="display:flex;align-items:center;gap:8px;padding:5px 14px;${i%2===0?'background:#0a0a0a;':''}border-bottom:0.5px solid rgba(255,255,255,0.03);">
           <span style="font-size:9px;color:#333;min-width:16px;">${i+1}</span>
           <span style="font-size:10px;font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-            <a href="https://solscan.io/account/${h.wallet}" target="_blank" style="color:${h.locked?'#1D9E75':'#888884'};text-decoration:none;">${sh(h.wallet)}</a>
+            <a href="https://solscan.io/account/${h.wallet}" target="_blank" style="color:${h.locked?'#1D9E75':'#bdbdb7'};text-decoration:none;">${sh(h.wallet)}</a>
           </span>
-          <span style="font-size:10px;color:#888884;min-width:55px;text-align:right;">${h.pct.toFixed(1)}%</span>
+          <span style="font-size:10px;color:#bdbdb7;min-width:55px;text-align:right;">${h.pct.toFixed(1)}%</span>
           ${h.locked?`<span style="font-size:9px;background:#1D9E7518;color:#1D9E75;border:0.5px solid #1D9E7540;border-radius:3px;padding:1px 5px;white-space:nowrap;flex-shrink:0;">🔒 Locked</span>`:''}
         </div>`).join('')}
       </div>
@@ -605,7 +660,7 @@ function buildLPOwnershipHTML(results,errors,hasPumpSwap,hasOtherTypes){
   }
 
   if(hasOtherTypes){
-    html+=`<div style="font-size:11px;color:#555552;padding:10px 14px;border:0.5px solid rgba(255,255,255,0.06);border-radius:6px;background:#0f0f0f;margin-bottom:12px;">LP position data for DLMM and CLMM pools requires on-chain position account indexing — not available client-side without an RPC key. Available in Phase 3 with Helius integration.</div>`;
+    html+=`<div style="font-size:11px;color:#9c9c97;padding:10px 14px;border:0.5px solid rgba(255,255,255,0.06);border-radius:6px;background:#0f0f0f;margin-bottom:12px;">LP position data for DLMM and CLMM pools requires on-chain position account indexing — not available client-side without an RPC key. Available in Phase 3 with Helius integration.</div>`;
   }
 
   return html;
@@ -695,7 +750,7 @@ function buildDonutChart(pairs, totalTVL){
         ${slices}
         <circle cx="${cx}" cy="${cy}" r="${ri-1}" fill="#0f0f0f"/>
         <text x="${cx}" y="${cy-6}" text-anchor="middle" fill="#e8e8e6" font-size="13" font-weight="500" font-family="SF Mono,Fira Code,monospace">${fmt(totalTVL)}</text>
-        <text x="${cx}" y="${cy+9}" text-anchor="middle" fill="#555552" font-size="9" font-family="SF Mono,Fira Code,monospace">TOTAL TVL</text>
+        <text x="${cx}" y="${cy+9}" text-anchor="middle" fill="#9c9c97" font-size="9" font-family="SF Mono,Fira Code,monospace">TOTAL TVL</text>
       </svg>
     </div>
     <div class="chart-legend">${legendItems}</div>
@@ -711,12 +766,12 @@ function lifecycle(mc,vola,bsr,capital){
     return `<tr>
       <td>${l}</td>
       <td><span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;">${s.label}</span></td>
-      <td>${s.damm>0?s.damm+'%':'—'}<br><span style="font-size:10px;color:#555552;">${s.damm>0?fmtD(cap*s.damm/100):''}</span></td>
-      <td>${s.dlmm>0?s.dlmm+'%':'—'}<br><span style="font-size:10px;color:#555552;">${s.dlmm>0?fmtD(cap*s.dlmm/100):''}</span></td>
-      <td>${s.clmm>0?s.clmm+'%':'—'}<br><span style="font-size:10px;color:#555552;">${s.clmm>0?fmtD(cap*s.clmm/100):''}</span></td>
+      <td>${s.damm>0?s.damm+'%':'—'}<br><span style="font-size:10px;color:#9c9c97;">${s.damm>0?fmtD(cap*s.damm/100):''}</span></td>
+      <td>${s.dlmm>0?s.dlmm+'%':'—'}<br><span style="font-size:10px;color:#9c9c97;">${s.dlmm>0?fmtD(cap*s.dlmm/100):''}</span></td>
+      <td>${s.clmm>0?s.clmm+'%':'—'}<br><span style="font-size:10px;color:#9c9c97;">${s.clmm>0?fmtD(cap*s.clmm/100):''}</span></td>
       <td>${s.dlmm>0?sh:'—'}</td>
       <td>${s.dlmm>0?rwv:'—'}</td>
-      <td style="color:#555552;font-size:10px;">${getMig(s.stage)}</td>
+      <td style="color:#9c9c97;font-size:10px;">${getMig(s.stage)}</td>
     </tr>`;
   }).join('');
 }
@@ -732,10 +787,10 @@ function buildDeployPlan(capital,s,vola,bsr,mc,vol,obj){
   const shape=getShape(vola,bsr,obj),rw=getRW(vola,obj);
   const estFees=(dlmmAmt+dammAmt)*0.7*(vol/(capital||1))*0.003;
   let rows='';
-  if(damm>0) rows+=`<tr><td><span style="color:#1D9E75;font-weight:500;">DAMM Pool</span><div class="sub">Meteora Dynamic AMM · Full range</div></td><td><div class="amt">${fmtD(dammAmt)}</div><div class="sub">${damm}% of capital</div></td><td style="color:#888884;font-size:11px;">Full-range liquidity. No rebalancing needed. Captures upside automatically.</td><td style="color:#888884;font-size:11px;">Price 2x or 0.5x from launch</td></tr>`;
-  if(dlmm>0) rows+=`<tr><td><span style="color:#378ADD;font-weight:500;">DLMM Pool</span><div class="sub">Meteora DLMM · ${shape} · ${rw}</div></td><td><div class="amt">${fmtD(dlmmAmt)}</div><div class="sub">${dlmm}% of capital</div></td><td style="color:#888884;font-size:11px;">${getBinConfig(mc,obj||'balanced').desc}. ${cfg.rangeAdj}. Est. ${fmtD(estFees)}/day fees at current volume.</td><td style="color:#888884;font-size:11px;">${getMig(s.stage)}</td></tr>`;
-  if(clmm>0) rows+=`<tr><td><span style="color:#D85A30;font-weight:500;">CLMM Pool</span><div class="sub">Orca Whirlpool or Raydium CLMM</div></td><td><div class="amt">${fmtD(clmmAmt)}</div><div class="sub">${clmm}% of capital</div></td><td style="color:#888884;font-size:11px;">Routing diversification. Captures institutional flow.</td><td style="color:#888884;font-size:11px;">When DLMM TVL exceeds ${fmtD(dlmmAmt*2)}</td></tr>`;
-  rows+=`<tr><td><span style="color:#555552;font-weight:500;">Reserve</span><div class="sub">Treasury — do not deploy</div></td><td><div class="amt">${fmtD(resAmt)}</div><div class="sub">${rp}% of capital</div></td><td style="color:#888884;font-size:11px;">Migration fund. Deploy only at stage transitions.</td><td style="color:#888884;font-size:11px;">Next stage trigger</td></tr>`;
+  if(damm>0) rows+=`<tr><td><span style="color:#1D9E75;font-weight:500;">DAMM Pool</span><div class="sub">Meteora Dynamic AMM · Full range</div></td><td><div class="amt">${fmtD(dammAmt)}</div><div class="sub">${damm}% of capital</div></td><td style="color:#bdbdb7;font-size:11px;">Full-range liquidity. No rebalancing needed. Captures upside automatically.</td><td style="color:#bdbdb7;font-size:11px;">Price 2x or 0.5x from launch</td></tr>`;
+  if(dlmm>0) rows+=`<tr><td><span style="color:#378ADD;font-weight:500;">DLMM Pool</span><div class="sub">Meteora DLMM · ${shape} · ${rw}</div></td><td><div class="amt">${fmtD(dlmmAmt)}</div><div class="sub">${dlmm}% of capital</div></td><td style="color:#bdbdb7;font-size:11px;">${getBinConfig(mc,obj||'balanced').desc}. ${cfg.rangeAdj}. Est. ${fmtD(estFees)}/day fees at current volume.</td><td style="color:#bdbdb7;font-size:11px;">${getMig(s.stage)}</td></tr>`;
+  if(clmm>0) rows+=`<tr><td><span style="color:#D85A30;font-weight:500;">CLMM Pool</span><div class="sub">Orca Whirlpool or Raydium CLMM</div></td><td><div class="amt">${fmtD(clmmAmt)}</div><div class="sub">${clmm}% of capital</div></td><td style="color:#bdbdb7;font-size:11px;">Routing diversification. Captures institutional flow.</td><td style="color:#bdbdb7;font-size:11px;">When DLMM TVL exceeds ${fmtD(dlmmAmt*2)}</td></tr>`;
+  rows+=`<tr><td><span style="color:#9c9c97;font-weight:500;">Reserve</span><div class="sub">Treasury — do not deploy</div></td><td><div class="amt">${fmtD(resAmt)}</div><div class="sub">${rp}% of capital</div></td><td style="color:#bdbdb7;font-size:11px;">Migration fund. Deploy only at stage transitions.</td><td style="color:#bdbdb7;font-size:11px;">Next stage trigger</td></tr>`;
   return{rows,estFees,shape,rw,dammAmt,dlmmAmt,clmmAmt,resAmt,damm,dlmm,clmm,reservePct:rp};
 }
 
@@ -743,7 +798,7 @@ function buildMigSteps(mc,mc30,mc90,mc180,capital,vola,bsr){
   const milestones=[{mc:mc30,label:'30d target'},{mc:mc90,label:'90d target'},{mc:mc180,label:'180d target'}].filter(m=>m.mc>mc);
   const colors=['#1D9E75','#378ADD','#BA7517'];
   return milestones.map(({mc:m,label},i)=>{
-    const s=classifyStage(m),c=colors[i]||'#555552';
+    const s=classifyStage(m),c=colors[i]||'#9c9c97';
     const sh=getShape(vola,bsr,'balanced'),rw=getRW(vola,'balanced');
     const cap=Math.min(capital*(m/mc)*0.5,capital*3);
     return `<div class="mstep"><div class="mstep-num" style="background:${c}22;color:${c};border:0.5px solid ${c}44;">${i+1}</div><div class="mstep-body"><div class="mstep-trigger">${label} · ${fmt(m)} MC · Stage ${s.stage}: ${s.label}</div><div class="mstep-action">Trigger: <strong style="color:#e8e8e6;">${getMig(Math.max(0,s.stage-1))}</strong><br>Action: Migrate to <strong style="color:#e8e8e6;">${s.damm}% DAMM / ${s.dlmm}% DLMM${s.clmm>0?' / '+s.clmm+'% CLMM':''}</strong> · ${sh} · ${rw}<br>DLMM target TVL: <strong style="color:#e8e8e6;">${fmtD(cap*s.dlmm/100)}</strong></div></div></div>`;
@@ -940,17 +995,17 @@ function buildRiskSection(mc,fdv,tvl,vol24,liqRatio,volLiq,priceChg,pairs){
     <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.04);">
       <span style="color:${dc[f.c]};font-size:9px;margin-top:2px;flex-shrink:0;">${f.c==='green'?'✓':'⚑'}</span>
       <div style="min-width:0;">
-        <div style="font-size:11px;color:${dc[f.c]};font-weight:500;">${f.label} <span style="color:#555552;font-weight:400;">${f.pts>0?'(+'+f.pts+' pts)':'('+f.pts+' pts)'}</span></div>
-        <div style="font-size:10px;color:#888884;margin-top:2px;line-height:1.4;">${f.detail}</div>
+        <div style="font-size:11px;color:${dc[f.c]};font-weight:500;">${f.label} <span style="color:#9c9c97;font-weight:400;">${f.pts>0?'(+'+f.pts+' pts)':'('+f.pts+' pts)'}</span></div>
+        <div style="font-size:10px;color:#bdbdb7;margin-top:2px;line-height:1.4;">${f.detail}</div>
       </div>
     </div>`).join('');
 
   const stubRows=stubs.map(s=>`
     <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,0.04);">
-      <span style="color:#555552;font-size:9px;margin-top:2px;flex-shrink:0;">○</span>
+      <span style="color:#9c9c97;font-size:9px;margin-top:2px;flex-shrink:0;">○</span>
       <div>
-        <div style="font-size:11px;color:#555552;">${s.label}</div>
-        <div style="font-size:10px;color:#555552;margin-top:2px;">${s.detail}</div>
+        <div style="font-size:11px;color:#9c9c97;">${s.label}</div>
+        <div style="font-size:10px;color:#9c9c97;margin-top:2px;">${s.detail}</div>
       </div>
     </div>`).join('');
 
@@ -959,9 +1014,9 @@ function buildRiskSection(mc,fdv,tvl,vol24,liqRatio,volLiq,priceChg,pairs){
 
   return `<div style="border:0.5px solid ${vc}55;border-radius:8px;padding:14px 14px 8px;margin-bottom:16px;background:${vbg};">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <div style="font-size:10px;color:#888884;letter-spacing:0.08em;text-transform:uppercase;">Risk Assessment</div>
+      <div style="font-size:10px;color:#bdbdb7;letter-spacing:0.08em;text-transform:uppercase;">Risk Assessment</div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:10px;color:#888884;">Score: <span style="color:${vc};font-weight:500;">${score}</span>/100</span>
+        <span style="font-size:10px;color:#bdbdb7;">Score: <span style="color:${vc};font-weight:500;">${score}</span>/100</span>
         <span style="background:${vbg};color:${vc};border:0.5px solid ${vc}55;border-radius:4px;padding:2px 10px;font-size:11px;font-weight:600;">${verdict}</span>
       </div>
     </div>
@@ -987,9 +1042,9 @@ function buildMicroCapTable(mc,volLiq,tvl,ref){
     const ilDrag=spotVal-dammVal;
     const bedays=dailyFees>0.001?Math.ceil(ilDrag/dailyFees):null;
     const beStr=!bedays?'—':bedays>365?'>1yr':bedays+' days';
-    const beCl=!bedays?'#555552':bedays<=30?'#1D9E75':bedays<=90?'#BA7517':'#c94a4a';
+    const beCl=!bedays?'#9c9c97':bedays<=30?'#1D9E75':bedays<=90?'#BA7517':'#c94a4a';
     return `<tr>
-      <td><strong style="color:#e8e8e6;">${m.lbl}</strong> <span style="font-size:9px;color:#555552;">${rStr}</span></td>
+      <td><strong style="color:#e8e8e6;">${m.lbl}</strong> <span style="font-size:9px;color:#9c9c97;">${rStr}</span></td>
       <td style="color:#1D9E75;">${fmtD(spotVal)}</td>
       <td style="color:#378ADD;">${fmtD(dammVal)}</td>
       <td style="color:#c94a4a;">−${fmtD(ilDrag)}</td>
@@ -1016,7 +1071,7 @@ function buildMicroCapTable(mc,volLiq,tvl,ref){
     recReason=`Vol/liq is ${volLiq.toFixed(3)}x — below the 0.03x minimum for meaningful LP yield. Fees on ${refLbl}: ${fmtD(dailyFees)}/day — insufficient to justify IL risk. Take spot if you want exposure. Add DAMM only when daily volume sustainably exceeds ${fmtD(volThreshold)}.`;
   }
   return `
-    <div style="font-size:10px;color:#555552;margin-bottom:10px;">vol/liq <strong style="color:#e8e8e6;">${volLiq.toFixed(2)}x</strong> · est. fees <strong style="color:#e8e8e6;">${fmtD(dailyFees)}/day</strong> on ${refLbl}</div>
+    <div style="font-size:10px;color:#9c9c97;margin-bottom:10px;">vol/liq <strong style="color:#e8e8e6;">${volLiq.toFixed(2)}x</strong> · est. fees <strong style="color:#e8e8e6;">${fmtD(dailyFees)}/day</strong> on ${refLbl}</div>
     <div style="overflow-x:auto;margin-bottom:12px;">
       <table class="dtable" style="min-width:420px;">
         <thead><tr><th>MC target</th><th style="color:#1D9E75;">Spot (${refLbl})</th><th style="color:#378ADD;">DAMM (${refLbl})</th><th>IL drag</th><th>Fee break-even</th></tr></thead>
@@ -1026,10 +1081,10 @@ function buildMicroCapTable(mc,volLiq,tvl,ref){
     <div style="font-size:10px;color:#333;margin-bottom:12px;">DAMM = ${refLbl} × √(price multiple). IL drag = Spot − DAMM. Break-even = days of fees at current vol/liq to offset IL. High multiples make spot structurally superior — DAMM is justified by stability value and downside protection.</div>
     <div style="padding:10px 12px;background:${recC}11;border:0.5px solid ${recC}33;border-radius:4px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
       <div style="flex-shrink:0;min-width:90px;">
-        <div style="font-size:9px;color:#555552;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Recommendation</div>
+        <div style="font-size:9px;color:#9c9c97;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Recommendation</div>
         <div style="font-size:13px;font-weight:600;color:${recC};">${rec}</div>
       </div>
-      <div style="font-size:11px;color:#888884;line-height:1.5;flex:1;">${recReason}</div>
+      <div style="font-size:11px;color:#bdbdb7;line-height:1.5;flex:1;">${recReason}</div>
     </div>`;
 }
 
@@ -1042,12 +1097,12 @@ function buildMicroCapSection(mc,volLiq,tvl){
     return `<button class="disc-btn${active?' primary':''}" style="padding:3px 10px;" onclick="setMicroCapRef(${v},this)">${lbl}</button>`;
   }).join('');
   return `
-    <div class="sl">Micro-cap deployment analysis <span style="font-size:10px;font-weight:400;color:#555552;">MC &lt; $40K</span></div>
+    <div class="sl">Micro-cap deployment analysis <span style="font-size:10px;font-weight:400;color:#9c9c97;">MC &lt; $40K</span></div>
     <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#0f0f0f;padding:14px 16px;margin-bottom:16px;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
-        <span style="font-size:10px;color:#555552;letter-spacing:0.04em;">CAPITAL</span>
+        <span style="font-size:10px;color:#9c9c97;letter-spacing:0.04em;">CAPITAL</span>
         <div style="display:flex;gap:5px;">${btnRow}</div>
-        <span style="font-size:10px;color:#555552;margin-left:4px;">Current MC: <strong style="color:#e8e8e6;">${fmt(mc)}</strong></span>
+        <span style="font-size:10px;color:#9c9c97;margin-left:4px;">Current MC: <strong style="color:#e8e8e6;">${fmt(mc)}</strong></span>
       </div>
       <div id="micro-cap-table">${buildMicroCapTable(mc,volLiq,tvl,1000)}</div>
     </div>`;
@@ -1403,6 +1458,7 @@ async function runLiveLP(){
   const goal=document.getElementById('lp-goal').value;
   const out=document.getElementById('lp-out');
   if(!addr){out.innerHTML='<span class="err">Enter a token address.</span>';btn.disabled=false;return;}
+  if(!validateAddress(addr)){out.innerHTML=`<span class="err">${CHAINS.solana.addressHint}</span>`;btn.disabled=false;return;}
   out.innerHTML='<span class="blink">Fetching token data...</span>';
   let pairs=[];
   try{
@@ -1582,11 +1638,11 @@ async function runLiveLP(){
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <span style="font-size:14px;font-weight:500;color:#e8e8e6;">${ti.name||'Unknown'}</span>
-        <span style="color:#555552;font-size:11px;">${ti.symbol||'?'}</span>
+        <span style="color:#9c9c97;font-size:11px;">${ti.symbol||'?'}</span>
         <span class="badge" style="background:${stgC}22;color:${stgC};border:0.5px solid ${stgC}44;">Stage ${s.stage}: ${s.label}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <span style="font-size:10px;color:#555552;">${pairs.length} pool${pairs.length!==1?'s':''} · ${vola} vola · FDV ${fmt(fdv)}</span>
+        <span style="font-size:10px;color:#9c9c97;">${pairs.length} pool${pairs.length!==1?'s':''} · ${vola} vola · FDV ${fmt(fdv)}</span>
         <button class="export-btn" onclick="document.getElementById('audit-addr').value=lastLPAddr;const t=[...document.querySelectorAll('.tab')].find(b=>b.textContent.includes('Auditor'));switchTab('auditor',t);runAudit();">→ Full Audit</button>
       </div>
     </div>
@@ -1605,32 +1661,32 @@ async function runLiveLP(){
           <div style="font-size:20px;font-weight:600;color:${decColor};letter-spacing:-0.01em;">${decision}</div>
         </div>
         <div style="text-align:right;flex-shrink:0;">
-          <div style="font-size:9px;color:#555552;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Capital</div>
+          <div style="font-size:9px;color:#9c9c97;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Capital</div>
           <div style="font-size:15px;font-weight:500;color:#e8e8e6;">${fmt(capital)}</div>
         </div>
       </div>
       <div style="padding:12px 14px;background:#0f0f0f;">
-        <p style="font-size:12px;color:#888884;line-height:1.8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:0;">${rationale}</p>
+        <p style="font-size:12px;color:#bdbdb7;line-height:1.8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:0;">${rationale}</p>
       </div>
     </div>
     ${config?`
     <div class="sl">Configuration</div>
     <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;background:#0f0f0f;padding:2px 0;margin-bottom:12px;">
-      ${Object.entries(config).map(([k,v],i,arr)=>`<div style="display:flex;gap:10px;align-items:baseline;padding:6px 12px;${i<arr.length-1?'border-bottom:0.5px solid rgba(255,255,255,0.05)':''}"><span style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#555552;min-width:80px;flex-shrink:0;">${k.replace(/([A-Z])/g,' $1').trim()}</span><span style="font-size:11px;color:#e8e8e6;">${v}</span></div>`).join('')}
+      ${Object.entries(config).map(([k,v],i,arr)=>`<div style="display:flex;gap:10px;align-items:baseline;padding:6px 12px;${i<arr.length-1?'border-bottom:0.5px solid rgba(255,255,255,0.05)':''}"><span style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#9c9c97;min-width:80px;flex-shrink:0;">${k.replace(/([A-Z])/g,' $1').trim()}</span><span style="font-size:11px;color:#e8e8e6;">${v}</span></div>`).join('')}
     </div>`:''}
     ${outcomes.length||risks.length||watchList.length?`
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;">
       ${outcomes.length?`<div style="border:0.5px solid rgba(29,158,117,0.25);border-radius:6px;padding:10px 12px;background:rgba(29,158,117,0.05);">
         <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#1D9E75;margin-bottom:8px;">Expected outcomes</div>
-        ${outcomes.map(o=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#888884;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#1D9E75;flex-shrink:0;">→</span><span>${o}</span></div>`).join('')}
+        ${outcomes.map(o=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#bdbdb7;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#1D9E75;flex-shrink:0;">→</span><span>${o}</span></div>`).join('')}
       </div>`:''}
       ${risks.length?`<div style="border:0.5px solid rgba(201,74,74,0.25);border-radius:6px;padding:10px 12px;background:rgba(201,74,74,0.05);">
         <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#c94a4a;margin-bottom:8px;">Risk flags</div>
-        ${risks.map(r=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#888884;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#c94a4a;flex-shrink:0;">⚑</span><span>${r}</span></div>`).join('')}
+        ${risks.map(r=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#bdbdb7;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#c94a4a;flex-shrink:0;">⚑</span><span>${r}</span></div>`).join('')}
       </div>`:''}
       ${watchList.length?`<div style="border:0.5px solid rgba(186,117,23,0.25);border-radius:6px;padding:10px 12px;background:rgba(186,117,23,0.05);">
         <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#BA7517;margin-bottom:8px;">What to watch</div>
-        ${watchList.map(w=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#888884;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#BA7517;flex-shrink:0;">◎</span><span>${w}</span></div>`).join('')}
+        ${watchList.map(w=>`<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#bdbdb7;line-height:1.5;font-family:-apple-system,sans-serif;"><span style="color:#BA7517;flex-shrink:0;">◎</span><span>${w}</span></div>`).join('')}
       </div>`:''}
     </div>`:''}
     <div class="sl" style="margin-top:14px;">Pool inventory</div>
@@ -1670,9 +1726,10 @@ function addPortfolioToken(){
   const inp=document.getElementById('port-input');
   const addr=inp.value.trim();
   if(!addr){return;}
+  if(!validateAddress(addr)){alert(CHAINS.solana.addressHint);return;}
   if(portfolioTokens.length>=50){alert('Maximum 50 tokens.');return;}
   if(portfolioTokens.find(t=>t.address===addr)){inp.value='';return;}
-  portfolioTokens.push({address:addr,name:'...',symbol:'...',mc:0,tvl:0,vol24:0,liqRatio:0,priceChg:0,stage:0,stageLabel:'—',loading:true});
+  portfolioTokens.push({address:addr,name:'...',symbol:'...',mc:0,tvl:0,vol24:0,liqRatio:0,priceChg:0,stage:0,stageLabel:'—',chain:DEFAULT_CHAIN,loading:true});
   savePortfolio();
   inp.value='';
   renderPortfolio();
@@ -1701,7 +1758,7 @@ async function fetchPortfolioToken(addr){
       priceChg:parseFloat(pairs[0]?.priceChange?.h24||0),
       estFees:vol24*0.003,
       stage:s.stage,stageLabel:s.label,
-      pairs:pairs.length,loading:false,error:false
+      pairs:pairs.length,chain:DEFAULT_CHAIN,loading:false,error:false
     };
     savePortfolio();renderPortfolio();
   }catch(e){
@@ -1739,7 +1796,7 @@ async function runDiscover(){
   if(discoverLoaded) return;
   discoverLoaded=true;
   const el=document.getElementById('disc-out');
-  el.innerHTML='<div class="ph2" style="padding:20px 0;color:#555552;">Fetching trending tokens...</div>';
+  el.innerHTML='<div class="ph2" style="padding:20px 0;color:#9c9c97;">Fetching trending tokens...</div>';
   try{
     const r1=await fetch('https://api.dexscreener.com/token-boosts/top/v1');
     const raw=await r1.json();
@@ -1757,7 +1814,7 @@ async function runDiscover(){
       if(!tokenMap[addr]) tokenMap[addr]={
         address:addr,name:p.baseToken?.name||'?',symbol:p.baseToken?.symbol||'?',
         price:parseFloat(p.priceUsd)||0,mc:parseFloat(p.marketCap)||0,
-        priceChg:0,priceH1:0,priceH6:0,
+        priceChg:0,priceH1:0,priceH6:0,chain:chainFromDexId(p.chainId),
         tvl:0,vol24:0,volH1:0,volH6:0,pools:0,_topVol:0
       };
       tokenMap[addr].tvl+=parseFloat(p.liquidity?.usd||0);
@@ -1829,7 +1886,7 @@ function addToPortfolioFromDiscover(ev,addr){
   ev.stopPropagation();
   if(portfolioTokens.find(t=>t.address===addr)){ev.target.textContent='✓ Added';ev.target.disabled=true;return;}
   if(portfolioTokens.length>=50){alert('Maximum 50 tokens.');return;}
-  portfolioTokens.push({address:addr,name:'...',symbol:'...',mc:0,tvl:0,vol24:0,liqRatio:0,priceChg:0,stage:0,stageLabel:'—',loading:true});
+  portfolioTokens.push({address:addr,name:'...',symbol:'...',mc:0,tvl:0,vol24:0,liqRatio:0,priceChg:0,stage:0,stageLabel:'—',chain:DEFAULT_CHAIN,loading:true});
   savePortfolio();
   fetchPortfolioToken(addr);
   ev.target.textContent='✓ Added';
@@ -1845,7 +1902,7 @@ async function searchDiscover(){
   if(!raw) return;
   const q=raw.startsWith('$')?raw.slice(1):raw;
   const el=document.getElementById('disc-out');
-  el.innerHTML='<div class="ph2" style="padding:20px 0;color:#555552;">Searching...</div>';
+  el.innerHTML='<div class="ph2" style="padding:20px 0;color:#9c9c97;">Searching...</div>';
   try{
     const r=await fetch(`https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(q)}`);
     const d=await r.json();
@@ -1861,14 +1918,14 @@ async function searchDiscover(){
       if(!tokenMap[addr]) tokenMap[addr]={
         address:addr,name:p.baseToken?.name||'?',symbol:p.baseToken?.symbol||'?',
         price:parseFloat(p.priceUsd)||0,mc:parseFloat(p.marketCap)||0,
-        priceChg:parseFloat(p.priceChange?.h24)||0,tvl:0,vol24:0,pools:0
+        priceChg:parseFloat(p.priceChange?.h24)||0,chain:chainFromDexId(p.chainId),tvl:0,vol24:0,pools:0
       };
       tokenMap[addr].tvl+=parseFloat(p.liquidity?.usd||0);
       tokenMap[addr].vol24+=parseFloat(p.volume?.h24||0);
       tokenMap[addr].pools++;
     }
     const tokens=Object.values(tokenMap).filter(t=>t.mc>0).sort((a,b)=>b.vol24-a.vol24);
-    el.innerHTML=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><button class="disc-btn" onclick="restoreDiscover()">← Trending</button><span style="font-size:10px;color:#555552;">${tokens.length} result${tokens.length!==1?'s':''} for <strong style="color:#e8e8e6;">${raw}</strong> · sorted by 24h volume</span></div><div class="disc-grid">${tokens.map(renderDiscCard).join('')}</div>`;
+    el.innerHTML=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><button class="disc-btn" onclick="restoreDiscover()">← Trending</button><span style="font-size:10px;color:#9c9c97;">${tokens.length} result${tokens.length!==1?'s':''} for <strong style="color:#e8e8e6;">${raw}</strong> · sorted by 24h volume</span></div><div class="disc-grid">${tokens.map(renderDiscCard).join('')}</div>`;
   }catch(e){
     el.innerHTML=`<div style="margin-bottom:12px;"><button class="disc-btn" onclick="restoreDiscover()">← Trending</button></div><div class="ph2" style="color:#c94a4a;">Search failed. Check your connection and try again.</div>`;
   }
@@ -1897,7 +1954,7 @@ function renderDiscGrid(){
   const sorted=[...discTokenData].sort((a,b)=>getDiscVal(b)-getDiscVal(a));
   const lbl=getDiscLabel();
   const modeLabel=discMode==='volume'?`vol ${lbl}`:`price chg ${lbl}`;
-  el.innerHTML=`<div style="font-size:10px;color:#555552;margin-bottom:10px;">${discTokenData.length} tokens · sorted by ${modeLabel} · <button class="disc-btn" style="padding:2px 8px;" onclick="discoverLoaded=false;discTokenData=null;runDiscover()">↺ Refresh</button></div><div class="disc-grid">${sorted.map(renderDiscCard).join('')}</div>`;
+  el.innerHTML=`<div style="font-size:10px;color:#9c9c97;margin-bottom:10px;">${discTokenData.length} tokens · sorted by ${modeLabel} · <button class="disc-btn" style="padding:2px 8px;" onclick="discoverLoaded=false;discTokenData=null;runDiscover()">↺ Refresh</button></div><div class="disc-grid">${sorted.map(renderDiscCard).join('')}</div>`;
 }
 
 function setDiscMode(mode,el){
@@ -1988,8 +2045,8 @@ function renderPortfolio(){
     const c=sc(t.stage||0),ch=t.priceChg||0;
     const lr=t.liqRatio||0;
     const lrColor=lr<2?'#c94a4a':lr<5?'#BA7517':'#1D9E75';
-    if(t.loading) return `<div class="portfolio-card"><div class="portfolio-card-header"><span class="portfolio-card-name" style="color:#555552;">Loading...</span></div><div class="portfolio-card-addr">${t.address}</div></div>`;
-    if(t.error) return `<div class="portfolio-card"><div class="portfolio-card-header"><span class="portfolio-card-name" style="color:#c94a4a;">${t.name}</span><button onclick="removePortfolioToken('${t.address}')" style="margin-left:auto;background:none;border:none;color:#555552;cursor:pointer;font-size:11px;">✕ remove</button></div><div class="portfolio-card-addr">${t.address}</div></div>`;
+    if(t.loading) return `<div class="portfolio-card"><div class="portfolio-card-header"><span class="portfolio-card-name" style="color:#9c9c97;">Loading...</span></div><div class="portfolio-card-addr">${t.address}</div></div>`;
+    if(t.error) return `<div class="portfolio-card"><div class="portfolio-card-header"><span class="portfolio-card-name" style="color:#c94a4a;">${t.name}</span><button onclick="removePortfolioToken('${t.address}')" style="margin-left:auto;background:none;border:none;color:#9c9c97;cursor:pointer;font-size:11px;">✕ remove</button></div><div class="portfolio-card-addr">${t.address}</div></div>`;
     const hs=calcHealthScore(t),hm=healthMeta(hs),alert=getPortfolioAlert(t,hs);
     const tm=t.tag?PORT_TAGS[t.tag]:null;
     return `<div class="portfolio-card" onclick="openAuditFromPortfolio('${t.address}')">
@@ -1998,7 +2055,7 @@ function renderPortfolio(){
         <span class="portfolio-card-sym">${t.symbol}</span>
         <span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;margin-left:4px;">Stage ${t.stage}: ${t.stageLabel}</span>
         <span style="margin-left:auto;color:${ch>=0?'#1D9E75':'#c94a4a'};font-size:11px;">${ch>=0?'+':''}${ch.toFixed(1)}% 24h</span>
-        <button onclick="event.stopPropagation();removePortfolioToken('${t.address}')" style="background:none;border:none;color:#555552;cursor:pointer;font-size:11px;margin-left:8px;">✕</button>
+        <button onclick="event.stopPropagation();removePortfolioToken('${t.address}')" style="background:none;border:none;color:#9c9c97;cursor:pointer;font-size:11px;margin-left:8px;">✕</button>
       </div>
       <div class="portfolio-card-addr">${t.address}</div>
       <div style="margin:4px 0 2px;">${tm?`<span onclick="event.stopPropagation();cycleTag('${t.address}')" style="cursor:pointer;font-size:9px;letter-spacing:0.06em;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:${tm.color}22;color:${tm.color};border:0.5px solid ${tm.color}44;">${tm.label}</span>`:`<span onclick="event.stopPropagation();cycleTag('${t.address}')" style="cursor:pointer;font-size:9px;letter-spacing:0.04em;padding:2px 8px;border-radius:3px;color:#333332;border:0.5px solid #252525;">+ tag</span>`}</div>
@@ -2011,7 +2068,7 @@ function renderPortfolio(){
         <div class="portfolio-metric"><span class="pm-l">Pools</span><span class="pm-v">${t.pairs||'—'}</span></div>
       </div>
       <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;">
-        <span style="font-size:10px;color:#555552;letter-spacing:0.04em;white-space:nowrap;">HEALTH</span>
+        <span style="font-size:10px;color:#9c9c97;letter-spacing:0.04em;white-space:nowrap;">HEALTH</span>
         <div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;"><div style="width:${hs}%;height:100%;background:${hm.color};border-radius:2px;transition:width .3s;"></div></div>
         <span style="font-size:12px;font-weight:600;color:${hm.color};min-width:24px;text-align:right;">${hs}</span>
         <span style="font-size:10px;color:${hm.color};min-width:48px;">${hm.label}</span>
@@ -2052,7 +2109,7 @@ function runArchitect(){
     </div>
     <div style="display:flex;align-items:center;gap:12px;margin:10px 0;">
       <span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;font-size:11px;padding:3px 10px;">Stage ${s.stage}: ${s.label}</span>
-      <span style="font-size:11px;color:#888884;">Shape → <strong style="color:#e8e8e6;">${deploy.shape}</strong> · ${deploy.rw}</span>
+      <span style="font-size:11px;color:#bdbdb7;">Shape → <strong style="color:#e8e8e6;">${deploy.shape}</strong> · ${deploy.rw}</span>
     </div>
     <div class="lrow">
       <span class="ldot" style="background:#1D9E75;"></span><span class="llbl">DAMM ${deploy.damm}% · ${fmtD(deploy.dammAmt)}</span>
@@ -2067,7 +2124,7 @@ function runArchitect(){
       <tbody>${deploy.rows}</tbody></table>
     </div>
     <div class="sl">Migration roadmap</div>
-    <div style="margin-bottom:16px;">${migSteps||'<span style="color:#555552;font-size:11px;">No migrations needed — targets within current stage.</span>'}</div>
+    <div style="margin-bottom:16px;">${migSteps||'<span style="color:#9c9c97;font-size:11px;">No migrations needed — targets within current stage.</span>'}</div>
     <div class="sl">Lifecycle capital plan</div>
     <div style="overflow-x:auto;margin-bottom:16px;">
       <table class="lt" style="min-width:680px;">
@@ -2084,6 +2141,7 @@ async function runAudit(){
   const btn=document.getElementById('audit-btn');btn.disabled=true;
   const addr=document.getElementById('audit-addr').value.trim();
   if(!addr){document.getElementById('audit-out').innerHTML='<span class="err">Enter a token address.</span>';btn.disabled=false;return;}
+  if(!validateAddress(addr)){document.getElementById('audit-out').innerHTML=`<span class="err">${CHAINS.solana.addressHint}</span>`;btn.disabled=false;return;}
   const out=document.getElementById('audit-out');
   out.innerHTML='<span class="blink">Fetching from DexScreener...</span>';
   let pairs=[];
@@ -2156,7 +2214,7 @@ async function runAudit(){
     :`Not competing for Jupiter routing at current structure. Build a single concentrated Meteora DLMM targeting ${fmt(rDepthNeeded)} depth as the starting point.`;
 
   // store for export
-  lastAuditData={address:addr,name:ti.name||'Unknown',symbol:ti.symbol||'?',price,mc,fdv,tvl,vol24,liqRatio,volLiq,priceChg,vola,estFees,feeDensity,stage:s,pairs,objective:obj,paras};
+  lastAuditData={address:addr,name:ti.name||'Unknown',symbol:ti.symbol||'?',price,mc,fdv,tvl,vol24,liqRatio,volLiq,priceChg,vola,estFees,feeDensity,stage:s,pairs,objective:obj,chain:chainFromDexId(pairs[0]?.chainId),paras};
   lastAuditAddr=addr;
 
   const riskHTML=buildRiskSection(mc,fdv,tvl,vol24,liqRatio,volLiq,priceChg,pairs);
@@ -2165,7 +2223,7 @@ async function runAudit(){
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
       <div>
         <span style="font-size:14px;font-weight:500;color:#e8e8e6;">${ti.name||'Unknown'}</span>
-        <span style="color:#555552;font-size:11px;margin-left:6px;">${ti.symbol||'?'}</span>
+        <span style="color:#9c9c97;font-size:11px;margin-left:6px;">${ti.symbol||'?'}</span>
         <span style="margin-left:8px;background:${cfg.color}18;color:${cfg.color};border:0.5px solid ${cfg.color}44;border-radius:4px;padding:1px 8px;font-size:10px;">${cfg.label}</span>
       </div>
       <div class="export-bar" style="margin-bottom:0;">
@@ -2175,7 +2233,7 @@ async function runAudit(){
         <button class="export-btn" onclick="exportPrint()">⎙ Print / PDF</button>
       </div>
     </div>
-    <div style="font-size:10px;color:#555552;margin-bottom:14px;word-break:break-all;">${addr}</div>
+    <div style="font-size:10px;color:#9c9c97;margin-bottom:14px;word-break:break-all;">${addr}</div>
     <div class="mrow">
       <div class="mc2"><div class="ml">Price</div><div class="mv">${price>0?'$'+price.toPrecision(4):'—'}</div><div class="ms" style="color:${priceChg>=0?'#1D9E75':'#c94a4a'};">${priceChg>=0?'+':''}${priceChg.toFixed(1)}% 24h</div></div>
       <div class="mc2"><div class="ml">Market Cap</div><div class="mv">${fmt(mc)}</div></div>
@@ -2184,15 +2242,15 @@ async function runAudit(){
       <div class="mc2"><div class="ml">Liq Ratio</div><div class="mv">${liqRatio.toFixed(1)}%</div><div class="ms">${liqRatio<2?'⚠ critical':liqRatio<5?'⚠ thin':liqRatio>15?'↑ deep':'✓ healthy'}</div></div>
       <div class="mc2"><div class="ml">Est. Daily Fees</div><div class="mv">${fmt(estFees)}</div></div>
     </div>
-    <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='grid'?'none':'grid';this.querySelector('.dtgl').textContent=this.nextElementSibling.style.display==='grid'?'▾':'▸';" style="cursor:pointer;display:flex;align-items:center;gap:5px;font-size:10px;color:#444442;margin-bottom:8px;user-select:none;">
+    <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='grid'?'none':'grid';this.querySelector('.dtgl').textContent=this.nextElementSibling.style.display==='grid'?'▾':'▸';" style="cursor:pointer;display:flex;align-items:center;gap:5px;font-size:10px;color:#8c8c87;margin-bottom:8px;user-select:none;">
       <span class="dtgl">▸</span>
       <span>FDV ${fmt(fdv)} · ${pairs.length} pool${pairs.length!==1?'s':''} · ${vola} volatility · ${feeDensity.toFixed(3)}% fee density</span>
     </div>
     <div style="display:none;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:5px;margin-bottom:10px;">
-      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">FDV</div><div style="font-size:12px;color:#888884;">${fmt(fdv)}</div></div>
-      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Pools</div><div style="font-size:12px;color:#888884;">${pairs.length}</div></div>
-      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Volatility</div><div style="font-size:12px;color:#888884;">${vola}</div></div>
-      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#444442;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Fee Density</div><div style="font-size:12px;color:#888884;">${feeDensity.toFixed(3)}%</div></div>
+      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#8c8c87;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">FDV</div><div style="font-size:12px;color:#bdbdb7;">${fmt(fdv)}</div></div>
+      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#8c8c87;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Pools</div><div style="font-size:12px;color:#bdbdb7;">${pairs.length}</div></div>
+      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#8c8c87;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Volatility</div><div style="font-size:12px;color:#bdbdb7;">${vola}</div></div>
+      <div style="background:#0f0f0f;border:0.5px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 8px;"><div style="font-size:8px;color:#8c8c87;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">Fee Density</div><div style="font-size:12px;color:#bdbdb7;">${feeDensity.toFixed(3)}%</div></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
       <span class="badge" style="background:${c}22;color:${c};border:0.5px solid ${c}44;">Stage ${s.stage}: ${s.label}</span>
@@ -2203,7 +2261,7 @@ async function runAudit(){
       <span class="ldot" style="background:#D85A30;"></span><span class="llbl">CLMM ${recClmm}% rec.</span>
     </div>
     <div class="abar"><div class="fd" style="width:${recDamm}%"></div><div class="fdl" style="width:${recDlmm}%"></div><div class="fcl" style="width:${recClmm}%"></div></div>
-    <div style="font-size:11px;color:#888884;margin:8px 0 14px;">Rec. shape: <span style="color:#e8e8e6;">${sh}</span> · Range: <span style="color:#e8e8e6;">${rwv}</span> · <span style="color:#e8e8e6;">${getBinConfig(mc,obj).desc}</span> · Treasury LP: <span style="color:#e8e8e6;">${getTLP(s.stage)}</span></div>
+    <div style="font-size:11px;color:#bdbdb7;margin:8px 0 14px;">Rec. shape: <span style="color:#e8e8e6;">${sh}</span> · Range: <span style="color:#e8e8e6;">${rwv}</span> · <span style="color:#e8e8e6;">${getBinConfig(mc,obj).desc}</span> · Treasury LP: <span style="color:#e8e8e6;">${getTLP(s.stage)}</span></div>
 
     <div class="sl">TVL by pool type</div>
     ${donut}
@@ -2218,7 +2276,7 @@ async function runAudit(){
     <div class="mrow" style="margin-bottom:4px;">
       ${slipData.map(d=>`<div class="mc2"><div class="ml">$${d.sz>=1000?d.sz/1000+'k':d.sz} trade</div><div class="mv" style="color:${d.col};">${d.imp<0.1?'<0.1':d.imp.toFixed(2)}%</div><div class="ms" style="color:${d.col};">${d.lbl}</div></div>`).join('')}
     </div>
-    <div style="font-size:10px;color:#555552;margin-bottom:16px;">Estimated against the deepest single pool using pool type concentration factors. Actual impact depends on active bin depth — treat as directional.</div>
+    <div style="font-size:10px;color:#9c9c97;margin-bottom:16px;">Estimated against the deepest single pool using pool type concentration factors. Actual impact depends on active bin depth — treat as directional.</div>
 
     ${microCapHTML}
 
@@ -2227,7 +2285,7 @@ async function runAudit(){
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap;">
         <div style="display:flex;align-items:baseline;gap:5px;">
           <span style="font-size:28px;font-weight:600;color:${fragColor};">${fragScore}</span>
-          <span style="font-size:11px;color:#555552;">/100</span>
+          <span style="font-size:11px;color:#9c9c97;">/100</span>
         </div>
         <span class="badge" style="background:${fragColor}22;color:${fragColor};border:0.5px solid ${fragColor}44;">${fragLabel}</span>
         <div style="flex:1;min-width:100px;">
@@ -2236,8 +2294,8 @@ async function runAudit(){
           </div>
         </div>
       </div>
-      <div style="font-size:11px;color:#555552;margin-bottom:6px;">${fragExpl}</div>
-      <div style="font-size:12px;color:#888884;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${fragNote}</div>
+      <div style="font-size:11px;color:#9c9c97;margin-bottom:6px;">${fragExpl}</div>
+      <div style="font-size:12px;color:#bdbdb7;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${fragNote}</div>
     </div>
 
     <div class="sl">Routing dominance score</div>
@@ -2245,7 +2303,7 @@ async function runAudit(){
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap;">
         <div style="display:flex;align-items:baseline;gap:5px;">
           <span style="font-size:28px;font-weight:600;color:${routingColor};">${routingScore}</span>
-          <span style="font-size:11px;color:#555552;">/100</span>
+          <span style="font-size:11px;color:#9c9c97;">/100</span>
         </div>
         <span class="badge" style="background:${routingColor}22;color:${routingColor};border:0.5px solid ${routingColor}44;">${routingLabel}</span>
         <div style="flex:1;min-width:100px;">
@@ -2255,9 +2313,9 @@ async function runAudit(){
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
-        ${routingFactors.map(f=>`<div style="display:flex;gap:8px;font-size:11px;color:#555552;line-height:1.6;"><span style="color:#333;flex-shrink:0;">·</span><span>${f}</span></div>`).join('')}
+        ${routingFactors.map(f=>`<div style="display:flex;gap:8px;font-size:11px;color:#9c9c97;line-height:1.6;"><span style="color:#333;flex-shrink:0;">·</span><span>${f}</span></div>`).join('')}
       </div>
-      <div style="font-size:12px;color:#888884;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;border-top:0.5px solid rgba(255,255,255,0.06);padding-top:10px;">${routingAction}</div>
+      <div style="font-size:12px;color:#bdbdb7;line-height:1.7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;border-top:0.5px solid rgba(255,255,255,0.06);padding-top:10px;">${routingAction}</div>
     </div>
 
     <div id="audit-lp-section"><div style="padding:8px 0;font-size:10px;color:#333;"><span class="blink">Loading LP ownership data…</span></div></div>
@@ -2269,6 +2327,184 @@ async function runAudit(){
   loadLPOwnershipSection(pairs);
   btn.disabled=false;
 }
+
+// ── SIMULATOR ─────────────────────────────────────────────────────────────────
+let simMode='damm';
+function g(id){const el=document.getElementById(id);return el?el.value:'';}
+
+// usd(): whole dollars + thousands separators; cents only when fractional ($0, $2,500, $15,811.39)
+function usd(n){
+  n=parseFloat(n)||0;
+  const neg=n<0;const a=Math.abs(n);
+  const whole=Math.round(a*100)%100===0;
+  const str=a.toLocaleString('en-US',{minimumFractionDigits:whole?0:2,maximumFractionDigits:2});
+  return (neg?'-$':'$')+str;
+}
+function signedUsd(n){return (n>0?'+':'')+usd(n);}
+function qfmt(n){n=parseFloat(n)||0;if(n>=1e9)return (n/1e9).toFixed(2)+'B';if(n>=1e6)return (n/1e6).toFixed(2)+'M';if(n>=1e3)return (n/1e3).toFixed(1)+'K';if(n>=1)return n.toFixed(0);if(n>0)return n.toPrecision(2);return '0';}
+function simPrice(p){p=parseFloat(p)||0;if(p===0)return '$0';if(p<0.0001)return '$'+p.toPrecision(3);if(p<1)return '$'+p.toPrecision(4);return '$'+p.toFixed(2);}
+
+function setSimMode(m,el){
+  simMode=m;
+  document.querySelectorAll('#sim-mode-row .obj-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sim-damm-inputs').style.display=m==='damm'?'block':'none';
+  document.getElementById('sim-dlmm-inputs').style.display=m==='dlmm'?'block':'none';
+}
+
+// ── DAMM v2 — full-range constant product (value scales with √price) ──────────
+const DAMM_TARGET_MCS=[50000,100000,150000,250000,500000,1000000,2500000,5000000,10000000];
+function simulateDamm(startValue,entryMC){
+  const mcs=[...new Set([...DAMM_TARGET_MCS,entryMC])].sort((a,b)=>a-b);
+  return mcs.map(mc=>{
+    const ratio=mc/entryMC;                       // MC ∝ price at fixed supply
+    const lpValue=startValue*Math.sqrt(ratio);    // V = V0·√(MC/MC0)
+    const perSide=lpValue/2;                       // always 50/50 by value
+    const pnl=lpValue-startValue;
+    const vHold=(startValue/2)*(ratio+1);          // half token (×ratio) + half quote (×1)
+    const vsHold=lpValue-vHold;                     // negative = IL drag vs holding
+    return {mc,ratio,lpValue,perSide,pnl,vsHold,mult:Math.sqrt(ratio),isEntry:mc===entryMC};
+  });
+}
+
+function runDammSim(){
+  const startValue=parseFloat(g('sim-damm-value'))||500;
+  const entryMC=parseFloat(g('sim-damm-mc'))||10000;
+  const quote=document.getElementById('sim-damm-quote').value;
+  const out=document.getElementById('sim-out');
+  if(startValue<=0||entryMC<=0){out.innerHTML='<span class="err">Starting value and entry market cap must be greater than zero.</span>';return;}
+  const rows=simulateDamm(startValue,entryMC);
+  const trs=rows.map(r=>{
+    const pnlC=r.pnl>=0?'#1D9E75':'#c94a4a';
+    const vsC=r.vsHold>=0?'#1D9E75':'#c94a4a';
+    return `<tr style="${r.isEntry?'background:rgba(29,158,117,0.08);':''}">
+      <td>${fmt(r.mc)}${r.isEntry?' <span style="font-size:9px;color:#1D9E75;letter-spacing:.06em;">ENTRY</span>':''}</td>
+      <td class="amt" style="font-size:13px;">${usd(r.lpValue)}</td>
+      <td style="color:#bdbdb7;white-space:nowrap;">${usd(r.perSide)} / ${usd(r.perSide)}</td>
+      <td style="color:${pnlC};white-space:nowrap;">${signedUsd(r.pnl)}</td>
+      <td>${r.mult.toFixed(2)}×</td>
+      <td style="color:${vsC};white-space:nowrap;">${signedUsd(r.vsHold)}</td>
+    </tr>`;
+  }).join('');
+  out.innerHTML=`
+    <div class="mrow" style="margin-bottom:12px;">
+      <div class="mc2"><div class="ml">Starting LP Value</div><div class="mv">${usd(startValue)}</div></div>
+      <div class="mc2"><div class="ml">Entry Market Cap</div><div class="mv">${fmt(entryMC)}</div></div>
+      <div class="mc2"><div class="ml">Quote</div><div class="mv">${quote}</div></div>
+      <div class="mc2"><div class="ml">Model</div><div class="mv" style="font-size:12px;">Full-range √price</div></div>
+    </div>
+    <div class="sl">DAMM v2 value projection</div>
+    <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;overflow-x:auto;margin-bottom:12px;">
+      <table class="dtable" style="min-width:560px;">
+        <thead><tr><th>Market Cap</th><th>LP Value</th><th>Token / Quote Side</th><th>PnL</th><th>Multiple</th><th>vs. Holding</th></tr></thead>
+        <tbody>${trs}</tbody>
+      </table>
+    </div>
+    <div class="analysis">
+      <div class="analysis-label">◇ Read-out</div>
+      <p>A full-range DAMM position is always <strong>50/50 by value</strong>, so a ${usd(startValue)} entry holds ${usd(startValue/2)} of token and ${usd(startValue/2)} of ${quote}. As market cap rises, value scales with the <strong>square root of price</strong> — at 4× the market cap the position is worth 2×, not 4×. That gap is the cost of providing two-sided liquidity.</p>
+      <p>The <strong>vs. Holding</strong> column is impermanent loss against simply holding the same two assets: it is always ≤ $0 away from entry and widens as price moves, because a pure hold captures the full token upside while the LP rebalances into quote on the way up. DAMM's compensating advantages — continuous fee income and a permanent two-sided bid — are <strong>not modeled here</strong>; this is price-appreciation only.</p>
+    </div>`;
+}
+
+// ── DLMM — discrete bins (constant-sum per bin at its center price) ───────────
+const MAX_BINS=2000;
+function genBins(low,high,binStep){
+  const s=binStep/10000,bins=[];let k=0;
+  while(bins.length<MAX_BINS){
+    const center=low*Math.pow(1+s,k+0.5);   // b_k = low·(1+s)^(k+0.5)
+    if(center>high) break;
+    bins.push(center);k++;
+  }
+  if(!bins.length) bins.push((low+high)/2);
+  return bins;
+}
+function shapeWeights(n,shape){
+  const w=[];
+  for(let i=0;i<n;i++){
+    const x=n>1?i/(n-1):0.5,d=Math.abs(x-0.5);
+    if(shape==='curve')      w.push(Math.exp(-Math.pow(d/0.22,2)));   // peak center
+    else if(shape==='bidask')w.push(0.15+Math.pow(d/0.5,1.6));         // U-shape
+    else                     w.push(1);                                // spot uniform
+  }
+  const sum=w.reduce((a,b)=>a+b,0)||1;
+  return w.map(v=>v/sum);
+}
+function simulateDlmm(o){
+  let P0=o.entryPrice;
+  if(o.structure==='dca-out') P0=Math.min(o.entryPrice,o.low);   // 1-sided token, sells up
+  if(o.structure==='dca-in')  P0=Math.max(o.entryPrice,o.high);  // 1-sided quote, buys down
+  const centers=genBins(o.low,o.high,o.binStep);
+  const weights=shapeWeights(centers.length,o.shape);
+  const bins=centers.map((b,i)=>({center:b,cap:o.capital*weights[i],side:b>P0?'base':'quote'}));
+  const supply=(o.entryMC>0&&P0>0)?o.entryMC/P0:0;
+  function valueAt(pf){
+    let tokenQty=0,quote=0;
+    for(const bn of bins){
+      if(bn.side==='base'){
+        const baseAmt=bn.cap/P0;
+        if(pf<bn.center) tokenQty+=baseAmt; else quote+=baseAmt*bn.center;
+      }else{
+        if(pf>bn.center) quote+=bn.cap; else tokenQty+=bn.cap/bn.center;
+      }
+    }
+    return {value:tokenQty*pf+quote,tokenQty,quote};
+  }
+  const steps=14,prices=[];
+  for(let i=0;i<=steps;i++) prices.push(o.low*Math.pow(o.high/o.low,i/steps));
+  if(P0>=o.low&&P0<=o.high&&!prices.some(p=>Math.abs(p-P0)/P0<1e-6)) prices.push(P0);
+  prices.sort((a,b)=>a-b);
+  const deposit=o.capital;
+  const sweep=prices.map(p=>{const v=valueAt(p);return {price:p,mc:supply>0?p*supply:0,value:v.value,mult:deposit>0?v.value/deposit:0,tokenQty:v.tokenQty,quote:v.quote,isEntry:Math.abs(p-P0)/P0<1e-6};});
+  return {P0,supply,sweep,deposit,entryVal:valueAt(P0).value,bottomVal:valueAt(o.low).value,topVal:valueAt(o.high).value,shape:o.shape,structure:o.structure,binStep:o.binStep,nBins:centers.length};
+}
+
+function runDlmmSim(){
+  const entryPrice=parseFloat(g('sim-dlmm-price'))||0;
+  const binStep=parseFloat(g('sim-dlmm-step'))||100;
+  const low=parseFloat(g('sim-dlmm-low'))||0;
+  const high=parseFloat(g('sim-dlmm-high'))||0;
+  const capital=parseFloat(g('sim-dlmm-capital'))||1000;
+  const shape=document.getElementById('sim-dlmm-shape').value;
+  const structure=document.getElementById('sim-dlmm-structure').value;
+  const entryMC=parseFloat(g('sim-dlmm-mc'))||0;
+  const out=document.getElementById('sim-out');
+  if(!(low>0&&high>low&&entryPrice>0)){out.innerHTML='<span class="err">Need entry price &gt; 0 and range low &lt; range high (both &gt; 0).</span>';return;}
+  const sim=simulateDlmm({entryPrice,binStep,low,high,capital,shape,structure,entryMC});
+  const maxV=Math.max(...sim.sweep.map(s=>s.value),1);
+  const shapeLbl={spot:'Spot (uniform)',curve:'Curve (peak center)',bidask:'Bid Ask (U-shape)'}[shape];
+  const structLbl={'two':'Two-sided','dca-out':'DCA Out (1-sided token)','dca-in':'DCA In (1-sided quote)'}[structure];
+  const rows=sim.sweep.map(s=>`<tr style="${s.isEntry?'background:rgba(55,138,221,0.08);':''}">
+      <td style="white-space:nowrap;">${simPrice(s.price)}${s.isEntry?' <span style="font-size:9px;color:#378ADD;">ENTRY</span>':''}</td>
+      <td>${s.mc>0?fmt(s.mc):'—'}</td>
+      <td class="amt" style="font-size:12px;">${usd(s.value)}</td>
+      <td>${s.mult.toFixed(2)}×</td>
+      <td style="min-width:90px;"><div class="abar" style="margin:0;"><div class="fdl" style="width:${(s.value/maxV*100).toFixed(1)}%"></div></div></td>
+      <td style="color:#bdbdb7;">${qfmt(s.tokenQty)}</td>
+      <td style="color:#bdbdb7;">${usd(s.quote)}</td>
+    </tr>`).join('');
+  out.innerHTML=`
+    <div class="mrow" style="margin-bottom:12px;">
+      <div class="mc2"><div class="ml">Deposit</div><div class="mv">${usd(sim.deposit)}</div></div>
+      <div class="mc2"><div class="ml">Entry value</div><div class="mv">${usd(sim.entryVal)}</div><div class="ms">${sim.nBins} bins</div></div>
+      <div class="mc2"><div class="ml">At range low</div><div class="mv">${usd(sim.bottomVal)}</div><div class="ms">${simPrice(low)}</div></div>
+      <div class="mc2"><div class="ml">At range high</div><div class="mv">${usd(sim.topVal)}</div><div class="ms">${simPrice(high)}</div></div>
+    </div>
+    <div class="sl">Price sweep · ${shapeLbl} · ${structLbl}</div>
+    <div style="border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;overflow-x:auto;margin-bottom:12px;">
+      <table class="dtable" style="min-width:620px;">
+        <thead><tr><th>Price</th><th>Market Cap</th><th>Value</th><th>×</th><th>Value bar</th><th>Token qty</th><th>Quote held</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="analysis">
+      <div class="analysis-label">▦ Read-out</div>
+      <p>${capital>0?usd(capital):'Capital'} is spread across <strong>${sim.nBins} bins</strong> from ${simPrice(low)} to ${simPrice(high)} using a <strong>${shapeLbl}</strong> distribution${shape==='bidask'?' — weighted toward the edges, so the position retains more value at the extremes':shape==='curve'?' — concentrated at the center, maximizing fee density near entry but giving up value at the edges':' — even weight across every bin'}. Structure is <strong>${structLbl}</strong>${structure==='dca-out'?': it starts 100% token and sells into strength as price climbs through each bin':structure==='dca-in'?': it starts 100% quote and accumulates token as price falls through each bin':': token above entry, quote below'}.</p>
+      <p>Each bin converts <strong>constant-sum at its center price</strong> — a token bin fully rotates to quote once price clears its center, and vice versa. ${sim.structure==='two'?`At range low the position is worth ${usd(sim.bottomVal)} (fully rotated into token) and at range high ${usd(sim.topVal)} (fully rotated into quote).`:`Bottom ${usd(sim.bottomVal)} · top ${usd(sim.topVal)}.`} Fees and rebalancing are <strong>not modeled</strong>; this is price-path value only.</p>
+    </div>`;
+}
+
+function runSimulator(){simMode==='damm'?runDammSim():runDlmmSim();}
 
 // ── clock ─────────────────────────────────────────────────────────────────────
 setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
